@@ -1,0 +1,283 @@
+[
+	{
+		"id": "factory_offer",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "새로운 공장",
+		"description": "한 기업이 마을 외곽에 큰 공장을 짓고 싶다고 제안했습니다.",
+		"left_choice": {
+			"text": "허가하지 않는다",
+			"result": "마을 외곽은 조용한 들판으로 남았습니다. 일자리를 기대하던 사람들이 이 결정을 어떻게 받아들일지는 두고 봐야 합니다.",
+			"effects": { "finance": -4, "residents": -3 },
+			"set_flags": [{ "flag": "factory_refused", "chance": 0.6 }]
+		},
+		"right_choice": {
+			"text": "공장 건설을 허가한다",
+			"result": "공장이 들어서고 세금과 일자리가 생겼습니다. 굴뚝에서 피어오르는 연기가 앞으로 마을에 무엇을 가져올지는 아직 모릅니다.",
+			"effects": { "finance": 12, "environment": -10, "residents": 4 },
+			"set_flags": ["factory_built"]
+		}
+	},
+	{
+		"id": "mall_offer",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "대형마트 입점",
+		"description": "대형마트가 마을 입구에 들어오고 싶어 합니다. 전통시장 상인들은 걱정이 큽니다.",
+		"left_choice": {
+			"text": "허가한다",
+			"result": "마트가 문을 열자 주민들이 편하게 장을 봅니다. 시장 상인들은 한숨을 쉬며 앞날을 걱정합니다.",
+			"effects": { "finance": 9, "residents": 4, "environment": -3 },
+			"set_flags": ["mall_built"]
+		},
+		"right_choice": {
+			"text": "거절하고 전통시장을 지원한다",
+			"result": "시장에 새 지붕과 주차장이 생겼습니다. 상인들은 반기지만, 마트를 원하던 주민도 적지 않았습니다.",
+			"effects": { "finance": -6, "residents": 2 }
+		}
+	},
+	{
+		"id": "local_food",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "로컬푸드 직매장",
+		"description": "농민들이 직접 기른 농산물을 파는 매장을 지어 달라고 요청했습니다.",
+		"left_choice": {
+			"text": "직매장을 짓는다",
+			"result": "마을에서 기른 채소가 바로 식탁에 오릅니다. 멀리서 실어 오지 않아도 되니 환경에도 좋습니다.",
+			"effects": { "finance": -7, "residents": 5, "environment": 2 }
+		},
+		"right_choice": {
+			"text": "기존 마트에 맡긴다",
+			"result": "농민들은 여전히 제값을 받기 어렵습니다. 실망한 목소리가 들립니다.",
+			"effects": { "residents": -4 }
+		}
+	},
+	{
+		"id": "smart_farm",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "대형 스마트팜",
+		"description": "한 기업이 농지를 빌려 큰 온실 단지를 짓겠다고 제안했습니다. 작은 농가들은 설 자리를 잃을까 걱정합니다.",
+		"left_choice": {
+			"text": "허가한다",
+			"result": "거대한 온실 단지가 들어서고 임대료가 들어옵니다. 작은 농가들은 경쟁이 버겁다며 걱정합니다.",
+			"effects": { "finance": 9, "residents": -5, "environment": -2 }
+		},
+		"right_choice": {
+			"text": "거절하고 작은 농가를 지원한다",
+			"result": "작은 농가들이 새 농기계를 마련했습니다. 지원금이 들었지만 농민들의 표정이 밝아졌습니다.",
+			"effects": { "finance": -5, "residents": 4 }
+		}
+	},
+	{
+		"id": "youth_startup",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "빈 상가",
+		"description": "상가 곳곳이 비어 가고 있습니다. 청년 가게를 들여 활기를 되찾자는 제안이 나왔습니다.",
+		"left_choice": {
+			"text": "청년 가게 월세를 지원한다",
+			"result": "빈 상가에 청년들의 작은 가게들이 문을 열었습니다. 이 가게들이 앞으로 어떻게 될지는 아직 아무도 모릅니다.",
+			"effects": { "finance": -7, "residents": 4 },
+			"set_flags": ["startup_supported"]
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "빈 상가가 늘면서 밤거리가 어두워졌습니다.",
+			"effects": { "safety": -3, "residents": -2 }
+		}
+	},
+	{
+		"id": "delivery_hub",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "물류센터",
+		"description": "택배 회사가 마을에 큰 물류센터를 짓겠다고 제안했습니다. 큰 트럭이 자주 다니게 됩니다.",
+		"left_choice": {
+			"text": "유치한다",
+			"result": "물류센터가 세금을 내고 일자리도 생겼습니다. 커다란 트럭이 마을 길을 오가며 매연과 위험이 늘었습니다.",
+			"effects": { "finance": 10, "safety": -5, "environment": -4 }
+		},
+		"right_choice": {
+			"text": "거절한다",
+			"result": "마을 길은 조용합니다. 일자리를 기대했던 주민들은 아쉬워합니다.",
+			"effects": { "environment": 2, "residents": -2 }
+		}
+	},
+	{
+		"id": "quarry",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "채석장 재가동",
+		"description": "문을 닫았던 채석장을 다시 열자는 요청이 들어왔습니다. 일자리가 생기지만 먼지와 소음이 걱정됩니다.",
+		"left_choice": {
+			"text": "다시 여는 것을 허가한다",
+			"result": "채석장에 다시 기계 소리가 울리고 일자리가 생겼습니다. 산이 깎여 나갈수록 어떤 일이 생길지는 두고 봐야 합니다.",
+			"effects": { "finance": 8, "residents": 3, "environment": -7 },
+			"set_flags": ["quarry_open"]
+		},
+		"right_choice": {
+			"text": "공원으로 되살린다",
+			"result": "깎여 나갔던 산자락에 흙을 덮고 나무를 심었습니다. 시간이 지나면 다시 푸르러질 것입니다.",
+			"effects": { "finance": -8, "environment": 6 }
+		}
+	},
+	{
+		"id": "cafe_street",
+		"category": "general",
+		"tags": ["industry"],
+		"title": "카페 거리",
+		"description": "조용한 주택가 골목을 카페 거리로 꾸미자는 제안이 들어왔습니다.",
+		"left_choice": {
+			"text": "카페 거리를 만든다",
+			"result": "예쁜 카페들이 생기고 골목에 사람들이 북적이기 시작했습니다. 골목의 인기가 오래된 가게들에게도 좋은 일일지는 아직 모릅니다.",
+			"effects": { "finance": 6, "residents": 5, "safety": -2 },
+			"set_flags": ["cafe_street"]
+		},
+		"right_choice": {
+			"text": "주택 골목으로 둔다",
+			"result": "골목은 조용한 주택가로 남았습니다. 새 가게를 열고 싶던 사람들은 다른 곳을 알아봅니다.",
+			"effects": { "safety": 2, "residents": -2 }
+		}
+	},
+
+	{
+		"id": "factory_noise",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "공장 소음과 매연",
+		"description": "몇 해 전 허가한 공장 근처 주민들이 소음과 매연 때문에 살기 힘들다고 호소합니다.",
+		"conditions": [
+			{ "type": "flag", "flag": "factory_built", "min_age": 3 },
+			{ "type": "stat", "stat": "environment", "op": "<", "value": 50 },
+			{ "type": "no_flag", "flag": "factory_settled" }
+		],
+		"left_choice": {
+			"text": "세금을 깎아 주고 저감 시설을 요구한다",
+			"result": "공장 굴뚝에 필터가 달리고 소음을 막는 벽이 세워졌습니다. 대신 공장에서 걷는 세금이 줄었습니다.",
+			"effects": { "finance": -5, "environment": 5 },
+			"set_flags": ["factory_settled"]
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "공장은 그대로 돌아갑니다. 참다못한 주민들이 모여 무언가를 준비하고 있다는 소문이 돕니다.",
+			"effects": { "residents": -8, "environment": -4 },
+			"set_flags": ["factory_settled", "citizen_protest"]
+		}
+	},
+	{
+		"id": "factory_jobs",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "일자리를 찾아온 가족들",
+		"description": "몇 해 전 허가한 공장에 일자리가 늘면서 이사 오는 가족이 많아졌습니다. 살 집이 모자랍니다.",
+		"conditions": [
+			{ "type": "flag", "flag": "factory_built", "min_age": 3 },
+			{ "type": "stat", "stat": "environment", "op": ">=", "value": 50 },
+			{ "type": "no_flag", "flag": "factory_settled" }
+		],
+		"left_choice": {
+			"text": "새 주택을 짓는다",
+			"result": "새 동네가 생기고 새 이웃들이 자리를 잡았습니다. 집을 짓느라 들판 일부가 사라졌습니다.",
+			"effects": { "finance": -8, "residents": 8, "environment": -4 },
+			"set_flags": ["factory_settled"]
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "집이 모자라 좁은 방에 여러 가족이 모여 삽니다. 동네가 복잡하고 어수선해졌습니다.",
+			"effects": { "residents": -4, "safety": -2 },
+			"set_flags": ["factory_settled"]
+		}
+	},
+	{
+		"id": "job_shortage",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "떠나는 청년들",
+		"description": "공장을 들이지 않은 뒤로 일할 곳을 찾지 못한 청년들이 하나둘 마을을 떠나고 있습니다.",
+		"conditions": [{ "type": "flag", "flag": "factory_refused", "min_age": 4 }],
+		"left_choice": {
+			"text": "창업 지원금을 준다",
+			"result": "지원금으로 가게와 작은 회사를 차린 청년들이 마을에 남았습니다.",
+			"effects": { "finance": -8, "residents": 5 }
+		},
+		"right_choice": {
+			"text": "어쩔 수 없다",
+			"result": "떠나는 청년들을 붙잡지 못했습니다. 마을이 조금 더 조용해졌습니다.",
+			"effects": { "residents": -7 }
+		}
+	},
+	{
+		"id": "market_decline",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "문 닫는 시장 가게",
+		"description": "대형마트가 생긴 뒤 전통시장 가게들이 잇달아 문을 닫고 있습니다.",
+		"conditions": [{ "type": "flag", "flag": "mall_built", "min_age": 3 }],
+		"left_choice": {
+			"text": "시장을 새롭게 고친다",
+			"result": "시장에 지붕을 올리고 배달 서비스도 시작했습니다. 손님들이 조금씩 돌아오고 있습니다.",
+			"effects": { "finance": -9, "residents": 5 }
+		},
+		"right_choice": {
+			"text": "시장 땅을 팔아 주차장으로 만든다",
+			"result": "시장 자리에 주차장이 들어섰습니다. 수십 년 이어진 시장의 이야기가 끝났습니다.",
+			"effects": { "finance": 7, "residents": -6, "environment": -2 }
+		}
+	},
+	{
+		"id": "quarry_dust",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "채석장 먼지",
+		"description": "다시 연 채석장의 발파 진동과 먼지 때문에 근처 주민들이 불편을 호소합니다.",
+		"conditions": [{ "type": "flag", "flag": "quarry_open", "min_age": 3 }],
+		"left_choice": {
+			"text": "먼지 막는 시설을 요구한다",
+			"result": "채석장 둘레에 높은 방진막이 세워졌습니다. 작업이 느려져 채석장 수입이 줄었습니다.",
+			"effects": { "finance": -4, "environment": 5 }
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "먼지 낀 창문과 금이 간 담장이 늘고 있습니다. 주민들의 불안도 커집니다.",
+			"effects": { "residents": -6, "safety": -4 }
+		}
+	},
+	{
+		"id": "rent_rise",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "떠나는 오래된 가게",
+		"description": "카페 거리가 인기를 끌자 가게 임대료가 치솟아, 오래된 가게들이 하나둘 떠나고 있습니다.",
+		"conditions": [{ "type": "flag", "flag": "cafe_street", "min_age": 4 }],
+		"left_choice": {
+			"text": "건물주들과 임대료 약속을 맺는다",
+			"result": "건물주들이 임대료를 천천히 올리기로 약속했습니다. 오래된 가게들이 자리를 지킬 수 있게 되었습니다.",
+			"effects": { "finance": -5, "residents": 5 }
+		},
+		"right_choice": {
+			"text": "시장에 맡긴다",
+			"result": "오래된 세탁소와 분식집이 떠나고 그 자리에 새 카페가 들어섰습니다. 골목의 옛 모습이 사라지고 있습니다.",
+			"effects": { "residents": -6 }
+		}
+	},
+	{
+		"id": "startup_success",
+		"category": "delayed",
+		"tags": ["industry"],
+		"title": "방송에 나온 청년 가게",
+		"description": "월세를 지원했던 청년 가게가 방송에 나오면서 손님이 몰려들고 있습니다.",
+		"conditions": [{ "type": "flag", "flag": "startup_supported", "min_age": 4 }],
+		"left_choice": {
+			"text": "청년 창업 지원을 더 늘린다",
+			"result": "성공 소식을 듣고 새 청년 가게들이 줄지어 문을 엽니다. 마을에 젊은 활기가 돕니다.",
+			"effects": { "finance": -5, "residents": 6 }
+		},
+		"right_choice": {
+			"text": "지원을 마무리한다",
+			"result": "자리를 잡은 가게들이 이제 세금을 내기 시작했습니다. 지원했던 돈이 조금씩 돌아옵니다.",
+			"effects": { "finance": 5 }
+		}
+	}
+]

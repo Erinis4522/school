@@ -1,0 +1,196 @@
+[
+	{
+		"id": "road_widening",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "좁은 중심 도로",
+		"description": "중심 도로가 좁아 출퇴근길이 막히고 걷는 사람도 위험합니다.",
+		"left_choice": {
+			"text": "지금 도로를 유지한다",
+			"result": "도로는 그대로입니다. 출퇴근 시간마다 차가 막히고, 좁은 길가를 걷는 사람들은 조마조마합니다.",
+			"effects": { "safety": -5, "residents": -2 }
+		},
+		"right_choice": {
+			"text": "도로를 넓힌다",
+			"result": "도로가 넓어져 차들이 시원하게 달립니다. 넓어진 길이 앞으로 어떤 모습이 될지는 두고 봐야 합니다.",
+			"effects": { "finance": -12, "safety": 7, "environment": -5 },
+			"set_flags": ["road_widened"]
+		}
+	},
+	{
+		"id": "bus_route",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "적자 버스 노선",
+		"description": "외곽으로 가는 버스는 승객이 적어 손해가 쌓이고 있습니다. 하지만 이 버스가 없으면 다닐 수 없는 주민도 있습니다.",
+		"left_choice": {
+			"text": "노선을 유지한다",
+			"result": "외곽 주민들은 계속 버스를 탈 수 있습니다. 손해는 마을이 메워야 합니다.",
+			"effects": { "finance": -8, "residents": 4 }
+		},
+		"right_choice": {
+			"text": "노선을 없앤다",
+			"result": "손해는 멈췄지만, 외곽 주민들은 차를 몰거나 먼 길을 걸어야 합니다.",
+			"effects": { "finance": 6, "residents": -8, "environment": -2 }
+		}
+	},
+	{
+		"id": "bike_lane",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "자전거 도로",
+		"description": "차로 하나를 자전거 도로로 바꾸자는 제안이 들어왔습니다.",
+		"left_choice": {
+			"text": "자전거 도로를 만든다",
+			"result": "자전거로 출근하는 사람이 늘었습니다. 좁아진 차로 때문에 운전자들은 불편해합니다. 새 길이 잘 지켜질지는 지켜봐야 합니다.",
+			"effects": { "environment": 6, "finance": -5, "residents": -3 },
+			"set_flags": ["bike_lane"]
+		},
+		"right_choice": {
+			"text": "차로를 그대로 둔다",
+			"result": "운전자들은 반깁니다. 자전거를 타는 사람들은 여전히 차들 사이를 조심조심 달립니다.",
+			"effects": { "residents": 2, "environment": -2 }
+		}
+	},
+	{
+		"id": "illegal_parking",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "상가 앞 불법 주차",
+		"description": "상가 앞 불법 주차 때문에 사람들이 차도로 걸어야 합니다. 상인들은 손님이 줄까 걱정합니다.",
+		"left_choice": {
+			"text": "강하게 단속한다",
+			"result": "인도가 다시 사람들의 길이 되었습니다. 상인들은 손님이 줄었다며 볼멘소리를 합니다.",
+			"effects": { "safety": 6, "residents": -5, "finance": 3 }
+		},
+		"right_choice": {
+			"text": "잠깐 세울 수 있는 시간을 정해 준다",
+			"result": "상인들은 한숨 돌렸습니다. 시간을 넘겨 세운 차들 때문에 걷는 사람은 여전히 위험합니다.",
+			"effects": { "residents": 3, "safety": -3 }
+		}
+	},
+	{
+		"id": "train_stop",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "기차역 정차",
+		"description": "기차가 마을 역에 서게 하려면 마을도 비용을 나눠 내야 합니다.",
+		"left_choice": {
+			"text": "비용을 내고 역을 유치한다",
+			"result": "마을 역에 기차가 서기 시작했습니다. 큰 도시에 오가기 쉬워졌지만, 비용이 매우 컸습니다.",
+			"effects": { "finance": -13, "residents": 8, "environment": 2 }
+		},
+		"right_choice": {
+			"text": "포기한다",
+			"result": "기차는 오늘도 마을을 그냥 지나갑니다. 역을 기다리던 주민들은 실망했습니다.",
+			"effects": { "residents": -5 }
+		}
+	},
+	{
+		"id": "tunnel",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "산 너머 도시",
+		"description": "산을 뚫어 이웃 도시와 잇는 터널 계획이 나왔습니다.",
+		"left_choice": {
+			"text": "터널을 뚫는다",
+			"result": "터널이 뚫려 이웃 도시까지 금방 갈 수 있게 되었습니다. 길이 열리면 오가는 것은 사람만이 아닐지도 모릅니다.",
+			"effects": { "finance": -10, "residents": 7, "environment": -8 },
+			"set_flags": ["tunnel_built"]
+		},
+		"right_choice": {
+			"text": "옛길을 유지한다",
+			"result": "산은 그대로 남았고, 이웃 도시에 가려면 여전히 구불구불한 옛길을 넘어야 합니다.",
+			"effects": { "residents": -3, "environment": 2 }
+		}
+	},
+	{
+		"id": "ev_chargers",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "전기차 충전소",
+		"description": "공영 주차장 일부를 전기차 충전 구역으로 바꿔 달라는 요청이 들어왔습니다.",
+		"left_choice": {
+			"text": "충전소를 설치한다",
+			"result": "전기차를 타는 주민이 조금씩 늘고 있습니다. 주차할 자리가 줄어 불평하는 운전자도 있습니다.",
+			"effects": { "environment": 4, "finance": -4, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "나중으로 미룬다",
+			"result": "주차장은 그대로입니다. 전기차를 사려던 주민들은 망설이고 있습니다.",
+			"effects": { "residents": 2, "environment": -2 }
+		}
+	},
+	{
+		"id": "car_free_street",
+		"category": "general",
+		"tags": ["transport"],
+		"title": "차 없는 거리",
+		"description": "주말마다 중심가에 차가 못 다니게 하고 걷는 거리로 만들자는 제안이 나왔습니다.",
+		"left_choice": {
+			"text": "시행한다",
+			"result": "주말이면 거리에 공연과 장터가 열리고 아이들이 뛰어놉니다. 거리를 관리하는 데 돈이 듭니다.",
+			"effects": { "environment": 4, "residents": 3, "finance": -4 }
+		},
+		"right_choice": {
+			"text": "시행하지 않는다",
+			"result": "차로 오는 손님이 그대로라 가게들은 안심합니다. 걷는 거리를 기대한 주민들은 아쉬워합니다.",
+			"effects": { "finance": 3, "residents": -3 }
+		}
+	},
+
+	{
+		"id": "speeding_cars",
+		"category": "delayed",
+		"tags": ["transport"],
+		"title": "넓어진 도로의 과속",
+		"description": "넓힌 중심 도로에서 빠르게 달리는 차가 크게 늘었습니다.",
+		"conditions": [{ "type": "flag", "flag": "road_widened", "min_age": 2 }],
+		"left_choice": {
+			"text": "단속 카메라를 단다",
+			"result": "카메라가 생기자 차들이 속도를 줄였습니다. 길을 건너는 사람들이 한결 안심합니다.",
+			"effects": { "finance": -5, "safety": 6 }
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "넓은 도로 위로 차들이 쌩쌩 달립니다. 길 하나 건너기가 무서워졌습니다.",
+			"effects": { "safety": -7 }
+		}
+	},
+	{
+		"id": "shopping_outflow",
+		"category": "delayed",
+		"tags": ["transport"],
+		"title": "이웃 도시로 가는 손님",
+		"description": "터널이 뚫리자 주민들이 이웃 도시로 장을 보러 가면서, 마을 상점가가 한산해졌습니다.",
+		"conditions": [{ "type": "flag", "flag": "tunnel_built", "min_age": 3 }],
+		"left_choice": {
+			"text": "마을 상점가 할인 행사를 지원한다",
+			"result": "할인 행사에 주민들이 다시 마을 가게를 찾습니다. 상인들이 반가워합니다.",
+			"effects": { "finance": -6, "residents": 4 }
+		},
+		"right_choice": {
+			"text": "그대로 둔다",
+			"result": "마을 가게들의 매출이 줄면서 마을에 들어오는 세금도 줄었습니다.",
+			"effects": { "finance": -4 }
+		}
+	},
+	{
+		"id": "bike_lane_parking",
+		"category": "delayed",
+		"tags": ["transport"],
+		"title": "자전거 도로 위 자동차",
+		"description": "새로 만든 자전거 도로에 자동차를 세우는 일이 잦아 자전거 타는 사람들이 위험합니다.",
+		"conditions": [{ "type": "flag", "flag": "bike_lane", "min_age": 3 }],
+		"left_choice": {
+			"text": "단속한다",
+			"result": "자전거 도로가 다시 자전거의 길이 되었습니다. 단속에 걸린 운전자들은 투덜댑니다.",
+			"effects": { "safety": 5, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "봐준다",
+			"result": "자전거 도로는 주차장처럼 변했습니다. 자전거를 타던 사람들이 다시 차를 몰기 시작합니다.",
+			"effects": { "safety": -4, "environment": -2 }
+		}
+	}
+]

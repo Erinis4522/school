@@ -1,0 +1,195 @@
+[
+	{
+		"id": "old_houses",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "오래된 주택가",
+		"description": "낡은 주택가 주민 일부가 재개발을 요구합니다. 오래 살아온 주민들은 떠나야 할까 봐 걱정합니다.",
+		"left_choice": {
+			"text": "재개발을 허가한다",
+			"result": "낡은 집들이 헐리고 튼튼한 새 건물이 올라갑니다. 오래 살던 주민 몇 가구는 결국 마을을 떠났습니다.",
+			"effects": { "finance": 10, "safety": 5, "residents": -9 }
+		},
+		"right_choice": {
+			"text": "보존하고 수리비를 지원한다",
+			"result": "정든 골목이 그대로 남았습니다. 집을 고치는 비용 일부를 마을이 나눠 냈습니다.",
+			"effects": { "finance": -6, "residents": 4 }
+		}
+	},
+	{
+		"id": "participatory_budget",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "주민참여예산",
+		"description": "마을 예산 일부를 주민들이 직접 정하게 하자는 제안이 나왔습니다.",
+		"left_choice": {
+			"text": "도입한다",
+			"result": "주민들이 모여 어디에 돈을 쓸지 의논하기 시작했습니다. 어떤 사업이 뽑힐지는 주민들 손에 달렸습니다.",
+			"effects": { "residents": 5, "finance": -4 },
+			"set_flags": ["pb_adopted"]
+		},
+		"right_choice": {
+			"text": "지금처럼 전문가가 정한다",
+			"result": "예산은 빠르고 깔끔하게 정해졌습니다. 목소리를 내고 싶던 주민들은 조금 서운합니다.",
+			"effects": { "finance": 3 }
+		}
+	},
+	{
+		"id": "town_hall_move",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "비좁은 마을회관",
+		"description": "마을회관이 너무 좁아 옮기자는 의견이 많습니다.",
+		"left_choice": {
+			"text": "외곽의 넓은 땅으로 옮긴다",
+			"result": "옛 회관 땅을 팔아 돈이 남았고 새 회관은 넓습니다. 하지만 멀어진 회관까지 가기 힘들다는 주민이 많습니다.",
+			"effects": { "finance": 5, "environment": -4, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "제자리에서 고쳐 쓴다",
+			"result": "회관을 손봐 조금 넓고 튼튼해졌습니다. 공사비가 적지 않게 들었습니다.",
+			"effects": { "finance": -7, "safety": 3 }
+		}
+	},
+	{
+		"id": "online_services",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "민원 온라인화",
+		"description": "서류 발급을 모두 온라인으로 바꾸자는 제안이 들어왔습니다. 컴퓨터가 익숙하지 않은 어르신들은 걱정합니다.",
+		"left_choice": {
+			"text": "온라인 중심으로 바꾼다",
+			"result": "서류를 집에서 뗄 수 있어 편해졌고 종이도 덜 씁니다. 컴퓨터가 어려운 어르신들은 도움을 청할 곳이 줄었습니다.",
+			"effects": { "finance": 6, "residents": -4, "environment": 2 }
+		},
+		"right_choice": {
+			"text": "창구와 온라인을 함께 운영한다",
+			"result": "누구든 편한 방법으로 서류를 뗄 수 있습니다. 두 가지를 함께 운영하느라 돈이 더 듭니다.",
+			"effects": { "finance": -4, "residents": 3 }
+		}
+	},
+	{
+		"id": "move_in_bonus",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "줄어드는 인구",
+		"description": "이사 오는 사람보다 떠나는 사람이 많아 마을이 점점 조용해지고 있습니다.",
+		"left_choice": {
+			"text": "이사 오면 장려금을 준다",
+			"result": "장려금 소식에 이사 오는 가족이 늘었습니다. 금고에서 나가는 돈도 늘었습니다.",
+			"effects": { "finance": -9, "residents": 7 }
+		},
+		"right_choice": {
+			"text": "빈집을 고쳐 싸게 빌려준다",
+			"result": "비어 있던 집들에 다시 불이 켜졌습니다. 빠르지는 않지만 조금씩 사람이 늘고 있습니다.",
+			"effects": { "finance": -5, "residents": 3, "safety": 2 }
+		}
+	},
+	{
+		"id": "leash_rule",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "반려견 목줄",
+		"description": "목줄 없이 다니는 개 때문에 주민 사이에 다툼이 잦아졌습니다.",
+		"left_choice": {
+			"text": "규칙을 만들고 과태료를 물린다",
+			"result": "산책길이 한결 안전해졌습니다. 과태료를 낸 반려인들은 불만을 털어놓습니다.",
+			"effects": { "safety": 6, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "안내와 홍보만 한다",
+			"result": "반려인들은 다행이라고 합니다. 목줄 없이 다니는 개는 아직 종종 보입니다.",
+			"effects": { "residents": 2 }
+		}
+	},
+	{
+		"id": "rename_town",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "마을 이름 바꾸기",
+		"description": "마을을 널리 알리기 위해 새 이름을 짓자는 의견이 나왔습니다.",
+		"left_choice": {
+			"text": "새 이름으로 바꾼다",
+			"result": "새 이름이 뉴스에 나오며 마을이 알려지기 시작했습니다. 오래 산 주민들은 정든 이름을 잃었다며 서운해합니다.",
+			"effects": { "finance": 4, "residents": -5 }
+		},
+		"right_choice": {
+			"text": "정든 이름을 지킨다",
+			"result": "마을 이름은 그대로입니다. 주민들은 익숙한 이름에 애착을 보입니다.",
+			"effects": { "residents": 3 }
+		}
+	},
+	{
+		"id": "trash_bag_price",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "쓰레기봉투 가격",
+		"description": "쓰레기 처리 비용이 올라 쓰레기봉투 가격을 올릴지 고민하고 있습니다.",
+		"left_choice": {
+			"text": "가격을 올린다",
+			"result": "봉투값이 오르자 쓰레기를 줄이려는 집이 늘었습니다. 살림이 빠듯한 주민들은 부담스러워합니다.",
+			"effects": { "finance": 7, "environment": 3, "residents": -6 }
+		},
+		"right_choice": {
+			"text": "가격을 그대로 둔다",
+			"result": "주민들은 안도했습니다. 모자란 처리 비용은 마을 금고에서 채워야 합니다.",
+			"effects": { "residents": 2, "finance": -4 }
+		}
+	},
+	{
+		"id": "greenbelt",
+		"category": "general",
+		"tags": ["administration"],
+		"title": "개발 제한 구역",
+		"description": "개발이 금지된 땅의 주인들이 제한을 풀어 달라고 요청했습니다.",
+		"left_choice": {
+			"text": "제한을 푼다",
+			"result": "그 땅에 건물이 들어서기 시작했고 세금도 더 걷힙니다. 마을을 감싸던 푸른 띠가 조금씩 줄어듭니다.",
+			"effects": { "finance": 10, "environment": -9, "residents": 2 }
+		},
+		"right_choice": {
+			"text": "제한을 유지한다",
+			"result": "마을 둘레의 숲과 들판은 그대로입니다. 땅 주인들은 재산을 쓸 수 없다며 억울해합니다.",
+			"effects": { "environment": 3, "residents": -4 }
+		}
+	},
+
+	{
+		"id": "citizen_rally",
+		"category": "delayed",
+		"tags": ["administration"],
+		"title": "주민 집회",
+		"description": "그동안 쌓인 불만이 터져 나왔습니다. 주민들이 마을회관 앞에서 집회를 열었습니다.",
+		"conditions": [{ "type": "flag", "flag": "citizen_protest", "min_age": 1 }],
+		"left_choice": {
+			"text": "공청회를 연다",
+			"result": "공청회에서 주민들의 이야기를 끝까지 들었습니다. 모든 문제가 풀리진 않았지만, 분위기는 한결 누그러졌습니다.",
+			"effects": { "finance": -3, "residents": 6 },
+			"clear_flags": ["citizen_protest"]
+		},
+		"right_choice": {
+			"text": "대응하지 않는다",
+			"result": "집회는 흩어졌지만 주민들의 마음은 더 멀어졌습니다. 마을 분위기가 무겁습니다.",
+			"effects": { "residents": -9, "safety": -3 },
+			"clear_flags": ["citizen_protest"]
+		}
+	},
+	{
+		"id": "pb_first_project",
+		"category": "delayed",
+		"tags": ["administration"],
+		"title": "주민이 고른 첫 사업",
+		"description": "주민참여예산으로 첫 투표를 했더니 두 사업이 똑같은 표를 받았습니다. 하나만 고를 수 있습니다.",
+		"conditions": [{ "type": "flag", "flag": "pb_adopted", "min_age": 3 }],
+		"left_choice": {
+			"text": "놀이터 그늘막을 짓는다",
+			"result": "한여름에도 아이들이 그늘 아래서 뛰어놉니다. 주민들은 \"우리가 고른 사업\"이라며 뿌듯해합니다.",
+			"effects": { "finance": -4, "safety": 3, "residents": 3 }
+		},
+		"right_choice": {
+			"text": "하천 산책로에 꽃길을 만든다",
+			"result": "하천 산책로가 꽃으로 물들었습니다. 주민들은 \"우리가 고른 사업\"이라며 뿌듯해합니다.",
+			"effects": { "finance": -4, "environment": 4, "residents": 2 }
+		}
+	}
+]

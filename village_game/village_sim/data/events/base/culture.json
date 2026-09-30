@@ -1,0 +1,178 @@
+[
+	{
+		"id": "festival",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "마을 축제",
+		"description": "올해 마을 축제를 어떤 규모로 열지 정해야 합니다.",
+		"left_choice": {
+			"text": "작게 연다",
+			"result": "소박한 축제가 열렸습니다. 돈은 아꼈지만 기대했던 주민들은 조금 싱거워합니다.",
+			"effects": { "finance": -2, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "크게 연다",
+			"result": "마을이 떠들썩한 축제가 열렸고 멀리서도 구경꾼이 몰려왔습니다. 이 소문이 어디까지 퍼질지는 아무도 모릅니다.",
+			"effects": { "finance": -10, "residents": 9, "safety": -4 },
+			"set_flags": ["festival_big"]
+		}
+	},
+	{
+		"id": "donated_land",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "기증받은 땅",
+		"description": "한 주민이 도서관을 지어 달라며 땅을 기증했습니다. 짓고 나면 운영비는 마을이 내야 합니다.",
+		"left_choice": {
+			"text": "작은 도서관을 짓는다",
+			"result": "작은 도서관이 문을 열었습니다. 방과 후 아이들이 책을 읽으러 모여듭니다.",
+			"effects": { "finance": -7, "residents": 7 }
+		},
+		"right_choice": {
+			"text": "땅을 개발해 마을 살림에 보탠다",
+			"result": "마을 금고는 넉넉해졌습니다. 땅을 기증한 주민은 뜻이 지켜지지 않았다며 실망했습니다.",
+			"effects": { "finance": 10, "residents": -6, "environment": -3 }
+		}
+	},
+	{
+		"id": "heritage_house",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "오래된 한옥",
+		"description": "백 년 된 한옥을 문화재로 지정하자는 요청이 들어왔습니다. 하지만 집주인은 집을 팔고 싶어 합니다.",
+		"left_choice": {
+			"text": "문화재로 지정하고 사들인다",
+			"result": "한옥이 마을의 문화재가 되었습니다. 주민들은 마을의 역사를 지켰다며 자랑스러워합니다.",
+			"effects": { "finance": -6, "residents": 4 }
+		},
+		"right_choice": {
+			"text": "집주인 뜻대로 개발을 허락한다",
+			"result": "한옥이 헐리고 새 건물이 올라갑니다. 백 년의 이야기가 사라졌다며 아쉬워하는 사람들이 있습니다.",
+			"effects": { "finance": 5, "environment": -3, "residents": -2 }
+		}
+	},
+	{
+		"id": "sports_field",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "흙먼지 운동장",
+		"description": "비만 오면 진흙탕이 되는 운동장을 인조 잔디로 바꾸자는 요청이 들어왔습니다.",
+		"left_choice": {
+			"text": "인조 잔디를 깐다",
+			"result": "비가 와도 뛸 수 있는 운동장이 되었습니다. 다만 인조 잔디는 흙과 달리 자연으로 돌아가지 않습니다.",
+			"effects": { "finance": -8, "residents": 6, "environment": -3 }
+		},
+		"right_choice": {
+			"text": "흙 운동장을 다듬기만 한다",
+			"result": "흙을 새로 깔고 평평하게 다졌습니다. 비만 오면 진흙탕이 되는 건 여전합니다.",
+			"effects": { "finance": -3, "residents": -2 }
+		}
+	},
+	{
+		"id": "film_shoot",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "드라마 촬영",
+		"description": "드라마 제작진이 일주일 동안 도로를 막고 마을에서 촬영하고 싶다고 합니다.",
+		"left_choice": {
+			"text": "허가한다",
+			"result": "촬영 장소 사용료가 들어오고 배우를 보러 사람들이 몰려왔습니다. 일주일 동안 길이 막혀 복잡했습니다.",
+			"effects": { "finance": 7, "residents": 3, "safety": -3 }
+		},
+		"right_choice": {
+			"text": "조용한 일상을 지킨다",
+			"result": "마을은 평소처럼 조용합니다. 배우를 보고 싶던 사람들만 조금 아쉬워합니다.",
+			"effects": { "residents": 2 }
+		}
+	},
+	{
+		"id": "mural_village",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "어두운 골목 담장",
+		"description": "어두운 골목의 낡은 담장을 새로 꾸미기로 했습니다. 어떻게 꾸밀지 정해야 합니다.",
+		"left_choice": {
+			"text": "벽화를 그린다",
+			"result": "알록달록한 벽화가 골목을 밝혔습니다. 골목을 오가는 발걸음이 늘었습니다.",
+			"effects": { "finance": -4, "residents": 5, "safety": 2 }
+		},
+		"right_choice": {
+			"text": "주민들이 꽃길을 가꾼다",
+			"result": "주민들이 함께 담장 아래 꽃을 심었습니다. 골목에 꽃향기가 번집니다.",
+			"effects": { "environment": 3, "residents": 2 }
+		}
+	},
+	{
+		"id": "closed_school",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "문 닫은 학교",
+		"description": "학생이 줄어 문을 닫은 학교 건물을 어떻게 쓸지 정해야 합니다.",
+		"left_choice": {
+			"text": "캠핑장으로 만든다",
+			"result": "주말마다 캠핑객이 찾아와 이용료가 들어옵니다. 쓰레기와 밤늦은 소음도 함께 늘었습니다.",
+			"effects": { "finance": 7, "environment": -4, "safety": -2 }
+		},
+		"right_choice": {
+			"text": "주민 강좌와 예술 공간으로 쓴다",
+			"result": "옛 교실에서 그림, 목공, 요리 강좌가 열립니다. 주민들이 다시 학교로 모입니다.",
+			"effects": { "finance": -4, "residents": 6 }
+		}
+	},
+	{
+		"id": "sister_city",
+		"category": "general",
+		"tags": ["culture"],
+		"title": "자매도시 제안",
+		"description": "외국의 한 도시가 우리 마을과 자매도시를 맺고 싶다고 연락해 왔습니다.",
+		"left_choice": {
+			"text": "자매도시를 맺는다",
+			"result": "두 도시가 협약서에 서명했습니다. 이 인연이 앞으로 어떤 만남으로 이어질지 기대하는 주민들이 있습니다.",
+			"effects": { "finance": -6, "residents": 4 },
+			"set_flags": ["sister_city"]
+		},
+		"right_choice": {
+			"text": "정중히 거절한다",
+			"result": "정중한 거절 편지를 보냈습니다. 외국과의 교류를 기대하던 주민들은 아쉬워합니다.",
+			"effects": { "residents": -2 }
+		}
+	},
+
+	{
+		"id": "tour_package",
+		"category": "delayed",
+		"tags": ["culture"],
+		"title": "관광 코스 제안",
+		"description": "크게 열었던 축제를 본 여행사가 우리 마을을 관광 코스로 만들고 싶다고 제안했습니다.",
+		"conditions": [{ "type": "flag", "flag": "festival_big", "min_age": 2 }],
+		"left_choice": {
+			"text": "받아들인다",
+			"result": "관광버스가 오가기 시작하고 가게들이 바빠졌습니다. 조용하던 골목은 관광객으로 붐빕니다.",
+			"effects": { "finance": 9, "environment": -5, "residents": -3 },
+			"set_flags": ["tourism_developed"]
+		},
+		"right_choice": {
+			"text": "거절한다",
+			"result": "마을은 조용한 모습을 지켰습니다. 축제는 주민들의 잔치로 남았습니다.",
+			"effects": { "residents": 2 }
+		}
+	},
+	{
+		"id": "exchange_visit",
+		"category": "delayed",
+		"tags": ["culture"],
+		"title": "자매도시 학생 방문단",
+		"description": "자매도시를 맺은 외국 도시에서 학생 방문단이 마을을 찾아온다고 합니다.",
+		"conditions": [{ "type": "flag", "flag": "sister_city", "min_age": 5 }],
+		"left_choice": {
+			"text": "주민 가정에서 머물게 한다",
+			"result": "외국 친구들이 주민 가정에서 지내며 함께 밥을 먹고 놀았습니다. 아이들에게 잊지 못할 추억이 생겼습니다.",
+			"effects": { "residents": 5, "finance": -3 }
+		},
+		"right_choice": {
+			"text": "간단한 환영 행사만 연다",
+			"result": "짧은 환영 행사가 끝나고 방문단은 떠났습니다. 더 가까워질 기회를 놓친 것 같아 아쉽습니다.",
+			"effects": { "residents": -2 }
+		}
+	}
+]

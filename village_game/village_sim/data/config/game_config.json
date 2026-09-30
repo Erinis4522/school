@@ -1,0 +1,31 @@
+{
+	"max_turns": 30,
+
+	"stat_min": 0,
+	"stat_max": 100,
+	"stats": [
+		{ "id": "residents", "name": "주민", "initial": 60 },
+		{ "id": "finance", "name": "재정", "initial": 60 },
+		{ "id": "environment", "name": "환경", "initial": 65 },
+		{ "id": "safety", "name": "안전", "initial": 60 }
+	],
+
+	"selection": {
+		"default_weight": 10,
+		"recent_tag_window": 2,
+		"recent_tag_weight": 0.3
+	},
+
+	"default_priority": {
+		"general": 0,
+		"delayed": 50,
+		"state": 30
+	},
+
+	"effect_scale": {
+		"residents": { "gain": 1.0, "loss": 1.0 },
+		"finance": { "gain": 1.0, "loss": 1.0 },
+		"environment": { "gain": 1.0, "loss": 1.0 },
+		"safety": { "gain": 1.0, "loss": 1.0 }
+	}
+}

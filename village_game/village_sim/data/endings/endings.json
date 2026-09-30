@@ -1,0 +1,46 @@
+[
+	{
+		"id": "collapse_residents",
+		"type": "collapse",
+		"stat": "residents",
+		"priority": 10,
+		"conditions": [{ "type": "stat", "stat": "residents", "op": "<=", "value": 0 }],
+		"title": "주민 투표",
+		"text": "주민들의 불만이 걷잡을 수 없이 커졌습니다.\n결국 운영위원회 해산을 요구하는 주민 투표가 시작되었습니다."
+	},
+	{
+		"id": "collapse_finance",
+		"type": "collapse",
+		"stat": "finance",
+		"priority": 10,
+		"conditions": [{ "type": "stat", "stat": "finance", "op": "<=", "value": 0 }],
+		"title": "멈춰 선 마을",
+		"text": "마을의 재정이 바닥났습니다.\n공공시설 운영이 하나둘 중단되기 시작했습니다."
+	},
+	{
+		"id": "collapse_environment",
+		"type": "collapse",
+		"stat": "environment",
+		"priority": 10,
+		"conditions": [{ "type": "stat", "stat": "environment", "op": "<=", "value": 0 }],
+		"title": "떠나는 사람들",
+		"text": "하천 오염과 녹지 감소가 심각해지면서\n주민들의 이주가 시작되었습니다."
+	},
+	{
+		"id": "collapse_safety",
+		"type": "collapse",
+		"stat": "safety",
+		"priority": 10,
+		"conditions": [{ "type": "stat", "stat": "safety", "op": "<=", "value": 0 }],
+		"title": "문 닫힌 마을",
+		"text": "반복되는 사고로 주요 시설이 폐쇄되었고,\n마을 운영을 계속하기 어려워졌습니다."
+	},
+	{
+		"id": "term_complete",
+		"type": "term_end",
+		"priority": 0,
+		"conditions": [],
+		"title": "임기 완주",
+		"text": "임기 동안 마을을 끝까지 이끌었습니다.\n모두를 만족시키지는 못했지만, 마을의 하루는 오늘도 이어집니다."
+	}
+]
