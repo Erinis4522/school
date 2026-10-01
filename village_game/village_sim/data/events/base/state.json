@@ -2,7 +2,7 @@
 	{
 		"id": "residents_crisis",
 		"npc_expression": "angry",
-		"npc": "luka",
+		"npc": "mina",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
@@ -10,21 +10,21 @@
 		"description": "\"마을 운영에 크게 실망했습니다. 우리 목소리를 들어 주세요.\" 주민 대표가 편지를 보내왔습니다.",
 		"conditions": [{ "type": "stat", "stat": "residents", "op": "<=", "value": 20 }],
 		"left_choice": {
+			"text": "주민들이 원하던 놀이터를 바로 짓는다",
+			"result": "놀이터가 빠르게 들어섰습니다. \"이번엔 약속을 지켰다\"며 주민들이 조금 마음을 열었습니다.",
+			"effects": { "environment": -3, "finance": -3, "residents": 10 }
+		},
+		"right_choice": {
 			"text": "매달 주민 간담회를 연다",
 			"memory": "주민 간담회를 매달 열기로 함",
 			"result": "첫 간담회에 많은 주민이 모였습니다. 이야기를 들어 주는 것만으로도 분위기가 조금 풀렸습니다.",
-			"effects": { "finance": -6, "residents": 12 }
-		},
-		"right_choice": {
-			"text": "주민들이 원하던 놀이터를 바로 짓는다",
-			"result": "놀이터가 빠르게 들어섰습니다. \"이번엔 약속을 지켰다\"며 주민들이 조금 마음을 열었습니다.",
-			"effects": { "finance": -8, "residents": 10, "environment": -2 }
+			"effects": { "finance": -5, "residents": 12 }
 		}
 	},
 	{
 		"id": "finance_crisis",
 		"npc_expression": "worried",
-		"npc": "owen",
+		"npc": "cherry",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
@@ -35,13 +35,13 @@
 			"text": "마을 공유지 일부를 판다",
 			"memory": "급한 돈을 위해 마을 공유지를 팖",
 			"result": "땅을 판 돈으로 급한 불을 껐습니다. 마을 뒷산 한 자락이 개발업자에게 넘어갔습니다.",
-			"effects": { "finance": 14, "environment": -6 }
+			"effects": { "environment": -7, "finance": 12 }
 		},
 		"right_choice": {
 			"text": "세금을 올린다",
 			"memory": "금고가 바닥나 세금을 올림",
 			"result": "금고에 다시 돈이 쌓이기 시작했습니다. 늘어난 세금에 주민들의 불만이 커졌습니다.",
-			"effects": { "finance": 12, "residents": -7 }
+			"effects": { "finance": 10, "residents": -7 }
 		}
 	},
 	{
@@ -55,15 +55,15 @@
 		"description": "\"공기와 물이 눈에 띄게 나빠졌어요. 아이들이 밖에서 놀기 어려울 정도예요.\"",
 		"conditions": [{ "type": "stat", "stat": "environment", "op": "<=", "value": 20 }],
 		"left_choice": {
-			"text": "대청소와 나무 심기 주간을 연다",
-			"result": "온 마을이 나서 하천을 치우고 나무를 심었습니다. 공기가 조금씩 맑아지고 있습니다.",
-			"effects": { "environment": 12, "finance": -5 }
-		},
-		"right_choice": {
 			"text": "차량 2부제를 시행한다",
 			"memory": "차량 2부제를 시행함",
 			"result": "도로 위 차가 절반으로 줄자 하늘이 맑아졌습니다. 차를 못 쓰는 날이 생긴 주민들은 불편해합니다.",
 			"effects": { "environment": 10, "residents": -6 }
+		},
+		"right_choice": {
+			"text": "대청소와 나무 심기 주간을 연다",
+			"result": "온 마을이 나서 하천을 치우고 나무를 심었습니다. 공기가 조금씩 맑아지고 있습니다.",
+			"effects": { "environment": 12, "finance": -5 }
 		}
 	},
 	{
@@ -79,7 +79,7 @@
 		"left_choice": {
 			"text": "마을 전체 안전 점검을 한다",
 			"result": "전문가들이 마을 구석구석을 살펴 위험한 곳을 고쳤습니다. 사고 소식이 뜸해졌습니다.",
-			"effects": { "finance": -9, "safety": 14 }
+			"effects": { "finance": -7, "safety": 14 }
 		},
 		"right_choice": {
 			"text": "주민 순찰대를 꾸린다",
@@ -98,16 +98,16 @@
 		"description": "\"설문 결과를 보니, 주민들이 원하는 일과 세워 두신 계획이 꽤 다릅니다.\"",
 		"conditions": [{ "type": "turn", "op": ">=", "value": 15 }],
 		"left_choice": {
+			"text": "세운 계획대로 밀고 간다",
+			"memory": "주민 설문과 달리 원래 계획을 지킴",
+			"result": "계획대로 흔들림 없이 일을 이어 갑니다. 계획을 바꾸지 않아 돈은 아꼈습니다.",
+			"effects": { "finance": 4, "residents": -5 }
+		},
+		"right_choice": {
 			"text": "결과를 공개하고 계획을 고친다",
 			"memory": "주민 설문에 따라 계획을 고침",
 			"result": "설문 결과를 공개하고 계획을 고쳤습니다. 주민들은 목소리가 반영됐다며 반가워합니다. 계획을 바꾸는 데 돈이 조금 들었습니다.",
 			"effects": { "residents": 6, "finance": -4 }
-		},
-		"right_choice": {
-			"text": "세운 계획대로 밀고 간다",
-			"memory": "주민 설문과 달리 원래 계획을 지킴",
-			"result": "계획대로 흔들림 없이 일을 이어 갑니다. 계획을 바꾸지 않아 돈은 아꼈습니다.",
-			"effects": { "finance": 4 }
 		}
 	},
 	{
@@ -122,19 +122,19 @@
 		"left_choice": {
 			"text": "새 사업을 시작한다",
 			"result": "새 문화센터 공사가 시작되었습니다. 완성은 다음 운영자의 몫입니다.",
-			"effects": { "finance": -8, "residents": 6, "environment": -2 }
+			"effects": { "environment": -2, "finance": -5, "residents": 5 }
 		},
 		"right_choice": {
 			"text": "벌여 둔 일을 마무리한다",
 			"result": "미뤄 둔 보수 공사와 정리를 마쳤습니다. 화려하진 않지만 마을이 단단해졌습니다.",
-			"effects": { "finance": 4, "safety": 3 }
+			"effects": { "finance": 4, "residents": -4, "safety": 1 }
 		}
 	},
 
 	{
 		"id": "regulation_backlash",
 		"npc_expression": "angry",
-		"npc": "cherry",
+		"npc": "luka",
 		"category": "state",
 		"tags": ["environment"],
 		"title": "규제에 지친 상인들",
@@ -147,13 +147,13 @@
 			"text": "규제 일부를 풀어 준다",
 			"memory": "상인들의 요구로 환경 규제를 일부 풀어 줌",
 			"result": "숨통이 트였다며 상인들이 반깁니다. 환경 지킴이 노엘 씨는 \"이게 시작이 아니길 바란다\"며 걱정합니다.",
-			"effects": { "finance": 6, "environment": -5, "residents": 2 }
+			"effects": { "environment": -6, "finance": 5, "safety": -4 }
 		},
 		"right_choice": {
 			"text": "규제를 지키고 상인들을 설득한다",
 			"memory": "상인들의 반발에도 환경 규제를 지킴",
 			"result": "규제는 그대로 남았습니다. 마을의 자연은 지켜졌지만, 문을 닫겠다는 가게 이야기가 들려옵니다.",
-			"effects": { "residents": -5, "environment": 3 }
+			"effects": { "environment": 3, "residents": -4 }
 		}
 	},
 	{
@@ -172,19 +172,19 @@
 			"text": "규칙을 정리해 줄인다",
 			"memory": "늘어난 안전 규칙을 정리해 줄임",
 			"result": "꼭 필요한 규칙만 남겼습니다. 주민들은 편해졌다고 하지만, 시설 담당자는 걱정스러운 얼굴입니다.",
-			"effects": { "residents": 6, "safety": -5 }
+			"effects": { "residents": 6, "safety": -7 }
 		},
 		"right_choice": {
 			"text": "안전이 먼저라며 그대로 둔다",
 			"memory": "불편 호소에도 안전 규칙을 지킴",
 			"result": "규칙은 그대로입니다. 사고는 줄었지만, 마을 분위기가 답답하다는 말이 나옵니다.",
-			"effects": { "residents": -6, "finance": -2 }
+			"effects": { "finance": -2, "residents": -4, "safety": 3 }
 		}
 	},
 	{
 		"id": "demands_overload",
 		"npc_expression": "happy",
-		"npc": "luka",
+		"npc": "mina",
 		"category": "state",
 		"tags": ["welfare"],
 		"title": "쏟아지는 요구",
@@ -197,7 +197,7 @@
 			"text": "모두 들어준다",
 			"memory": "한꺼번에 쏟아진 주민 요구를 모두 들어줌",
 			"result": "모두가 만족했지만 금고가 눈에 띄게 줄었습니다. 다음 요구는 더 커질지도 모릅니다.",
-			"effects": { "finance": -10, "residents": 4 }
+			"effects": { "finance": -8, "residents": 4 }
 		},
 		"right_choice": {
 			"text": "우선순위를 정해 일부만 들어준다",
@@ -209,7 +209,7 @@
 	{
 		"id": "treasury_criticism",
 		"npc_expression": "worried",
-		"npc": "owen",
+		"npc": "cherry",
 		"category": "state",
 		"tags": ["administration"],
 		"title": "쌓아 두기만 하는 금고",
@@ -219,16 +219,16 @@
 			{ "type": "stat", "stat": "finance", "op": ">=", "value": 70 }
 		],
 		"left_choice": {
-			"text": "모아 둔 돈을 크게 쓴다",
-			"memory": "모아 둔 돈으로 낡은 시설을 한꺼번에 고침",
-			"result": "낡은 시설을 한꺼번에 고쳤습니다. 주민들은 반기지만, 금고는 다시 가벼워졌습니다.",
-			"effects": { "finance": -12, "safety": 5, "residents": 4 }
-		},
-		"right_choice": {
 			"text": "비상금을 지킨다",
 			"memory": "비판에도 비상금을 지킴",
 			"result": "만일을 위해 돈을 지켰습니다. 하지만 낡은 시설 앞에서 주민들의 불만은 커집니다.",
-			"effects": { "residents": -5, "safety": -3 }
+			"effects": { "finance": 3, "residents": -4, "safety": -5 }
+		},
+		"right_choice": {
+			"text": "모아 둔 돈을 크게 쓴다",
+			"memory": "모아 둔 돈으로 낡은 시설을 한꺼번에 고침",
+			"result": "낡은 시설을 한꺼번에 고쳤습니다. 주민들은 반기지만, 금고는 다시 가벼워졌습니다.",
+			"effects": { "finance": -9, "residents": 4, "safety": 4 }
 		}
 	}
 ]

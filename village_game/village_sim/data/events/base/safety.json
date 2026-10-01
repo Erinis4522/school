@@ -10,40 +10,40 @@
 		"title": "낡은 다리",
 		"description": "점검 결과 마을 다리 곳곳에서 균열이 발견되었습니다. 제대로 고치려면 큰 돈이 듭니다.",
 		"left_choice": {
-			"text": "당장 보수한다",
-			"reaction": "튼튼하게 고치겠습니다. 이제 안심하세요.",
-			"reaction_expression": "happy",
-			"memory": "낡은 다리를 바로 보수함",
-			"result": "몇 달의 공사 끝에 다리가 튼튼해졌습니다. 마을 금고는 그만큼 가벼워졌습니다.",
-			"effects": { "finance": -11, "safety": 10 }
-		},
-		"right_choice": {
 			"text": "통행만 제한한다",
 			"reaction": "통행만 막아 두면… 언젠가 탈이 날 수도 있습니다.",
 			"reaction_expression": "worried",
 			"memory": "낡은 다리를 통행 제한만 하고 둠",
 			"result": "큰 차는 다리를 건널 수 없게 되어 주민들이 멀리 돌아다닙니다. 균열이 난 다리가 언제까지 버틸지는 아무도 장담할 수 없습니다.",
-			"effects": { "residents": -5, "safety": -3 },
+			"effects": { "residents": -5, "safety": -8 },
 			"set_flags": [{ "flag": "bridge_neglected", "chance": 0.5 }]
+		},
+		"right_choice": {
+			"text": "당장 보수한다",
+			"reaction": "튼튼하게 고치겠습니다. 이제 안심하세요.",
+			"reaction_expression": "happy",
+			"memory": "낡은 다리를 바로 보수함",
+			"result": "몇 달의 공사 끝에 다리가 튼튼해졌습니다. 마을 금고는 그만큼 가벼워졌습니다.",
+			"effects": { "finance": -6, "residents": -3, "safety": 8 }
 		}
 	},
 	{
 		"id": "alley_cctv",
-		"npc": "luka",
+		"npc": "mina",
 		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "골목 CCTV",
 		"description": "밤길이 어두운 골목에 CCTV를 달아 달라는 요청이 들어왔습니다. 누군가 지켜보는 느낌이 싫다는 주민도 있습니다.",
 		"left_choice": {
-			"text": "설치한다",
-			"result": "골목에 CCTV가 생겨 밤길이 한결 든든해졌습니다. 늘 찍히는 게 불편하다는 주민도 있습니다.",
-			"effects": { "finance": -7, "safety": 8, "residents": -3 }
-		},
-		"right_choice": {
 			"text": "설치하지 않는다",
 			"result": "사생활을 걱정하던 주민들은 안심했습니다. 밤늦게 골목을 지나는 사람들은 여전히 불안해합니다.",
-			"effects": { "residents": 3, "safety": -5 }
+			"effects": { "residents": 3, "safety": -7 }
+		},
+		"right_choice": {
+			"text": "설치한다",
+			"result": "골목에 CCTV가 생겨 밤길이 한결 든든해졌습니다. 늘 찍히는 게 불편하다는 주민도 있습니다.",
+			"effects": { "finance": -5, "residents": -3, "safety": 6 }
 		}
 	},
 	{
@@ -57,40 +57,40 @@
 		"title": "장마 예보",
 		"description": "올여름에는 폭우가 잦을 것이라는 예보가 나왔습니다.",
 		"left_choice": {
-			"text": "배수로를 정비한다",
-			"reaction": "이번 장마는 걱정 없겠습니다.",
-			"reaction_expression": "happy",
-			"memory": "장마 전에 배수로를 정비함",
-			"result": "막혀 있던 배수로를 모두 뚫고 넓혔습니다. 비가 많이 와도 물이 잘 빠질 것 같습니다.",
-			"effects": { "finance": -9, "safety": 9 }
-		},
-		"right_choice": {
 			"text": "모래주머니만 준비한다",
 			"reaction": "모래주머니로 버틸 수 있을지…",
 			"reaction_expression": "worried",
 			"memory": "장마를 모래주머니로만 대비함",
 			"result": "모래주머니를 쌓아 두고 돈을 아꼈습니다. 이걸로 충분할지는 비가 와 봐야 알 수 있습니다.",
-			"effects": { "finance": -2 },
+			"effects": { "finance": -2, "safety": -6 },
 			"set_flags": [{ "flag": "flood_unprepared", "chance": 0.7 }]
+		},
+		"right_choice": {
+			"text": "배수로를 정비한다",
+			"reaction": "이번 장마는 걱정 없겠습니다.",
+			"reaction_expression": "happy",
+			"memory": "장마 전에 배수로를 정비함",
+			"result": "막혀 있던 배수로를 모두 뚫고 넓혔습니다. 비가 많이 와도 물이 잘 빠질 것 같습니다.",
+			"effects": { "environment": -3, "finance": -5, "safety": 7 }
 		}
 	},
 	{
 		"id": "school_zone",
-		"npc": "luka",
+		"npc": "mina",
 		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "어린이 보호구역",
 		"description": "학부모들이 학교 앞 어린이 보호구역을 더 넓혀 달라고 요청했습니다. 운전하는 주민들은 불편하다고 말합니다.",
 		"left_choice": {
-			"text": "구역을 넓힌다",
-			"result": "학교 앞 차들이 천천히 달리게 되어 아이들이 안전해졌습니다. 운전하는 주민들은 길이 막힌다고 불평합니다.",
-			"effects": { "safety": 8, "residents": -4, "finance": -3 }
-		},
-		"right_choice": {
 			"text": "지금대로 둔다",
 			"result": "운전하는 주민들은 편하다고 합니다. 학부모들은 등굣길이 여전히 걱정입니다.",
-			"effects": { "residents": 2, "safety": -5 }
+			"effects": { "residents": 2, "safety": -7 }
+		},
+		"right_choice": {
+			"text": "구역을 넓힌다",
+			"result": "학교 앞 차들이 천천히 달리게 되어 아이들이 안전해졌습니다. 운전하는 주민들은 길이 막힌다고 불평합니다.",
+			"effects": { "finance": -3, "residents": -4, "safety": 6 }
 		}
 	},
 	{
@@ -105,12 +105,12 @@
 			"text": "소방 분소를 유치한다",
 			"memory": "소방 분소를 유치함",
 			"result": "마을 안에 작은 소방서가 생겼습니다. 불이 나도 금방 달려올 수 있지만, 짓고 운영하는 데 큰 돈이 듭니다.",
-			"effects": { "finance": -12, "safety": 11 }
+			"effects": { "finance": -7, "residents": -3, "safety": 7 }
 		},
 		"right_choice": {
 			"text": "의용소방대를 꾸린다",
 			"result": "주민들이 돌아가며 소방 훈련을 받고 있습니다. 돈은 적게 들었지만, 바쁜 시간을 쪼개야 하는 주민들은 힘들어합니다.",
-			"effects": { "finance": -3, "safety": 4, "residents": -3 }
+			"effects": { "residents": -4, "safety": 2 }
 		}
 	},
 	{
@@ -124,12 +124,12 @@
 		"left_choice": {
 			"text": "새 기구로 모두 바꾼다",
 			"result": "반짝이는 새 놀이기구에 아이들이 몰려듭니다. 교체 비용은 꽤 들었습니다.",
-			"effects": { "finance": -8, "safety": 7, "residents": 2 }
+			"effects": { "finance": -6, "residents": 2, "safety": 5 }
 		},
 		"right_choice": {
 			"text": "위험한 기구만 철거한다",
 			"result": "위험한 기구는 사라졌지만 놀이터가 휑해졌습니다. 아이들이 놀 거리가 없다고 투덜댑니다.",
-			"effects": { "safety": 3, "residents": -5 }
+			"effects": { "residents": -5 }
 		}
 	},
 	{
@@ -143,31 +143,31 @@
 		"left_choice": {
 			"text": "마을 전체가 훈련한다",
 			"result": "모두가 대피 길을 몸으로 익혔습니다. 한나절 장사를 못 한 가게 주인들은 속이 쓰립니다.",
-			"effects": { "safety": 8, "residents": -4 }
+			"effects": { "residents": -4, "safety": 6 }
 		},
 		"right_choice": {
 			"text": "학교에서만 훈련한다",
 			"result": "아이들은 대피 방법을 배웠습니다. 어른들은 아직 어디로 피해야 하는지 잘 모릅니다.",
-			"effects": { "safety": 3 }
+			"effects": { "finance": -2, "safety": 1 }
 		}
 	},
 	{
 		"id": "stray_dogs",
-		"npc": "luka",
+		"npc": "mina",
 		"phases": ["mid"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "떠돌이 개",
 		"description": "떠돌이 개 무리가 골목을 돌아다녀 아이들이 놀라는 일이 늘었습니다.",
 		"left_choice": {
-			"text": "마을 보호소를 만든다",
-			"result": "보호소에서 개들을 돌보고 새 가족도 찾아 주고 있습니다. 운영비가 꾸준히 듭니다.",
-			"effects": { "finance": -6, "safety": 4, "residents": 2 }
-		},
-		"right_choice": {
 			"text": "붙잡아 다른 지역 보호소로 보낸다",
 			"result": "골목이 조용해졌습니다. 개들을 챙겨 주던 주민들은 마음이 편치 않습니다.",
-			"effects": { "safety": 5, "residents": -4 }
+			"effects": { "residents": -4, "safety": 2 }
+		},
+		"right_choice": {
+			"text": "마을 보호소를 만든다",
+			"result": "보호소에서 개들을 돌보고 새 가족도 찾아 주고 있습니다. 운영비가 꾸준히 듭니다.",
+			"effects": { "finance": -5, "residents": 2, "safety": 2 }
 		}
 	},
 	{
@@ -179,14 +179,14 @@
 		"title": "겨울 빙판길",
 		"description": "눈이 오면 마을 비탈길이 빙판이 되어 넘어지는 사람이 많습니다.",
 		"left_choice": {
-			"text": "제설 장비를 산다",
-			"result": "눈이 오면 제설차가 바로 출동합니다. 장비값이 만만치 않았습니다.",
-			"effects": { "finance": -9, "safety": 8 }
-		},
-		"right_choice": {
 			"text": "'내 집 앞 눈 치우기' 캠페인을 한다",
 			"result": "눈 오는 아침마다 주민들이 빗자루를 듭니다. 길은 나아졌지만, 힘들다는 목소리도 나옵니다.",
-			"effects": { "safety": 3, "residents": -4 }
+			"effects": { "residents": -4 }
+		},
+		"right_choice": {
+			"text": "제설 장비를 산다",
+			"result": "눈이 오면 제설차가 바로 출동합니다. 장비값이 만만치 않았습니다.",
+			"effects": { "environment": -4, "finance": -5, "safety": 6 }
 		}
 	},
 
@@ -203,12 +203,12 @@
 			"text": "다리를 새로 짓는다",
 			"memory": "무너진 다리를 새로 지음",
 			"result": "무너진 다리를 헐고 새 다리를 세웠습니다. 처음에 보수하는 것보다 훨씬 많은 돈이 들었습니다.",
-			"effects": { "finance": -13, "safety": 6 }
+			"effects": { "environment": -4, "finance": -8, "safety": 7 }
 		},
 		"right_choice": {
 			"text": "다리를 막고 돌아가게 한다",
 			"result": "다리는 막혔고, 주민들은 먼 길을 돌아다녀야 합니다. 불편함과 불안함이 함께 커지고 있습니다.",
-			"effects": { "safety": -6, "residents": -5 }
+			"effects": { "residents": -5, "safety": -8 }
 		}
 	},
 	{
@@ -223,12 +223,12 @@
 		"left_choice": {
 			"text": "복구 지원금을 준다",
 			"result": "지원금 덕분에 피해 입은 집들이 빠르게 제 모습을 찾고 있습니다. 배수로를 미리 정비했다면 어땠을까요.",
-			"effects": { "finance": -10, "residents": 3 }
+			"effects": { "finance": -7, "residents": 3 }
 		},
 		"right_choice": {
 			"text": "주민 스스로 복구하게 한다",
 			"result": "주민들이 직접 물을 퍼내고 집을 고치고 있습니다. 서운함과 불안이 마을에 남았습니다.",
-			"effects": { "residents": -7, "safety": -4 }
+			"effects": { "residents": -7, "safety": -6 }
 		}
 	}
 ]

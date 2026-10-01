@@ -1,0 +1,268 @@
+[
+	{
+		"id": "river_sand",
+		"npc": "noel",
+		"phases": ["early", "mid"],
+		"category": "general",
+		"tags": ["environment"],
+		"title": "하천 모래 채취",
+		"description": "한 업체가 마을 하천 바닥의 모래를 퍼 가겠다며 사용료를 내겠다고 합니다. 강바닥을 파면 물고기가 알을 낳는 곳이 망가질 수 있습니다.",
+		"left_choice": {
+			"text": "채취를 허가한다",
+			"result": "사용료가 마을 금고에 들어왔습니다. 하천은 흙탕물이 되었고, 물가의 새들이 눈에 띄게 줄었습니다.",
+			"effects": { "finance": 8, "environment": -7 }
+		},
+		"right_choice": {
+			"text": "허가하지 않는다",
+			"result": "하천은 그대로 지켜졌습니다. 일감을 기대했던 몇몇 주민은 아쉬워합니다.",
+			"effects": { "environment": 2, "residents": -2 }
+		}
+	},
+	{
+		"id": "night_market",
+		"npc": "luka",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["industry"],
+		"title": "야시장 운영 시간",
+		"description": "주말 야시장이 인기를 끌자, 상인들이 자정까지 문을 열게 해 달라고 합니다. 밤늦게까지 사람이 몰리면 사고와 다툼이 걱정됩니다.",
+		"left_choice": {
+			"text": "저녁 9시까지만 연다",
+			"result": "야시장은 일찍 문을 닫습니다. 골목은 조용하지만 상인들은 매출이 아쉽다고 말합니다.",
+			"effects": { "finance": 2, "residents": -2 }
+		},
+		"right_choice": {
+			"text": "자정까지 열게 한다",
+			"result": "야시장이 밤늦게까지 북적입니다. 장사는 잘되지만, 술 취한 손님들 사이에 다툼이 잦아졌습니다.",
+			"effects": { "finance": 7, "residents": 2, "safety": -6 }
+		}
+	},
+	{
+		"id": "billboard",
+		"npc": "cherry",
+		"phases": ["early", "mid"],
+		"category": "general",
+		"tags": ["administration"],
+		"title": "대형 광고판",
+		"description": "광고 회사가 마을 입구 사거리에 커다란 전광판을 세우게 해 주면 해마다 사용료를 내겠다고 합니다.",
+		"left_choice": {
+			"text": "광고판을 허가한다",
+			"result": "사용료가 들어오기 시작했습니다. 하지만 밤새 번쩍이는 불빛에 주민들이 불평하고, 운전자들의 시선을 빼앗는다는 말도 나옵니다.",
+			"effects": { "finance": 6, "residents": -4, "safety": -2 }
+		},
+		"right_choice": {
+			"text": "마을 경관을 지킨다",
+			"result": "마을 입구는 예전 모습 그대로입니다. 금고에 들어올 뻔한 돈을 아쉬워하는 목소리도 있습니다.",
+			"effects": { "residents": 2, "finance": -1 }
+		}
+	},
+	{
+		"id": "parking_fee",
+		"npc": "cherry",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["transport"],
+		"title": "공영 주차장 요금",
+		"description": "공영 주차장 관리비가 늘어나 요금을 올리자는 안이 나왔습니다. 매일 차를 쓰는 주민들은 부담이 커집니다.",
+		"left_choice": {
+			"text": "출퇴근 시간만 조금 올린다",
+			"result": "붐비는 시간에만 요금이 올랐습니다. 불만은 크지 않지만 금고에 보탬도 크지 않습니다.",
+			"effects": { "finance": 3, "residents": -2 }
+		},
+		"right_choice": {
+			"text": "요금을 크게 올린다",
+			"result": "주차장 수입이 크게 늘었습니다. 주민들은 장 보러 나가기도 부담스럽다며 불만을 쏟아 냅니다.",
+			"effects": { "finance": 8, "residents": -6 }
+		}
+	},
+	{
+		"id": "lumber_sale",
+		"npc": "noel",
+		"phases": ["early", "mid"],
+		"category": "general",
+		"tags": ["environment"],
+		"title": "마을 숲 목재",
+		"description": "마을 소유의 숲에 다 자란 나무가 많습니다. 목재 회사가 숲 한쪽을 통째로 베어 사 가겠다고 합니다.",
+		"left_choice": {
+			"text": "솎아베기만 한다",
+			"result": "빽빽한 곳의 나무만 골라 베어 팔았습니다. 숲은 오히려 숨통이 트였고, 수입은 크지 않습니다.",
+			"effects": { "finance": 3, "environment": -1 }
+		},
+		"right_choice": {
+			"text": "숲 한쪽을 통째로 판다",
+			"result": "큰돈이 금고에 들어왔습니다. 민둥산이 된 비탈을 보며 비 오는 날을 걱정하는 사람들이 생겼습니다.",
+			"effects": { "finance": 10, "environment": -8, "safety": -2 }
+		}
+	},
+	{
+		"id": "tour_bus_lot",
+		"npc": "luka",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["transport"],
+		"title": "관광버스 주차장",
+		"description": "근처 관광지로 가는 관광버스들이 우리 마을 공터를 쉬어 가는 주차장으로 쓰게 해 달라고 합니다. 주차비를 내겠다고 합니다.",
+		"left_choice": {
+			"text": "주차장으로 빌려준다",
+			"result": "주차비가 꼬박꼬박 들어옵니다. 하지만 공회전하는 버스 매연과 소음에 근처 주민들이 창문을 닫고 지냅니다.",
+			"effects": { "finance": 7, "environment": -3, "residents": -3 }
+		},
+		"right_choice": {
+			"text": "주민 쉼터로 쓴다",
+			"result": "공터에 벤치와 화분을 놓아 쉼터로 꾸몄습니다. 관리하는 데 약간의 돈이 듭니다.",
+			"effects": { "finance": -2, "residents": 3 }
+		}
+	},
+	{
+		"id": "fireworks_sponsor",
+		"npc": "rio",
+		"phases": ["early", "mid"],
+		"category": "general",
+		"tags": ["culture"],
+		"title": "기업 후원 불꽃놀이",
+		"description": "한 기업이 이름을 크게 걸어 주는 조건으로 마을 불꽃놀이 비용을 모두 대고 후원금도 주겠다고 합니다. 행사는 훨씬 커집니다.",
+		"left_choice": {
+			"text": "후원을 받아 크게 연다",
+			"result": "하늘을 가득 메운 불꽃에 구경꾼이 몰려들었습니다. 후원금도 남았지만, 화약 연기와 인파 사고 걱정이 뒤따랐습니다.",
+			"effects": { "finance": 6, "environment": -4, "safety": -4 }
+		},
+		"right_choice": {
+			"text": "작게 우리 힘으로 연다",
+			"result": "소박한 불꽃놀이가 열렸습니다. 마을 돈이 조금 들었지만 주민들끼리 오붓하게 즐겼습니다.",
+			"effects": { "finance": -3, "residents": 3 }
+		}
+	},
+	{
+		"id": "night_construction",
+		"npc": "bruno",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["industry"],
+		"title": "밤샘 공사",
+		"description": "마을 도로 공사 업체가 밤에도 공사를 하면 기간이 줄어 공사비를 깎아 주겠다고 합니다. 근처 주민들은 밤잠을 설칠까 걱정합니다.",
+		"left_choice": {
+			"text": "낮에만 공사한다",
+			"result": "공사 기간이 길어져 비용이 조금 더 들었습니다. 주민들은 밤에는 편히 잘 수 있었습니다.",
+			"effects": { "finance": -3, "residents": 1 }
+		},
+		"right_choice": {
+			"text": "밤샘 공사를 허락한다",
+			"result": "공사비를 아꼈고 길도 빨리 열렸습니다. 대신 한 달 내내 밤마다 기계 소리가 울렸습니다.",
+			"effects": { "finance": 6, "residents": -6 }
+		}
+	},
+	{
+		"id": "field_rental",
+		"npc": "mina",
+		"phases": ["early", "mid", "late"],
+		"category": "general",
+		"tags": ["welfare"],
+		"title": "주말 운동장 대여",
+		"description": "주말마다 비어 있는 마을 운동장을 행사 업체에 빌려주면 대여료를 받을 수 있습니다. 주말에 운동장을 쓰던 주민들은 갈 곳이 없어집니다.",
+		"left_choice": {
+			"text": "행사 업체에 빌려준다",
+			"result": "대여료가 들어옵니다. 주말 운동을 하던 주민들과 아이들은 불만이 많고, 큰 행사 날엔 주변 길이 혼잡합니다.",
+			"effects": { "finance": 5, "residents": -4, "safety": -2 }
+		},
+		"right_choice": {
+			"text": "주민에게 계속 개방한다",
+			"result": "주말 운동장은 여전히 주민들의 차지입니다. 관리비는 마을이 계속 냅니다.",
+			"effects": { "finance": -1, "residents": 2 }
+		}
+	},
+	{
+		"id": "waste_import",
+		"npc": "cherry",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["environment"],
+		"title": "이웃 도시의 쓰레기",
+		"description": "이웃 도시가 처리장이 모자라다며, 우리 마을 처리장에서 쓰레기를 받아 주면 처리비를 넉넉히 주겠다고 합니다.",
+		"left_choice": {
+			"text": "거절한다",
+			"result": "처리장은 우리 마을 쓰레기만 처리합니다. 이웃 도시와는 사이가 조금 서먹해졌습니다.",
+			"effects": { "environment": 1, "residents": -1 }
+		},
+		"right_choice": {
+			"text": "받아 준다",
+			"result": "처리비가 두둑이 들어왔습니다. 쓰레기 트럭이 늘면서 처리장 주변에 냄새가 심해졌습니다.",
+			"effects": { "finance": 9, "environment": -7, "residents": -2 }
+		}
+	},
+	{
+		"id": "patrol_cut",
+		"npc": "cherry",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["safety"],
+		"title": "순찰 인력 줄이기",
+		"description": "살림을 줄이기 위해 밤 순찰 인력을 절반으로 줄이자는 안이 올라왔습니다.",
+		"left_choice": {
+			"text": "순찰을 절반으로 줄인다",
+			"result": "인건비가 크게 줄었습니다. 밤길이 허전해졌다며 불안해하는 주민들이 늘었습니다.",
+			"effects": { "finance": 7, "safety": -7 }
+		},
+		"right_choice": {
+			"text": "순찰을 그대로 유지한다",
+			"result": "밤 순찰은 그대로입니다. 대신 다른 곳에서 아낄 방법을 찾아야 합니다.",
+			"effects": { "finance": -2, "safety": 1 }
+		}
+	},
+	{
+		"id": "streetlight_off",
+		"npc": "cain",
+		"phases": ["early", "mid", "late"],
+		"category": "general",
+		"tags": ["safety"],
+		"title": "가로등 절반 끄기",
+		"description": "전기 요금을 아끼고 밤하늘도 지키자며, 자정이 넘으면 가로등을 절반만 켜자는 제안이 나왔습니다.",
+		"left_choice": {
+			"text": "지금처럼 모두 켠다",
+			"result": "가로등은 밤새 마을을 밝힙니다. 전기 요금은 그대로 나갑니다.",
+			"effects": { "finance": -2, "safety": 1 }
+		},
+		"right_choice": {
+			"text": "자정 넘어 절반을 끈다",
+			"result": "전기 요금이 줄고 별이 더 잘 보입니다. 하지만 어두운 골목에서 넘어지는 사람과 불안해하는 주민이 생겼습니다.",
+			"effects": { "finance": 5, "environment": 2, "safety": -6 }
+		}
+	},
+	{
+		"id": "cell_tower",
+		"npc": "owen",
+		"phases": ["early", "mid", "late"],
+		"category": "general",
+		"tags": ["administration"],
+		"title": "산 위 통신 기지국",
+		"description": "통신 회사가 뒷산 꼭대기에 기지국을 세우게 해 주면 땅 사용료를 내겠다고 합니다. 산 위까지 공사 길을 내야 합니다.",
+		"left_choice": {
+			"text": "기지국을 허가한다",
+			"result": "사용료가 들어오고 휴대전화도 잘 터집니다. 대신 산허리를 깎아 공사 길이 생겼습니다.",
+			"effects": { "finance": 6, "environment": -5, "residents": 2 }
+		},
+		"right_choice": {
+			"text": "산을 그대로 둔다",
+			"result": "뒷산은 그대로입니다. 전화가 잘 안 터지는 동네 주민들은 아쉬워합니다.",
+			"effects": { "environment": 1, "residents": -2 }
+		}
+	},
+	{
+		"id": "welfare_cut",
+		"npc": "cherry",
+		"phases": ["mid", "late"],
+		"category": "general",
+		"tags": ["welfare"],
+		"title": "복지 예산 줄이기",
+		"description": "마을 살림이 빠듯해지자, 어르신 반찬 배달과 아이 돌봄 지원 같은 복지 예산을 줄이자는 안이 나왔습니다.",
+		"left_choice": {
+			"text": "복지 예산을 지킨다",
+			"result": "복지 사업은 그대로 이어집니다. 다른 곳의 예산을 조금씩 줄여야 했습니다.",
+			"effects": { "finance": -2, "residents": 2 }
+		},
+		"right_choice": {
+			"text": "복지 예산을 줄인다",
+			"result": "금고에 여유가 생겼습니다. 반찬 배달이 끊긴 어르신들과 돌봄이 줄어든 가정의 한숨이 깊어졌습니다.",
+			"effects": { "finance": 8, "residents": -8 }
+		}
+	}
+]

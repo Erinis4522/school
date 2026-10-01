@@ -1,7 +1,7 @@
 [
 	{
 		"id": "center_floor",
-		"npc": "luka",
+		"npc": "owen",
 		"phases": ["mid"],
 		"category": "general",
 		"tags": ["welfare"],
@@ -10,7 +10,7 @@
 		"left_choice": {
 			"text": "경로당으로 꾸민다",
 			"result": "어르신들이 모여 이야기꽃을 피우고, 서로 안부도 챙깁니다. 꾸미는 데 돈이 조금 들었습니다.",
-			"effects": { "residents": 5, "finance": -4, "safety": 2 }
+			"effects": { "finance": -4, "residents": 5 }
 		},
 		"right_choice": {
 			"text": "사무실로 빌려준다",
@@ -20,7 +20,7 @@
 	},
 	{
 		"id": "shared_childcare",
-		"npc": "luka",
+		"npc": "mina",
 		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
@@ -29,31 +29,31 @@
 		"left_choice": {
 			"text": "나눔터를 연다",
 			"result": "부모들이 돌아가며 아이들을 돌보고, 아이들은 새 친구를 사귀었습니다. 공간을 마련하는 데 돈이 들었습니다.",
-			"effects": { "finance": -6, "residents": 7 }
+			"effects": { "finance": -5, "residents": 6 }
 		},
 		"right_choice": {
 			"text": "지금은 어렵다고 답한다",
 			"result": "부모들은 실망한 채 돌아갔습니다. 아이 맡길 곳 걱정은 여전합니다.",
-			"effects": { "residents": -3 }
+			"effects": { "residents": -4 }
 		}
 	},
 	{
 		"id": "access_ramp",
-		"npc": "luka",
+		"npc": "mina",
 		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "가게 앞 계단",
 		"description": "휠체어를 타는 주민이 계단 때문에 가게에 들어가기 어렵다고 말합니다.",
 		"left_choice": {
-			"text": "경사로 설치비를 지원한다",
-			"result": "가게마다 경사로가 생겼습니다. 휠체어를 탄 주민도, 유모차를 끄는 부모도 편하게 드나듭니다.",
-			"effects": { "finance": -5, "safety": 3 }
-		},
-		"right_choice": {
 			"text": "가게 자율에 맡긴다",
 			"result": "몇몇 가게만 경사로를 만들었습니다. 여전히 들어갈 수 없는 가게가 많습니다.",
-			"effects": { "residents": -3 }
+			"effects": { "residents": -4 }
+		},
+		"right_choice": {
+			"text": "경사로 설치비를 지원한다",
+			"result": "가게마다 경사로가 생겼습니다. 휠체어를 탄 주민도, 유모차를 끄는 부모도 편하게 드나듭니다.",
+			"effects": { "finance": -4, "residents": 3, "safety": 1 }
 		}
 	},
 	{
@@ -67,31 +67,31 @@
 		"left_choice": {
 			"text": "교실을 늘린다",
 			"result": "기다리던 아이들이 모두 돌봄교실에 들어갔습니다. 부모들은 마음 놓고 일할 수 있게 되었습니다.",
-			"effects": { "finance": -7, "residents": 5 }
+			"effects": { "finance": -5, "residents": 5 }
 		},
 		"right_choice": {
 			"text": "지금 규모를 유지한다",
 			"result": "대기 명단은 줄지 않았습니다. 학교가 끝나면 갈 곳 없는 아이들이 거리를 서성입니다.",
-			"effects": { "residents": -4 }
+			"effects": { "residents": -5 }
 		}
 	},
 	{
 		"id": "clinic_hours",
-		"npc": "owen",
+		"npc": "mina",
 		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "보건소 진료 시간",
 		"description": "일을 마치고 나면 진료받을 곳이 없다는 이야기가 계속 들려옵니다.",
 		"left_choice": {
-			"text": "보건소 야간 진료를 연다",
-			"result": "퇴근길에 보건소에 들르는 주민이 많아졌습니다. 야간 인력을 두는 데 돈이 듭니다.",
-			"effects": { "finance": -8, "residents": 6 }
-		},
-		"right_choice": {
 			"text": "지금대로 운영한다",
 			"result": "보건소는 예전처럼 저녁 일찍 문을 닫습니다. 밤에 아픈 사람이 생기면 갈 곳이 마땅치 않습니다.",
-			"effects": { "safety": -3 }
+			"effects": { "safety": -5 }
+		},
+		"right_choice": {
+			"text": "보건소 야간 진료를 연다",
+			"result": "퇴근길에 보건소에 들르는 주민이 많아졌습니다. 야간 인력을 두는 데 돈이 듭니다.",
+			"effects": { "finance": -6, "residents": 4, "safety": 2 }
 		}
 	},
 	{
@@ -103,14 +103,14 @@
 		"title": "나눔 냉장고",
 		"description": "남는 음식을 이웃과 나누는 냉장고를 설치하자는 제안이 들어왔습니다.",
 		"left_choice": {
-			"text": "설치한다",
-			"result": "냉장고에 반찬과 과일이 채워지고, 필요한 사람이 가져갑니다. 버려지는 음식도 줄었습니다.",
-			"effects": { "finance": -3, "residents": 4, "environment": 2 }
-		},
-		"right_choice": {
 			"text": "관리가 어려워 설치하지 않는다",
 			"result": "남은 음식은 여전히 쓰레기통으로 갑니다. 제안했던 주민들은 아쉬워합니다.",
 			"effects": { "environment": -2, "residents": -2 }
+		},
+		"right_choice": {
+			"text": "설치한다",
+			"result": "냉장고에 반찬과 과일이 채워지고, 필요한 사람이 가져갑니다. 버려지는 음식도 줄었습니다.",
+			"effects": { "finance": -3, "residents": 4, "environment": 2 }
 		}
 	},
 	{
@@ -122,14 +122,14 @@
 		"title": "한국어 교실",
 		"description": "다른 나라에서 이사 온 가정들이 한국어를 배울 수 있는 교실을 요청했습니다.",
 		"left_choice": {
-			"text": "마을에서 교실을 연다",
-			"result": "매주 한국어 교실이 열립니다. 서툰 한국어로 먼저 인사를 건네는 이웃이 늘었습니다.",
-			"effects": { "finance": -5, "residents": 5 }
-		},
-		"right_choice": {
 			"text": "자원봉사자를 모집해 맡긴다",
 			"result": "몇몇 주민이 선뜻 나섰습니다. 돈은 들지 않았지만, 수업이 자주 열리지는 못합니다.",
 			"effects": { "residents": 2 }
+		},
+		"right_choice": {
+			"text": "마을에서 교실을 연다",
+			"result": "매주 한국어 교실이 열립니다. 서툰 한국어로 먼저 인사를 건네는 이웃이 늘었습니다.",
+			"effects": { "finance": -3, "residents": 5 }
 		}
 	},
 	{
@@ -141,14 +141,14 @@
 		"title": "청년 월세 부담",
 		"description": "청년들이 비싼 월세 때문에 마을을 떠나려 합니다.",
 		"left_choice": {
-			"text": "월세를 지원한다",
-			"result": "월세 부담이 줄어든 청년들이 마을에 남기로 했습니다. 지원금이 매달 나갑니다.",
-			"effects": { "finance": -8, "residents": 6 }
-		},
-		"right_choice": {
 			"text": "대신 청년 공공주택을 짓는다",
 			"result": "마을 외곽에 청년 주택 공사가 시작되었습니다. 숲 일부가 공사장이 되었습니다.",
 			"effects": { "finance": -4, "environment": -3, "residents": 3 }
+		},
+		"right_choice": {
+			"text": "월세를 지원한다",
+			"result": "월세 부담이 줄어든 청년들이 마을에 남기로 했습니다. 지원금이 매달 나갑니다.",
+			"effects": { "finance": -5, "residents": 5 }
 		}
 	},
 	{
@@ -162,12 +162,12 @@
 		"left_choice": {
 			"text": "공공 목욕탕으로 인수한다",
 			"result": "목욕탕이 다시 문을 열었습니다. 어르신들의 사랑방이 지켜졌지만, 운영비가 듭니다.",
-			"effects": { "finance": -7, "residents": 5 }
+			"effects": { "finance": -5, "residents": 4, "safety": -2 }
 		},
 		"right_choice": {
 			"text": "철거하고 주차장으로 쓴다",
 			"result": "목욕탕 자리에 주차장이 생겼습니다. 오래 다니던 주민들은 추억이 사라졌다며 아쉬워합니다.",
-			"effects": { "finance": 3, "safety": 2, "residents": -4 }
+			"effects": { "finance": 3, "residents": -4 }
 		}
 	}
 ]

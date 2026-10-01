@@ -40,6 +40,7 @@ const FAN_OFFSET := 410.0                     # 펼쳐졌을 때 메인 창 중�
 const FAN_DROP := 40.0                        # 펼쳐졌을 때 아래로 내려오는 거리
 const FAN_DEGREES := 6.0                      # 펼쳐졌을 때 기울기
 const FAN_SECONDS := 0.26
+const CARD_RENDER_PAD := 16                   # 카드를 따로 그릴 때 그림자가 잘리지 않게 두는 바깥 여백
 const BOUNCE_PIXELS := 7.0
 const SHAKE_PIXELS := 5.0
 const INPUT_COOLDOWN_MS := 280                # 화면이 바뀐 직후 연타로 넘어가 버리지 않게
@@ -291,7 +292,8 @@ func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
 		_stage_portrait.react()
 
 
-## 선택할 때: 가운데 인물 대신 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자.
+## 선택할 때: 가운데 인물 대신 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자. (담담한 neutral 얼굴)
+## 밝은 얼굴(delight)은 그쪽을 눌러 옆으로 펼쳐지는 인물 카드에서만 쓴다.
 ## 그림이 없는 쪽은 빈자리로 둔다(반대쪽 인물이 가운데로 쏠리지 않게).
 func _show_pair() -> void:
 	_stage_portrait.visible = false
@@ -300,7 +302,7 @@ func _show_pair() -> void:
 	for side in SIDES:
 		var view = _stage_sides[side]
 		var preview: Dictionary = _session.get_side_preview(side)
-		var found: bool = view.set_character(String(preview["npc"].get("id", "")), String(preview["expression"]))
+		var found: bool = view.set_character(String(preview["npc"].get("id", "")), "neutral")
 		view.visible = true
 		view.modulate.a = 1.0 if found else 0.0
 		if found:
@@ -385,6 +387,7 @@ func _fan_out(side: String) -> void:
 	var card: Control = view["card"]
 	var direction := -1.0 if side == "left" else 1.0
 	card.pivot_offset = Vector2(card.size.x / 2.0, card.size.y)
+	view["render"].render_target_update_mode = SubViewport.UPDATE_ALWAYS   # 숨쉬기·깜빡임이 보이도록 펼쳐져 있는 동안 계속 그린다
 	if not card.visible:
 		card.position = _rest_position(card)
 		card.rotation_degrees = 0.0
@@ -404,7 +407,9 @@ func _retract(side: String) -> void:
 	var tween := _restart_tween(view)
 	tween.tween_property(card, "position", _rest_position(card), 0.18).set_ease(Tween.EASE_IN)
 	tween.tween_property(card, "rotation_degrees", 0.0, 0.18)
-	tween.chain().tween_callback(func(): card.visible = false)
+	tween.chain().tween_callback(func():
+		card.visible = false
+		view["render"].render_target_update_mode = SubViewport.UPDATE_DISABLED)
 
 
 func _restart_tween(view: Dictionary) -> Tween:
@@ -727,16 +732,41 @@ func _build_layout() -> void:
 
 ## 인물 카드 한 장 (고정 크기). 위: 인물 그림 칸 / 아래: 글 칸(따로 바탕을 깔아 그림과 겹치지 않게).
 ## 메인 창에 가려지는 안쪽에는 여백을 두어 내용이 바깥쪽에 보이게 한다.
+## 카드는 비스듬히 기울어 나오는데, 글자·작은 아이콘을 그대로 기울이면 자글자글하게 깨진다.
+## 그래서 카드 내용은 따로 만든 화면(SubViewport)에 똑바로 그리고, 그 그림을 부드럽게(linear) 기울여 보여 준다.
 func _make_side_card(side: String) -> Dictionary:
 	var card := Control.new()
 	card.size = PERSON_CARD_SIZE
 	card.visible = false
 	add_child(card)
 
+	# 카드 그림자가 잘리지 않게 바깥에 여백(CARD_RENDER_PAD)을 두고 그린다.
+	var render := SubViewport.new()
+	render.size = Vector2i(PERSON_CARD_SIZE) + Vector2i.ONE * CARD_RENDER_PAD * 2
+	render.transparent_bg = true
+	render.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	render.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	card.add_child(render)
+
+	var image := TextureRect.new()
+	image.texture = render.get_texture()
+	image.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	image.position = -Vector2.ONE * CARD_RENDER_PAD
+	image.size = Vector2(render.size)
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(image)
+
+	# 따로 그리는 화면에는 테마가 이어지지 않으므로 여기서 다시 붙인다.
+	var content := Control.new()
+	content.theme = UiStyle.make_theme()
+	content.position = Vector2.ONE * CARD_RENDER_PAD
+	content.size = PERSON_CARD_SIZE
+	render.add_child(content)
+
 	var background := Panel.new()
 	background.add_theme_stylebox_override("panel", UiStyle.main_box())
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	card.add_child(background)
+	content.add_child(background)
 
 	var margin := MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -744,7 +774,7 @@ func _make_side_card(side: String) -> Dictionary:
 	margin.add_theme_constant_override("margin_bottom", 14)
 	margin.add_theme_constant_override("margin_left", PERSON_HIDDEN_MARGIN if side == "right" else 12)
 	margin.add_theme_constant_override("margin_right", PERSON_HIDDEN_MARGIN if side == "left" else 12)
-	card.add_child(margin)
+	content.add_child(margin)
 
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 8)
@@ -783,6 +813,7 @@ func _make_side_card(side: String) -> Dictionary:
 
 	return {
 		"card": card,
+		"render": render,
 		"portrait": portrait,
 		"name": name_label,
 		"choice": choice_label,

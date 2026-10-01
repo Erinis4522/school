@@ -12,10 +12,10 @@
 	"stat_min": 0,
 	"stat_max": 100,
 	"stats": [
-		{ "id": "residents", "name": "주민", "initial": 60 },
-		{ "id": "finance", "name": "재정", "initial": 60 },
-		{ "id": "environment", "name": "환경", "initial": 65 },
-		{ "id": "safety", "name": "안전", "initial": 60 }
+		{ "id": "residents", "name": "주민", "initial": 40 },
+		{ "id": "finance", "name": "재정", "initial": 40 },
+		{ "id": "environment", "name": "환경", "initial": 45 },
+		{ "id": "safety", "name": "안전", "initial": 40 }
 	],
 
 	"selection": {

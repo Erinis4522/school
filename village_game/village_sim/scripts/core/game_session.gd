@@ -285,13 +285,14 @@ func _queue_opening() -> void:
 		state.met_npcs[npc_id] = state.turn
 
 
-## 인물이 이번 판에서 처음 등장하면 자기소개 대사를 사건 앞에 넣는다. (한 판에 한 번)
+## 인물이 이번 판에서 처음 등장하면 자기소개 대사를 사건 앞에 넣는다. (한 판에 한 번, 표정은 항상 neutral)
+## 첫 인사를 한 안내원(루카)은 이미 만난 것으로 쳐서 다시 소개하지 않는다.
 func _queue_introduction(npc_id: String) -> void:
 	if npc_id.is_empty() or state.met_npcs.has(npc_id) or not _npcs.has(npc_id):
 		return
 	state.met_npcs[npc_id] = state.turn
 	for line in _npcs[npc_id]["intro"]:
-		_dialogue_queue.append(_dialogue(npc_id, "happy", line, "intro"))
+		_dialogue_queue.append(_dialogue(npc_id, "neutral", line, "intro"))
 
 
 func _dialogue(npc_id: String, expression: String, text: String, kind: String) -> Dictionary:
