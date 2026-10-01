@@ -14,6 +14,7 @@ village_sim/
 │  ├─ endings/endings.json      붕괴 엔딩 4개 + 임기 종료 엔딩 3개
 │  ├─ npcs/npcs.json            인물 8명 (이름, 역할, 신경 쓰는 상태, 기본 반응 대사, 처음 만날 때 자기소개)
 │  ├─ dialogue/debates.json     사건마다 왼쪽·오른쪽을 지지하는 인물과 그 한마디 (찬반 대화)
+│  ├─ audio/audio.json          상황별 효과음·배경음 파일 이름과 소리 크기
 │  ├─ story/story.json          새 게임 첫 인사(루카), 10·20턴 중간 결산 문구
 │  └─ visuals/                  title.json(타이틀 버튼 위치), backgrounds.json(상황별 배경 규칙), village_layers.json(겹침 레이어)
 ├─ assets/                      그림 (넣는 법은 assets/README.md)
@@ -99,6 +100,7 @@ Godot은 `coding/tools/godot/`의 휴대용 버전을 쓰며, 내보내기 템�
 | 밸런스 시뮬레이션 | `godot --headless --script res://village_sim/tools/balance_sim.gd -- --runs=1000` |
 | 화면 흐름 점검 | `godot --headless --script res://village_sim/tools/ui_smoke_test.gd` |
 | 임시 그림 다시 만들기 | `godot --headless --script res://village_sim/tools/make_placeholders.gd` |
+| 임시 소리 다시 만들기 | `godot --headless --script res://village_sim/tools/make_sounds.gd` |
 
 - 데이터 검사는 게임을 켤 때도 자동으로 돌아 출력 창에 결과가 나온다. 막별 사건 수와 선택지당 평균 상태 수, 인물별 등장 수도 알려 준다.
 - 시뮬레이션 보고서는 `balance_reports/`에 마크다운으로 저장된다. 수정 전후 보고서를 비교하면 된다.

@@ -16,6 +16,7 @@ const LAYERS_FILE := "visuals/village_layers.json"
 const BACKGROUNDS_FILE := "visuals/backgrounds.json"
 const TITLE_FILE := "visuals/title.json"
 const DIALOGUE_DIR := "dialogue"
+const AUDIO_FILE := "audio/audio.json"
 
 var _errors: Array = []
 
@@ -93,6 +94,7 @@ func load_all(data_dir: String = "") -> Dictionary:
 	var story: Variant = _read_json(data_dir.path_join(STORY_FILE))
 	var backgrounds: Variant = _read_json(data_dir.path_join(BACKGROUNDS_FILE))
 	var title: Variant = _read_json(data_dir.path_join(TITLE_FILE))
+	var audio: Variant = _read_json(data_dir.path_join(AUDIO_FILE))
 
 	return {
 		"config": config,
@@ -104,6 +106,7 @@ func load_all(data_dir: String = "") -> Dictionary:
 		"debates": debates,
 		"backgrounds": backgrounds if backgrounds is Dictionary else {},
 		"title": title if title is Dictionary else {},
+		"audio": audio if audio is Dictionary else {},
 		"load_errors": _errors,
 	}
 

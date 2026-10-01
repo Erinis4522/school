@@ -84,6 +84,7 @@ func _glow(alpha: float) -> StyleBoxFlat:
 
 
 func _on_action(action: String) -> void:
+	get_tree().call_group("village_audio", "play_sfx", "button")
 	match action:
 		"new_game":
 			new_game_requested.emit()

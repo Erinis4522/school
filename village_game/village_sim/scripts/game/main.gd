@@ -8,11 +8,13 @@ const TitleScreenScene: PackedScene = preload("res://village_sim/scenes/title/ti
 const GameScreenScene: PackedScene = preload("res://village_sim/scenes/game/game.tscn")
 const EndingScreenScene: PackedScene = preload("res://village_sim/scenes/ending/ending.tscn")
 const VillageBackdrop = preload("res://village_sim/scripts/game/village_backdrop.gd")
+const AudioPlayer = preload("res://village_sim/scripts/game/audio_player.gd")
 
 var _data: Dictionary
 var _session
 var _screen: Control
 var _backdrop
+var _audio
 
 
 func _ready() -> void:
@@ -27,6 +29,11 @@ func _ready() -> void:
 	add_child(_backdrop)
 	_backdrop.setup(_data.get("layers", []))
 
+	# 배경음·효과음 (어디서든 get_tree().call_group(AudioPlayer.GROUP, "play_sfx", ...) 로 부른다)
+	_audio = AudioPlayer.new()
+	add_child(_audio)
+	_audio.setup(_data.get("audio", {}))
+
 	_session = GameSession.new(_data)
 	_session.game_ended.connect(_on_game_ended)
 	_session.stats_changed.connect(func(_ratios): _refresh_backdrop())
@@ -34,6 +41,7 @@ func _ready() -> void:
 
 
 func _show_title() -> void:
+	_audio.play_bgm("title")
 	var screen = TitleScreenScene.instantiate()
 	_swap_screen(screen)
 	screen.setup(_data.get("title", {}))
@@ -42,6 +50,7 @@ func _show_title() -> void:
 
 
 func _start_game() -> void:
+	_audio.play_bgm("game")
 	var screen = GameScreenScene.instantiate()
 	_swap_screen(screen)
 	screen.setup(_session)

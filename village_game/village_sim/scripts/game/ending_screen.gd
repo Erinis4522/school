@@ -96,5 +96,7 @@ func _build_layout() -> void:
 	restart_button.custom_minimum_size = Vector2(240, 56)
 	restart_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	restart_button.add_theme_font_size_override("font_size", 20)
-	restart_button.pressed.connect(func(): restart_requested.emit())
+	restart_button.pressed.connect(func():
+		get_tree().call_group("village_audio", "play_sfx", "button")
+		restart_requested.emit())
 	column.add_child(restart_button)

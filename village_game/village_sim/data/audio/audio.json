@@ -1,0 +1,16 @@
+{
+	"bgm": {
+		"title": "village_theme",
+		"game": "village_theme"
+	},
+	"sfx": {
+		"button": "button",
+		"advance": "advance",
+		"card_out": "card_out",
+		"card_select": "card_select"
+	},
+	"volume_db": {
+		"bgm": -14,
+		"sfx": -6
+	}
+}

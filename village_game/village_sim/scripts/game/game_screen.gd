@@ -8,7 +8,8 @@ extends Control
 ## 한 사건의 흐름
 ##   (처음 보는 인물이면 자기소개) → 안건 소개(안건을 올린 인물 + 사건 제목·설명)
 ##   → 왼쪽을 지지하는 인물의 한마디 → 오른쪽을 지지하는 인물의 한마디 → 선택
-##   선택: 메인 창의 왼쪽/오른쪽을 누르면 그쪽 지지자의 인물 카드가 메인 창 뒤에서 비스듬히 펼쳐진다.
+##   선택: 메인 창 위에 "당신의 선택은?" 안내 그림이 뜨고, 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자가 선다.
+##         메인 창의 왼쪽/오른쪽을 누르면 그쪽 지지자의 인물 카드가 메인 창 뒤에서 비스듬히 펼쳐진다.
 ##         (인물 그림 / 선택지 문구 / 예상 변화) 반대쪽을 누르면 카드가 바뀌고, 같은 쪽을 한 번 더 누르면 결정.
 ##   결정: 인물 카드가 들어가고, 고른 쪽 지지자가 메인 창 가운데에 올라와 반응한다. 대화창에는 반응 대사와 결과.
 ##   대사·결과·중간 결산에서는 아무 곳이나 누르면 다음으로 넘어간다.
@@ -25,8 +26,13 @@ const UiStyle = preload("res://village_sim/scripts/game/ui_style.gd")
 const PortraitView = preload("res://village_sim/scripts/game/portrait_view.gd")
 
 const SIDES: Array[String] = ["left", "right"]
-const MAIN_SIZE := Vector2(640, 500)          # 메인 창 (글이 길면 세로로 늘어난다)
-const STAGE_PORTRAIT := Vector2(230, 270)     # 메인 창 가운데 인물
+const AUDIO_GROUP := "village_audio"   # audio_player.gd 의 GROUP
+const MAIN_SIZE := Vector2(640, 520)          # 메인 창 (글이 길면 세로로 늘어난다)
+const STAGE_PORTRAIT := Vector2(220, 250)     # 메인 창 인물 (가운데 한 명, 선택 때는 좌우 두 명)
+const STAGE_PAIR_GAP := 110                   # 선택 때 좌우 두 인물 사이 간격
+const BANNER_WIDTH := 400.0                   # 선택 안내 그림(assets/ui/choice) 폭. 높이는 그림 비율대로
+const BANNER_OVERLAP := 14.0                  # 선택 안내 그림이 메인 창 위 테두리를 덮는 정도
+const BANNER_SPACE := 80                      # 선택 안내 그림이 들어갈 자리 (메인 창 위 빈칸)
 const PERSON_CARD_SIZE := Vector2(300, 430)   # 인물 카드 (고정 크기)
 const PERSON_PORTRAIT_HEIGHT := 220
 const PERSON_HIDDEN_MARGIN := 70              # 인물 카드가 메인 창 뒤에 가려지는 안쪽 폭
@@ -38,7 +44,7 @@ const BOUNCE_PIXELS := 7.0
 const SHAKE_PIXELS := 5.0
 const INPUT_COOLDOWN_MS := 280                # 화면이 바뀐 직후 연타로 넘어가 버리지 않게
 
-const SIDE_NAMES := {"left": "왼쪽", "right": "오른쪽"}
+const SIDE_HEADINGS := {"left": "◀ 왼쪽 의견", "right": "오른쪽 의견 ▶"}
 const GUIDE_START := "메인 창의 왼쪽이나 오른쪽을 눌러 선택지를 펼쳐 보세요."
 const GUIDE_PREVIEW := "같은 쪽을 한 번 더 누르면 결정합니다. 반대쪽을 누르면 다른 선택지가 나와요."
 const GUIDE_NEXT := "아무 곳이나 누르면 다음으로 넘어갑니다."
@@ -57,8 +63,14 @@ var _shown_npc := ""
 var _stats_box: VBoxContainer
 var _turn_label: Label
 var _main: PanelContainer
-var _stage: CenterContainer
-var _stage_portrait                 # PortraitView
+var _stage: HBoxContainer
+var _stage_portrait                 # PortraitView (가운데 한 명)
+var _stage_sides: Dictionary = {}   # "left" / "right" -> PortraitView (선택 때 좌우 지지자)
+var _banner: TextureRect            # 선택할 때 메인 창 위에 뜨는 안내 그림
+var _banner_tween: Tween
+var _heading_box: PanelContainer    # 사건 제목 칸
+var _heading_label: Label           # 메인 창 위쪽 제목 (사건 이름)
+var _subheading_label: Label        # 제목 아래 작은 안내 (왼쪽·오른쪽 의견, 고른 선택지)
 var _name_tag: PanelContainer
 var _name_label: Label
 var _line_label: Label
@@ -91,6 +103,7 @@ func select_side(side: String) -> void:
 	if _phase != Phase.CHOOSING:
 		return
 	if _preview_side == side:
+		_sfx("card_select")
 		_session.choose(side)
 		return
 	if not _preview_side.is_empty():
@@ -98,6 +111,8 @@ func select_side(side: String) -> void:
 	_preview_side = side
 	_fill_side_card(side)
 	_fan_out(side)
+	_stage_sides[side].react()
+	_sfx("card_out")
 	_guide_label.text = GUIDE_PREVIEW
 	_show_markers(_hints.get(side, {}))
 
@@ -117,6 +132,7 @@ func is_showing_dialogue() -> bool:
 ## 대사·결과·중간 결산에서 다음으로 넘어간다.
 func advance() -> void:
 	if _phase != Phase.CHOOSING:
+		_sfx("advance")
 		_session.proceed()
 
 
@@ -155,6 +171,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_dialogue_presented(dialogue: Dictionary) -> void:
 	_phase = Phase.DIALOGUE
 	_preview_side = ""
+	_show_banner(false)
 	for side in SIDES:
 		_retract(side)
 	_update_turn_label()
@@ -163,19 +180,25 @@ func _on_dialogue_presented(dialogue: Dictionary) -> void:
 	var kind := String(dialogue.get("kind", ""))
 	_show_speaker(npc, String(dialogue.get("expression", "neutral")), false)
 	var text := String(dialogue.get("text", ""))
-	if kind == "topic":
-		# 안건 소개: 이름표 자리에 사건 제목, 대사 대신 설명 (따옴표 없음)
-		_set_box(String(dialogue.get("name", "")), text, "")
-	else:
-		var speaker := _npc_title(npc)
-		if dialogue.has("side"):
-			speaker += "  ·  %s 의견" % SIDE_NAMES[dialogue["side"]]
-		_set_box(speaker, "“%s”" % text, "")
+	match kind:
+		"topic":
+			# 안건 소개: 위쪽 제목에 사건 이름, 대화창에는 이름표 없이 사건 설명 (따옴표 없음)
+			_set_heading(String(dialogue.get("event_title", "")), "")
+			_set_box("", text, "")
+		"argument":
+			var side := String(dialogue.get("side", ""))
+			_set_heading(String(dialogue.get("event_title", "")), SIDE_HEADINGS.get(side, ""))
+			_set_box(_npc_name(npc), "“%s”" % text, "")
+		_:
+			# 첫 인사·자기소개: 제목 없이 인물과 대사만
+			_set_heading("", "")
+			_set_box(_npc_name(npc), "“%s”" % text, "")
 	_guide_label.text = GUIDE_NEXT
 	_lock_input()
 
 
-## 선택: 안건을 올린 인물이 가운데, 대화창에는 사건 제목과 설명. 좌우를 눌러 지지자 카드를 펼친다.
+## 선택: 메인 창 위에 선택 안내 그림, 위쪽에 사건 제목, 왼쪽·오른쪽에 각 선택지의 지지자, 대화창에는 사건 설명.
+## 좌우를 눌러 지지자 카드를 펼친다.
 func _on_event_presented(event: Dictionary, hints: Dictionary) -> void:
 	_phase = Phase.CHOOSING
 	_event = event
@@ -184,9 +207,10 @@ func _on_event_presented(event: Dictionary, hints: Dictionary) -> void:
 	for side in SIDES:
 		_retract(side)
 	_update_turn_label()
-	var npc: Dictionary = event.get("npc_info", {})
-	_show_speaker(npc, String(event.get("npc_expression", "neutral")), false)
-	_set_box(String(event["title"]), String(event["description"]), "어떻게 할까요?")
+	_show_pair()
+	_show_banner(true)
+	_set_heading(String(event["title"]), "어떻게 할까요?")
+	_set_box("", String(event["description"]), "")
 	_guide_label.text = GUIDE_START
 	_show_markers({})
 	_lock_input()
@@ -196,17 +220,18 @@ func _on_event_presented(event: Dictionary, hints: Dictionary) -> void:
 func _on_choice_resolved(result: Dictionary) -> void:
 	_phase = Phase.RESULT
 	_preview_side = ""
+	_show_banner(false)
 	for side in SIDES:
 		_retract(side)
 	var reaction: Dictionary = result.get("reaction", {})
-	var detail := "▶ %s\n%s" % [result["choice_text"], result["text"]]
+	_set_heading(String(_event.get("title", "")), "▶ " + String(result["choice_text"]))
 	if reaction.is_empty():
 		_show_speaker({}, "", false)
-		_set_box(String(_event.get("title", "")), detail, "")
+		_set_box("", String(result["text"]), "")
 	else:
 		_show_speaker(reaction["npc"], String(reaction["expression"]), true)
 		var line := "“%s”" % reaction["text"] if not String(reaction["text"]).is_empty() else ""
-		_set_box(_npc_title(reaction["npc"]), line, detail)
+		_set_box(_npc_name(reaction["npc"]), line, String(result["text"]))
 	_guide_label.text = GUIDE_NEXT
 	if result.get("important", false):
 		_pixel_burst(_stage_portrait if _stage.visible else _main)
@@ -223,6 +248,7 @@ func _on_choice_resolved(result: Dictionary) -> void:
 ## 중간 결산: 인물 없이 대화창에 마을 분위기(숫자 없이 문장으로)와 이번 막의 주요 결정.
 func _on_checkpoint_presented(checkpoint: Dictionary) -> void:
 	_phase = Phase.CHECKPOINT
+	_show_banner(false)
 	for side in SIDES:
 		_retract(side)
 	_show_speaker({}, "", false)
@@ -232,7 +258,8 @@ func _on_checkpoint_presented(checkpoint: Dictionary) -> void:
 		recall = "그동안의 주요 결정\n"
 		for memory in memories:
 			recall += "· " + String(memory) + "\n"
-	_set_box(String(checkpoint["title"]), checkpoint["intro"] + "\n\n" + " ".join(PackedStringArray(checkpoint["lines"])), recall.strip_edges())
+	_set_heading(String(checkpoint["title"]), "")
+	_set_box("", checkpoint["intro"] + "\n\n" + " ".join(PackedStringArray(checkpoint["lines"])), recall.strip_edges())
 	_guide_label.text = GUIDE_NEXT
 	_show_markers({})
 	_lock_input()
@@ -248,8 +275,11 @@ func _on_stats_changed(ratios: Dictionary) -> void:
 
 ## 가운데 인물. 다른 인물이면 아래에서 슥 올라오고, 같은 인물이면 표정만 바꾼다(react면 흔들림). 인물이 없으면 숨긴다.
 func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
+	for side in SIDES:
+		_stage_sides[side].visible = false
 	var npc_id := String(npc.get("id", ""))
 	var shown: bool = _stage_portrait.set_character(npc_id, expression) if not npc_id.is_empty() else false
+	_stage_portrait.visible = shown
 	_stage.visible = shown
 	if not shown:
 		_shown_npc = ""
@@ -261,7 +291,62 @@ func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
 		_stage_portrait.react()
 
 
-## 대화창: 이름표, 큰 글(대사·설명), 작은 글(결과·안내). 빈 글은 숨긴다.
+## 선택할 때: 가운데 인물 대신 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자.
+## 그림이 없는 쪽은 빈자리로 둔다(반대쪽 인물이 가운데로 쏠리지 않게).
+func _show_pair() -> void:
+	_stage_portrait.visible = false
+	_shown_npc = ""   # 결과에서 고른 쪽 지지자가 가운데에 새로 올라오게
+	var any := false
+	for side in SIDES:
+		var view = _stage_sides[side]
+		var preview: Dictionary = _session.get_side_preview(side)
+		var found: bool = view.set_character(String(preview["npc"].get("id", "")), String(preview["expression"]))
+		view.visible = true
+		view.modulate.a = 1.0 if found else 0.0
+		if found:
+			view.play_enter()
+		any = any or found
+	_stage.visible = any
+
+
+## 선택 안내 그림: 선택할 때 메인 창 위에 톡 튀어나오고, 다른 때는 숨는다.
+func _show_banner(on: bool) -> void:
+	if _banner.texture == null:
+		return
+	if _banner_tween != null:
+		_banner_tween.kill()
+	if not on:
+		_banner.visible = false
+		return
+	_place_banner()
+	_banner.visible = true
+	_banner.pivot_offset = _banner.size / 2.0
+	_banner.scale = Vector2(0.85, 0.85)
+	_banner.modulate.a = 0.0
+	_banner_tween = create_tween().set_parallel(true)
+	_banner_tween.tween_property(_banner, "scale", Vector2.ONE, 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_banner_tween.tween_property(_banner, "modulate:a", 1.0, 0.18)
+
+
+## 메인 창 위쪽 가운데에 붙인다. (메인 창이 글 때문에 커져도 따라간다. 화면 위로 넘치지 않게)
+func _place_banner() -> void:
+	var texture_size := _banner.texture.get_size()
+	_banner.size = Vector2(BANNER_WIDTH, roundf(BANNER_WIDTH * texture_size.y / texture_size.x))
+	var main_rect := _main.get_global_rect()
+	var origin := get_global_rect().position
+	var top := maxf(main_rect.position.y + BANNER_OVERLAP - _banner.size.y, origin.y)
+	_banner.position = Vector2(main_rect.get_center().x - _banner.size.x / 2.0, top) - origin
+
+
+## 메인 창 위쪽 제목 칸(사건 이름)과 그 아래 작은 안내. 빈 글은 숨긴다.
+func _set_heading(title: String, sub: String) -> void:
+	_heading_box.visible = not title.is_empty()
+	_heading_label.text = title
+	_subheading_label.visible = not sub.is_empty()
+	_subheading_label.text = TextUtil.keep_words(sub)
+
+
+## 대화창: 이름표(인물 이름), 큰 글(대사), 작은 글(결과). 빈 글은 숨긴다.
 func _set_box(tag: String, line: String, sub: String) -> void:
 	_name_tag.visible = not tag.is_empty()
 	_name_label.text = tag
@@ -271,10 +356,9 @@ func _set_box(tag: String, line: String, sub: String) -> void:
 	_sub_label.text = TextUtil.keep_words(sub)
 
 
-func _npc_title(npc: Dictionary) -> String:
-	if npc.is_empty() or not npc.has("name"):
-		return ""
-	return "%s · %s" % [npc["name"], npc["role"]]
+## 인물 이름만 (예: "케인")
+func _npc_name(npc: Dictionary) -> String:
+	return String(npc.get("name", ""))
 
 
 # --- 인물 카드 -------------------------------------------------------------------
@@ -285,7 +369,7 @@ func _fill_side_card(side: String) -> void:
 	var preview: Dictionary = _session.get_side_preview(side)
 	var npc: Dictionary = preview["npc"]
 	view["portrait"].visible = view["portrait"].set_character(String(npc.get("id", "")), preview["expression"])
-	view["name"].text = _npc_title(npc)
+	view["name"].text = _npc_name(npc)
 	view["choice"].text = TextUtil.keep_words(preview["text"])
 	_fill_effect_chips(view["effects"], _hints.get(side, {}))
 
@@ -472,6 +556,11 @@ func _burst_colors() -> Gradient:
 	return gradient
 
 
+## 효과음 (AudioPlayer가 없으면 조용히 넘어간다)
+func _sfx(action: String) -> void:
+	get_tree().call_group(AUDIO_GROUP, "play_sfx", action)
+
+
 func _lock_input() -> void:
 	_input_ready_at = Time.get_ticks_msec() + INPUT_COOLDOWN_MS
 
@@ -521,8 +610,13 @@ func _build_layout() -> void:
 	add_child(center)
 
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
+	column.add_theme_constant_override("separation", 0)
 	center.add_child(column)
+
+	# 메인 창 위 빈칸: 선택 안내 그림이 뜨는 자리 (그림은 이 자리와 메인 창 위 테두리에 겹쳐 그린다)
+	var banner_space := Control.new()
+	banner_space.custom_minimum_size = Vector2(0, BANNER_SPACE)
+	column.add_child(banner_space)
 
 	# 글이 길어져 메인 창이 커지면 바깥 배치(안내 문구 위치)도 다시 계산하게 알린다.
 	_main = PanelContainer.new()
@@ -530,7 +624,9 @@ func _build_layout() -> void:
 	_main.add_theme_stylebox_override("panel", UiStyle.main_box())
 	_main.resized.connect(func():
 		column.update_minimum_size()
-		column.queue_sort())
+		column.queue_sort()
+		if _banner != null and _banner.visible:
+			_place_banner.call_deferred())
 	column.add_child(_main)
 
 	var main_margin := MarginContainer.new()
@@ -543,13 +639,40 @@ func _build_layout() -> void:
 	main_column.add_theme_constant_override("separation", 10)
 	main_margin.add_child(main_column)
 
-	# 무대: 가운데 서 있는 인물
-	_stage = CenterContainer.new()
+	# 제목: 사건 이름(진한 띠 모양 칸) + 그 아래 작은 안내
+	_heading_box = PanelContainer.new()
+	_heading_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_heading_box.add_theme_stylebox_override("panel", UiStyle.title_box())
+	main_column.add_child(_heading_box)
+	_heading_label = Label.new()
+	_heading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_heading_label.add_theme_font_size_override("font_size", 24)
+	_heading_label.add_theme_color_override("font_color", UiStyle.TITLE_TEXT)
+	_heading_box.add_child(_heading_label)
+
+	_subheading_label = Label.new()
+	_subheading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_subheading_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_subheading_label.add_theme_font_size_override("font_size", 16)
+	_subheading_label.add_theme_color_override("font_color", UiStyle.TEXT_SOFT)
+	main_column.add_child(_subheading_label)
+
+	# 무대: 평소에는 가운데 인물 한 명, 선택할 때는 왼쪽·오른쪽 지지자 두 명
+	_stage = HBoxContainer.new()
 	_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_stage.alignment = BoxContainer.ALIGNMENT_CENTER
+	_stage.add_theme_constant_override("separation", STAGE_PAIR_GAP)
 	main_column.add_child(_stage)
-	_stage_portrait = PortraitView.new()
-	_stage_portrait.custom_minimum_size = STAGE_PORTRAIT
-	_stage.add_child(_stage_portrait)
+	for side in ["left", "center", "right"]:
+		var portrait = PortraitView.new()
+		portrait.custom_minimum_size = STAGE_PORTRAIT
+		portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		portrait.visible = false
+		_stage.add_child(portrait)
+		if side == "center":
+			_stage_portrait = portrait
+		else:
+			_stage_sides[side] = portrait
 
 	# 대화창: 둥근 직사각형. 이름표 + 대사 + 작은 글
 	var box := PanelContainer.new()
@@ -580,6 +703,10 @@ func _build_layout() -> void:
 	_sub_label.add_theme_color_override("font_color", UiStyle.TEXT_SOFT)
 	box_column.add_child(_sub_label)
 
+	var guide_gap := Control.new()
+	guide_gap.custom_minimum_size = Vector2(0, 12)
+	column.add_child(guide_gap)
+
 	var guide_panel := PanelContainer.new()
 	guide_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	column.add_child(guide_panel)
@@ -587,6 +714,15 @@ func _build_layout() -> void:
 	_guide_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_guide_label.add_theme_color_override("font_color", UiStyle.TEXT_SOFT)
 	guide_panel.add_child(_guide_label)
+
+	# 선택 안내 그림: 메인 창보다 나중에 추가해서 메인 창 위 테두리에 겹쳐 그려지게 한다. 그림이 없으면 안 뜬다.
+	_banner = TextureRect.new()
+	_banner.texture = AssetLibrary.texture("ui/choice")
+	_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_banner.visible = false
+	add_child(_banner)
 
 
 ## 인물 카드 한 장 (고정 크기). 위: 인물 그림 칸 / 아래: 글 칸(따로 바탕을 깔아 그림과 겹치지 않게).

@@ -18,6 +18,11 @@ const BEIGE_BORDER := Color("c4a97a")
 const DIALOGUE_BG := Color("fffaf0")   # 대화창 바탕
 const NAME_TAG_BG := Color("8a6a43")   # 이름표 바탕
 const NAME_TAG_TEXT := Color("fff6e6")
+const HEADING_TEXT := Color("5a4126")   # 메인 창 위쪽 제목
+const TITLE_TEXT := Color("fff3d6")     # 제목 칸 안의 글자
+const PORTRAIT_RADIUS := 18             # 초상화 모서리 둥글기
+const PORTRAIT_BORDER := Color("8a6a43")
+const PORTRAIT_BORDER_WIDTH := 4
 
 
 static func make_theme() -> Theme:
@@ -87,6 +92,33 @@ static func name_tag_box() -> StyleBoxFlat:
 	box.content_margin_right = 12
 	box.content_margin_top = 3
 	box.content_margin_bottom = 4
+	return box
+
+
+## 메인 창 위쪽 사건 제목 칸 (진한 나무색 띠 + 밝은 글자)
+static func title_box() -> StyleBoxFlat:
+	var box := _flat(NAME_TAG_BG, 14, HEADING_TEXT)
+	box.set_border_width_all(3)
+	box.content_margin_left = 30
+	box.content_margin_right = 30
+	box.content_margin_top = 6
+	box.content_margin_bottom = 8
+	box.shadow_color = Color(0, 0, 0, 0.15)
+	box.shadow_size = 3
+	box.shadow_offset = Vector2(0, 2)
+	return box
+
+
+## 초상화 모양(둥근 모서리). 그림은 이 모양 안쪽만 보인다.
+static func portrait_mask() -> StyleBoxFlat:
+	return _flat(DIALOGUE_BG, PORTRAIT_RADIUS)
+
+
+## 초상화 테두리 (그림 위에 겹쳐 그린다)
+static func portrait_frame() -> StyleBoxFlat:
+	var box := _flat(Color.TRANSPARENT, PORTRAIT_RADIUS, PORTRAIT_BORDER)
+	box.draw_center = false
+	box.set_border_width_all(PORTRAIT_BORDER_WIDTH)
 	return box
 
 

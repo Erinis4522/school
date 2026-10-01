@@ -73,9 +73,29 @@ backgrounds/layers/<레이어 id>_1.png, _2.png …   (선택) 프레임 애니�
 ui/icons/residents.png  ui/icons/finance.png  ui/icons/environment.png  ui/icons/safety.png   상태 아이콘
 ui/arrow_up.png  ui/arrow_down.png    오름/내림 화살표
 ui/card_frame.png                     카드 틀 (9분할로 늘려 씀. 바깥 6픽셀은 늘어나지 않음)
+ui/choice.png                         선택할 때 메인 창 위에 뜨는 "당신의 선택은?" 안내 그림 (지금: 실제 그림, 투명 배경)
 ```
 
+- `choice.png`는 폭 400픽셀로 줄여 메인 창 위 테두리에 살짝 겹쳐 보여 줍니다. 크기·겹침 정도는 `scripts/game/game_screen.gd`의 `BANNER_WIDTH`, `BANNER_OVERLAP`. 그림이 없으면 안 뜹니다.
+- 초상화의 둥근 모서리와 테두리(둥글기·색·굵기)는 `ui_style.gd`의 `PORTRAIT_RADIUS`, `PORTRAIT_BORDER`, `PORTRAIT_BORDER_WIDTH`.
+
 색·글자 크기 같은 나머지 화면 스타일은 `scripts/game/ui_style.gd` 한 곳에 모여 있습니다.
+
+## 소리
+
+```
+audio/bgm/village_theme.ogg     배경음 (반복 재생)
+audio/sfx/button.ogg            버튼 누를 때 (타이틀, 다시 시작)
+audio/sfx/advance.ogg           대사·결과를 넘길 때
+audio/sfx/card_out.ogg          인물 카드가 펼쳐질 때
+audio/sfx/card_select.ogg       선택을 결정할 때
+```
+
+- 형식: `.ogg` `.wav` `.mp3` (같은 이름이 여러 개면 ogg → wav → mp3 순서). 배경음은 **ogg** 권장 (자동으로 반복 재생됨)
+- 지금은 코드로 합성한 임시 소리(`placeholders/audio/`)가 나옵니다. 다시 만들려면 `tools/make_sounds.gd`
+- 상황별로 어떤 파일을 쓸지, 배경음·효과음 크기는 `data/audio/audio.json`에서 정합니다.
+  예: 타이틀과 게임 배경음을 다르게 하려면 `"bgm": {"title": "title_theme", "game": "village_theme"}` 로 바꾸고 `audio/bgm/title_theme.ogg`를 넣습니다.
+- 압축된 wav를 배경음으로 쓰면 Godot 가져오기(Import) 설정에서 Loop Mode를 Forward로 바꿔야 반복됩니다. (ogg는 신경 쓰지 않아도 됨)
 
 ## 엔딩 그림 (선택)
 

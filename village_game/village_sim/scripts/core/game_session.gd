@@ -249,11 +249,12 @@ func _queue_event_talk(event: Dictionary) -> void:
 		return
 	var shown: Dictionary = _pending_event
 	var topic := _dialogue(String(event["npc"]), String(event["npc_expression"]), shown["description"], "topic")
-	topic["name"] = shown["title"]   # 대화창 이름표 자리에 사건 제목
+	topic["event_title"] = shown["title"]   # 화면 위쪽 제목
 	_dialogue_queue.append(topic)
 	for side in SIDES:
 		var line := _dialogue(debate[side]["npc"], "neutral", debate[side]["line"], "argument")
 		line["side"] = side
+		line["event_title"] = shown["title"]
 		_dialogue_queue.append(line)
 
 
@@ -311,11 +312,12 @@ func _for_display(event: Dictionary) -> Dictionary:
 
 
 ## 선택지 미리 보기(인물 카드)용: {"npc": 그 선택지를 지지하는 인물, "expression": 카드 표정, "text": 선택지 문구}
-## 찬반 대화가 있는 사건은 각 쪽 지지자가 담담한 얼굴(neutral)로 나온다.
+## 찬반 대화가 있는 사건은 각 쪽 지지자가 밝은 얼굴(happy)로 나온다.
 func get_side_preview(side: String) -> Dictionary:
 	var choice: Dictionary = current_event[side + "_choice"]
 	var npc := _npc_for(current_event, side)
-	var expression := "neutral" if not _debate_for(current_event).is_empty() \
+	# 찬반 지지자는 자기 의견을 내미는 쪽이라 밝은 표정(happy → 그림은 delight)
+	var expression := "happy" if not _debate_for(current_event).is_empty() \
 		else _expression_for(npc, choice, Effects.preview_levels(choice, config))
 	return {"npc": npc, "expression": expression, "text": choice["text"]}
 

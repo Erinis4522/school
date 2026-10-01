@@ -10,6 +10,7 @@ extends RefCounted
 const ROOT := "res://village_sim/assets/"
 const PLACEHOLDER_ROOT := "res://village_sim/assets/placeholders/"
 const EXTENSIONS: Array[String] = ["png", "webp", "jpg", "svg"]
+const AUDIO_EXTENSIONS: Array[String] = ["ogg", "wav", "mp3"]
 const DEFAULT_EXPRESSION := "neutral"
 ## 게임 속 표정 → 그 표정 그림이 없을 때 대신 찾을 그림 표정 (앞쪽부터)
 const EXPRESSION_ALIASES := {
@@ -88,6 +89,18 @@ static func frames(relative: String) -> Array[Texture2D]:
 			return result
 	var none: Array[Texture2D] = []
 	return none
+
+
+## 소리. 실제 소리(assets/audio/...) → 임시 소리(assets/placeholders/audio/...) 순서. 없으면 null.
+static func audio(relative: String) -> AudioStream:
+	for root in [ROOT, PLACEHOLDER_ROOT]:
+		for extension in AUDIO_EXTENSIONS:
+			var path := "%saudio/%s.%s" % [root, relative, extension]
+			if ResourceLoader.exists(path):
+				var stream := load(path) as AudioStream
+				if stream != null:
+					return stream
+	return null
 
 
 ## 실제 그림만 찾는다. (임시 그림은 쓰지 않음) 없으면 null.
