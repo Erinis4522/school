@@ -39,6 +39,15 @@ village_sim/
 받는 사람은 설치 없이 더블클릭으로 실행한다. (서명하지 않은 파일이라 처음에 Windows 경고가 뜨면 "추가 정보 → 실행")
 Godot은 `coding/tools/godot/`의 휴대용 버전을 쓰며, 내보내기 템플릿도 그 폴더 안에 있다.
 
+## 웹 버전 올리기
+
+`village_game/publish_web.ps1`을 실행하면 데이터를 검사한 뒤 웹 버전을 만들어 `gh-pages` 브랜치에 올린다.
+몇 분 뒤 https://erinis4522.github.io/school/ 에 반영된다. (만들기만 하려면 `-NoPublish`)
+
+- 웹 버전은 서버 설정이 필요 없는 "스레드 미사용" 방식으로 내보낸다. (GitHub Pages에서 그대로 동작)
+- 브라우저는 컴퓨터에 깔린 글꼴을 쓸 수 없어서, 한글 글꼴(`assets/fonts/NotoSansKR-Regular.otf`, OFL 라이선스)을 게임에 넣어 두었다. exe도 같은 글꼴을 쓴다.
+- 처음 접속하면 약 40MB를 받으므로 몇 초 걸린다. 그다음부터는 브라우저에 저장되어 빨라진다.
+
 ## 도구
 
 프로젝트 폴더(`project.godot`가 있는 곳)에서 실행한다. `godot`은 `../tools/godot/Godot_v4.7.2-stable_win64_console.exe`로 바꾼다.

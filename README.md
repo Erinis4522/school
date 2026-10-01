@@ -8,8 +8,9 @@
 
 ## 플레이
 
-Releases에서 `마을운영.exe`를 받아 더블클릭합니다. 설치할 필요가 없습니다.
-(서명하지 않은 파일이라 처음에 Windows 경고가 뜨면 "추가 정보 → 실행")
+- **웹에서 바로**: https://erinis4522.github.io/school/ (크롬·엣지 권장, 설치 필요 없음)
+- **Windows 프로그램**: Releases에서 `마을운영.exe`를 받아 더블클릭합니다. 설치할 필요가 없습니다.
+  (서명하지 않은 파일이라 처음에 Windows 경고가 뜨면 "추가 정보 → 실행")
 
 ## 문서
 
@@ -25,6 +26,7 @@ Releases에서 `마을운영.exe`를 받아 더블클릭합니다. 설치할 필
 2. 같은 폴더에 빈 파일 `._sc_`를 만듭니다. (Godot 설정을 이 폴더 안에만 저장)
 3. exe를 만들려면 Godot 편집기에서 "편집기 → 내보내기 템플릿 관리"로 템플릿을 설치합니다.
 4. `village_game/build_exe.ps1`을 실행하면 `build/마을운영.exe`가 만들어집니다.
+5. `village_game/publish_web.ps1`을 실행하면 웹 버전을 만들어 GitHub Pages(gh-pages 브랜치)에 올립니다.
 
 ```
 coding/
