@@ -88,7 +88,8 @@ func load_all(data_dir: String = "") -> Dictionary:
 			var entry := {"source": path}
 			for side in ["left", "right"]:
 				var part: Dictionary = raw.get(side, {}) if raw.get(side, {}) is Dictionary else {}
-				entry[side] = {"npc": String(part.get("npc", "")), "line": String(part.get("line", ""))}
+				# outlook: 그쪽 카드가 펼쳐질 때 그 인물이 "이걸 고르면 마을이 어떻게 될지" 내다보는 한마디
+				entry[side] = {"npc": String(part.get("npc", "")), "line": String(part.get("line", "")), "outlook": String(part.get("outlook", ""))}
 			debates[String(raw.get("event", ""))] = entry
 
 	var story: Variant = _read_json(data_dir.path_join(STORY_FILE))
@@ -203,6 +204,8 @@ func _normalize_config(raw: Variant) -> Dictionary:
 			"default_weight": float(selection.get("default_weight", 10)),
 			"recent_tag_window": int(selection.get("recent_tag_window", 2)),
 			"recent_tag_weight": float(selection.get("recent_tag_weight", 0.3)),
+			"crisis_tag": String(selection.get("crisis_tag", "crisis")),   # 위기(구제) 사건 표시 태그
+			"crisis_limit": int(selection.get("crisis_limit", -1)),         # 한 판에 위기 사건이 나올 수 있는 최대 횟수 (-1: 제한 없음)
 		},
 		"default_priority": source.get("default_priority", {"state": 30, "delayed": 50}),
 		"effect_scale": source.get("effect_scale", {}),

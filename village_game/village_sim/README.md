@@ -126,6 +126,7 @@ Godot은 `coding/tools/godot/`의 휴대용 버전을 쓰며, 내보내기 템�
 | 상태 초기값 | `game_config.json` → `stats[].initial` |
 | 한 상태의 증감을 한꺼번에 키우거나 줄이기 | `game_config.json` → `effect_scale` (예: 재정 감소를 20% 줄이려면 `"finance": {"gain": 1.0, "loss": 0.8}`) |
 | 비슷한 주제 연속 등장 억제 | `game_config.json` → `selection.recent_tag_window`, `recent_tag_weight` |
+| 위기(구제) 사건이 한 판에 나오는 최대 횟수 | `game_config.json` → `selection.crisis_limit` (지금 1, 제한 없애려면 -1). 위기 사건은 태그 `crisis` |
 | 사건이 어느 막에 나올지 | 사건의 `phases` |
 | 사건이 자주/드물게 나오게 | 사건의 `weight` (기본 10, 결과가 돌아오는 "씨앗" 사건은 18) |
 | 조건부 사건끼리 순서 | 사건의 `priority` (위기 100, 지연 50, 턴 40, 정책 누적 30) |

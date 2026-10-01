@@ -21,7 +21,9 @@
 	"selection": {
 		"default_weight": 10,
 		"recent_tag_window": 2,
-		"recent_tag_weight": 0.3
+		"recent_tag_weight": 0.3,
+		"crisis_tag": "crisis",
+		"crisis_limit": 1
 	},
 
 	"default_priority": {

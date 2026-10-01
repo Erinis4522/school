@@ -24,6 +24,7 @@ const TextUtil = preload("res://village_sim/scripts/game/text_util.gd")
 const AssetLibrary = preload("res://village_sim/scripts/game/asset_library.gd")
 const UiStyle = preload("res://village_sim/scripts/game/ui_style.gd")
 const PortraitView = preload("res://village_sim/scripts/game/portrait_view.gd")
+const PencilCircle = preload("res://village_sim/scripts/game/pencil_circle.gd")
 
 const SIDES: Array[String] = ["left", "right"]
 const AUDIO_GROUP := "village_audio"   # audio_player.gd 의 GROUP
@@ -33,8 +34,10 @@ const STAGE_PAIR_GAP := 110                   # 선택 때 좌우 두 인물 사
 const BANNER_WIDTH := 400.0                   # 선택 안내 그림(assets/ui/choice) 폭. 높이는 그림 비율대로
 const BANNER_OVERLAP := 14.0                  # 선택 안내 그림이 메인 창 위 테두리를 덮는 정도
 const BANNER_SPACE := 80                      # 선택 안내 그림이 들어갈 자리 (메인 창 위 빈칸)
-const PERSON_CARD_SIZE := Vector2(300, 430)   # 인물 카드 (고정 크기)
-const PERSON_PORTRAIT_HEIGHT := 220
+const STAGE_PAIR_PORTRAIT := Vector2(220, 226) # 선택 때 좌우 지지자 (아래에 예상 변화가 붙는다)
+const PERSON_CARD_SIZE := Vector2(300, 470)   # 인물 카드 (고정 크기)
+const PERSON_PORTRAIT_HEIGHT := 200
+const CIRCLE_DELAY := 0.18                    # 카드가 펼쳐지기 시작하고 빨간 동그라미를 긋기까지
 const PERSON_HIDDEN_MARGIN := 70              # 인물 카드가 메인 창 뒤에 가려지는 안쪽 폭
 const FAN_OFFSET := 410.0                     # 펼쳐졌을 때 메인 창 중심에서 옆으로 나오는 거리
 const FAN_DROP := 40.0                        # 펼쳐졌을 때 아래로 내려오는 거리
@@ -58,7 +61,7 @@ var _preview_side := ""
 var _input_ready_at := 0
 var _stat_names: Dictionary = {}   # stat_id -> 화면 이름
 var _stat_views: Dictionary = {}   # stat_id -> {"row", "icon", "bar", "marker"}
-var _side_cards: Dictionary = {}   # "left" / "right" -> {"card", "portrait", "name", "choice", "effects", "tween"}
+var _side_cards: Dictionary = {}   # "left" / "right" -> {"card", "render", "portrait", "name", "choice", "outlook", "circle", "tween"}
 var _shown_npc := ""
 
 var _stats_box: VBoxContainer
@@ -67,6 +70,8 @@ var _main: PanelContainer
 var _stage: HBoxContainer
 var _stage_portrait                 # PortraitView (가운데 한 명)
 var _stage_sides: Dictionary = {}   # "left" / "right" -> PortraitView (선택 때 좌우 지지자)
+var _stage_holders: Dictionary = {} # "left" / "right" -> 초상화 + 예상 변화 묶음
+var _stage_chips: Dictionary = {}   # "left" / "right" -> 예상 변화 (아이콘 + 화살표)
 var _banner: TextureRect            # 선택할 때 메인 창 위에 뜨는 안내 그림
 var _banner_tween: Tween
 var _heading_box: PanelContainer    # 사건 제목 칸
@@ -277,7 +282,7 @@ func _on_stats_changed(ratios: Dictionary) -> void:
 ## 가운데 인물. 다른 인물이면 아래에서 슥 올라오고, 같은 인물이면 표정만 바꾼다(react면 흔들림). 인물이 없으면 숨긴다.
 func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
 	for side in SIDES:
-		_stage_sides[side].visible = false
+		_stage_holders[side].visible = false
 	var npc_id := String(npc.get("id", ""))
 	var shown: bool = _stage_portrait.set_character(npc_id, expression) if not npc_id.is_empty() else false
 	_stage_portrait.visible = shown
@@ -294,6 +299,7 @@ func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
 
 ## 선택할 때: 가운데 인물 대신 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자. (담담한 neutral 얼굴)
 ## 밝은 얼굴(delight)은 그쪽을 눌러 옆으로 펼쳐지는 인물 카드에서만 쓴다.
+## 각 초상화 아래에는 그 선택지를 고르면 달라질 상태(아이콘 + 화살표)를 보여 준다.
 ## 그림이 없는 쪽은 빈자리로 둔다(반대쪽 인물이 가운데로 쏠리지 않게).
 func _show_pair() -> void:
 	_stage_portrait.visible = false
@@ -303,7 +309,8 @@ func _show_pair() -> void:
 		var view = _stage_sides[side]
 		var preview: Dictionary = _session.get_side_preview(side)
 		var found: bool = view.set_character(String(preview["npc"].get("id", "")), "neutral")
-		view.visible = true
+		_stage_holders[side].visible = true
+		_fill_effect_chips(_stage_chips[side], _hints.get(side, {}))
 		view.modulate.a = 1.0 if found else 0.0
 		if found:
 			view.play_enter()
@@ -365,7 +372,8 @@ func _npc_name(npc: Dictionary) -> String:
 
 # --- 인물 카드 -------------------------------------------------------------------
 
-## 인물 카드 내용: 그쪽 지지자, 이름, 선택지 문구, 예상 변화
+## 인물 카드 내용: 그쪽 지지자(밝은 얼굴), 이름, 선택지 문구, 이걸 고르면 마을이 어떻게 될지 내다보는 한마디
+## (예상 변화 아이콘은 메인 창의 초상화 아래에 있다)
 func _fill_side_card(side: String) -> void:
 	var view: Dictionary = _side_cards[side]
 	var preview: Dictionary = _session.get_side_preview(side)
@@ -373,7 +381,9 @@ func _fill_side_card(side: String) -> void:
 	view["portrait"].visible = view["portrait"].set_character(String(npc.get("id", "")), preview["expression"])
 	view["name"].text = _npc_name(npc)
 	view["choice"].text = TextUtil.keep_words(preview["text"])
-	_fill_effect_chips(view["effects"], _hints.get(side, {}))
+	var outlook := String(preview.get("outlook", ""))
+	view["outlook"].text = TextUtil.keep_words("“%s”" % outlook) if not outlook.is_empty() else ""
+	view["outlook"].get_parent().visible = not outlook.is_empty()
 
 
 ## 인물 카드가 메인 창 뒤에 숨어 있을 때의 위치 (메인 창 중심에 겹침)
@@ -396,6 +406,7 @@ func _fan_out(side: String) -> void:
 	var tween := _restart_tween(view)
 	tween.tween_property(card, "position", target, FAN_SECONDS).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "rotation_degrees", FAN_DEGREES * direction, FAN_SECONDS).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	view["circle"].play(CIRCLE_DELAY)   # 대사창에 빨간 색연필 동그라미
 
 
 ## 메인 창 뒤로 다시 들어간다.
@@ -409,6 +420,7 @@ func _retract(side: String) -> void:
 	tween.tween_property(card, "rotation_degrees", 0.0, 0.18)
 	tween.chain().tween_callback(func():
 		card.visible = false
+		view["circle"].clear()
 		view["render"].render_target_update_mode = SubViewport.UPDATE_DISABLED)
 
 
@@ -670,14 +682,29 @@ func _build_layout() -> void:
 	main_column.add_child(_stage)
 	for side in ["left", "center", "right"]:
 		var portrait = PortraitView.new()
-		portrait.custom_minimum_size = STAGE_PORTRAIT
 		portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		portrait.visible = false
-		_stage.add_child(portrait)
 		if side == "center":
+			portrait.custom_minimum_size = STAGE_PORTRAIT
+			portrait.visible = false
+			_stage.add_child(portrait)
 			_stage_portrait = portrait
-		else:
-			_stage_sides[side] = portrait
+			continue
+		# 좌우 지지자: 초상화 아래에 그 선택지를 고르면 달라질 상태(아이콘 + 화살표)
+		var holder := VBoxContainer.new()
+		holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		holder.add_theme_constant_override("separation", 6)
+		holder.visible = false
+		_stage.add_child(holder)
+		portrait.custom_minimum_size = STAGE_PAIR_PORTRAIT
+		holder.add_child(portrait)
+		var chips := HFlowContainer.new()
+		chips.alignment = FlowContainer.ALIGNMENT_CENTER
+		chips.custom_minimum_size = Vector2(STAGE_PAIR_PORTRAIT.x, 26)
+		chips.add_theme_constant_override("h_separation", 10)
+		holder.add_child(chips)
+		_stage_sides[side] = portrait
+		_stage_holders[side] = holder
+		_stage_chips[side] = chips
 
 	# 대화창: 둥근 직사각형. 이름표 + 대사 + 작은 글
 	var box := PanelContainer.new()
@@ -784,32 +811,35 @@ func _make_side_card(side: String) -> Dictionary:
 	portrait.custom_minimum_size = Vector2(0, PERSON_PORTRAIT_HEIGHT)
 	column.add_child(portrait)
 
-	var text_panel := PanelContainer.new()
-	text_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	text_panel.add_theme_stylebox_override("panel", UiStyle.dialogue_box())
-	column.add_child(text_panel)
-
-	var text_column := VBoxContainer.new()
-	text_column.alignment = BoxContainer.ALIGNMENT_CENTER
-	text_column.add_theme_constant_override("separation", 6)
-	text_panel.add_child(text_column)
-
+	# 초상화 아래: 이름 · 선택지 문구
 	var name_label := Label.new()
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.add_theme_color_override("font_color", UiStyle.TEXT_SOFT)
 	name_label.add_theme_font_size_override("font_size", 15)
-	text_column.add_child(name_label)
+	column.add_child(name_label)
 
 	var choice_label := Label.new()
 	choice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	choice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	choice_label.add_theme_font_size_override("font_size", 19)
-	text_column.add_child(choice_label)
+	choice_label.add_theme_color_override("font_color", UiStyle.HEADING_TEXT)
+	column.add_child(choice_label)
 
-	var effects := HFlowContainer.new()
-	effects.alignment = FlowContainer.ALIGNMENT_CENTER
-	effects.add_theme_constant_override("h_separation", 10)
-	text_column.add_child(effects)
+	# 대사창: 이 선택지를 고르면 마을이 어떻게 될지 내다보는 인물의 한마디 + 빨간 동그라미
+	var text_panel := PanelContainer.new()
+	text_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	text_panel.add_theme_stylebox_override("panel", UiStyle.dialogue_box())
+	column.add_child(text_panel)
+
+	var outlook_label := Label.new()
+	outlook_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	outlook_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	outlook_label.add_theme_font_size_override("font_size", 15)
+	text_panel.add_child(outlook_label)
+
+	var circle := PencilCircle.new()
+	circle.mirrored = side == "left"   # 왼쪽 카드는 오른쪽이 메인 창에 가려지므로, 꼬리가 보이는 쪽(왼쪽)에서 겹치게
+	text_panel.add_child(circle)   # 대사창과 같은 칸에 겹쳐 그 위에 그린다
 
 	return {
 		"card": card,
@@ -817,7 +847,8 @@ func _make_side_card(side: String) -> Dictionary:
 		"portrait": portrait,
 		"name": name_label,
 		"choice": choice_label,
-		"effects": effects,
+		"outlook": outlook_label,
+		"circle": circle,
 		"tween": null,
 	}
 

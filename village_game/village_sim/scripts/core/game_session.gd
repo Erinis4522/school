@@ -320,7 +320,8 @@ func get_side_preview(side: String) -> Dictionary:
 	# 찬반 지지자는 자기 의견을 내미는 쪽이라 밝은 표정(happy → 그림은 delight)
 	var expression := "happy" if not _debate_for(current_event).is_empty() \
 		else _expression_for(npc, choice, Effects.preview_levels(choice, config))
-	return {"npc": npc, "expression": expression, "text": choice["text"]}
+	var outlook := String(_debate_for(current_event).get(side, {}).get("outlook", ""))
+	return {"npc": npc, "expression": expression, "text": choice["text"], "outlook": outlook}
 
 
 ## 그 선택지의 인물: 선택지의 npc → 대화(data/dialogue/)의 그쪽 지지자 → 사건의 인물 순서.

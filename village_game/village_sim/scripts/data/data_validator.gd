@@ -76,6 +76,8 @@ static func validate(data: Dictionary) -> Dictionary:
 				report["errors"].append("%s: %s 인물 '%s'가 없습니다." % [where, side, npc_id])
 			if String(debate[side]["line"]).is_empty():
 				report["warnings"].append("%s: %s 대사가 비어 있습니다." % [where, side])
+			if String(debate[side]["outlook"]).is_empty():
+				report["warnings"].append("%s: %s 전망 대사(outlook)가 비어 있습니다. 인물 카드에 대사가 나오지 않습니다." % [where, side])
 		if debate["left"]["npc"] == debate["right"]["npc"]:
 			report["warnings"].append("%s: 왼쪽과 오른쪽 인물이 같습니다. 찬반 구도가 되려면 서로 달라야 합니다." % where)
 	var without_debate: Array = []

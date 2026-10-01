@@ -10,6 +10,7 @@ extends RefCounted
 ##      최근에 나온 사건과 태그가 겹치면 weight를 낮춰 비슷한 주제가 연달아 나오지 않게 한다.
 ##      현재 막의 일반 사건이 바닥나면 다른 막의 일반 사건을 쓴다.
 ##   모든 사건은 한 판에 한 번만 나온다.
+##   위기(구제) 사건(태그 crisis_tag)은 한 판에 crisis_limit번까지만 나온다. 상태가 바닥날 때마다 구해 주지는 않는다.
 
 const Conditions = preload("res://village_sim/scripts/core/condition_evaluator.gd")
 
@@ -18,6 +19,8 @@ var _conditional: Array = []
 var _final: Array = []
 var _recent_tag_window: int
 var _recent_tag_weight: float
+var _crisis_tag: String
+var _crisis_limit: int
 
 
 func _init(events: Array, selection_config: Dictionary) -> void:
@@ -31,6 +34,8 @@ func _init(events: Array, selection_config: Dictionary) -> void:
 				_conditional.append(event)
 	_recent_tag_window = int(selection_config["recent_tag_window"])
 	_recent_tag_weight = float(selection_config["recent_tag_weight"])
+	_crisis_tag = String(selection_config.get("crisis_tag", "crisis"))
+	_crisis_limit = int(selection_config.get("crisis_limit", -1))
 
 
 ## act: 설정의 막 정보 {"id", "name", "from", "to", "follow_up_chance"}
@@ -47,12 +52,24 @@ func pick_next(state, rng: RandomNumberGenerator, act: Dictionary, is_final_turn
 
 func pick_conditional(state, rng: RandomNumberGenerator, act: Dictionary) -> Dictionary:
 	var allow_delayed := rng.randf() < float(act.get("follow_up_chance", 1.0))
+	var allow_crisis := _crisis_limit < 0 or _crisis_count(state) < _crisis_limit
 	var candidates: Array = []
 	for event in _conditional:
 		if event["category"] == "delayed" and not allow_delayed:
 			continue
+		if not allow_crisis and _crisis_tag in event["tags"]:
+			continue
 		candidates.append(event)
 	return _pick_top_priority(candidates, state, rng)
+
+
+## 이번 판에 이미 나온 위기(구제) 사건 수
+func _crisis_count(state) -> int:
+	var count := 0
+	for event in _conditional:
+		if _crisis_tag in event["tags"] and state.seen_events.has(event["id"]):
+			count += 1
+	return count
 
 
 func pick_general(state, rng: RandomNumberGenerator, act: Dictionary) -> Dictionary:
