@@ -44,6 +44,9 @@ if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $webDir "index.html"))) {
     Write-Host "웹 버전을 만들지 못했습니다." -ForegroundColor Red
     exit 1
 }
+# 링크 미리보기(오픈그래프) 이미지: web/og.jpg 를 함께 넣는다. (다시 만들기: village_sim/tools/make_og_image.gd)
+$ogImage = Join-Path $project "web\og.jpg"
+if (Test-Path $ogImage) { Copy-Item $ogImage $webDir }
 Write-Host "완료: $webDir" -ForegroundColor Green
 
 if ($NoPublish) { exit 0 }
