@@ -1,18 +1,27 @@
 [
 	{
 		"id": "factory_offer",
+		"weight": 18,
+		"npc": "bruno",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "새로운 공장",
 		"description": "한 기업이 마을 외곽에 큰 공장을 짓고 싶다고 제안했습니다.",
 		"left_choice": {
 			"text": "허가하지 않는다",
+			"reaction": "공장 하나가 마을을 살릴 수 있었는데… 아쉽군요.",
+			"reaction_expression": "angry",
+			"memory": "공장 유치를 거절함",
 			"result": "마을 외곽은 조용한 들판으로 남았습니다. 일자리를 기대하던 사람들이 이 결정을 어떻게 받아들일지는 두고 봐야 합니다.",
 			"effects": { "finance": -4, "residents": -3 },
-			"set_flags": [{ "flag": "factory_refused", "chance": 0.6 }]
+			"set_flags": ["factory_declined", { "flag": "factory_refused", "chance": 0.6 }]
 		},
 		"right_choice": {
 			"text": "공장 건설을 허가한다",
+			"reaction": "탁월한 선택입니다! 마을이 크게 달라질 겁니다.",
+			"reaction_expression": "happy",
+			"memory": "공장 건설을 허가함",
 			"result": "공장이 들어서고 세금과 일자리가 생겼습니다. 굴뚝에서 피어오르는 연기가 앞으로 마을에 무엇을 가져올지는 아직 모릅니다.",
 			"effects": { "finance": 12, "environment": -10, "residents": 4 },
 			"set_flags": ["factory_built"]
@@ -20,24 +29,37 @@
 	},
 	{
 		"id": "mall_offer",
+		"weight": 18,
+		"npc": "bruno",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "대형마트 입점",
 		"description": "대형마트가 마을 입구에 들어오고 싶어 합니다. 전통시장 상인들은 걱정이 큽니다.",
 		"left_choice": {
 			"text": "허가한다",
+			"memory": "대형마트 입점을 허가함",
 			"result": "마트가 문을 열자 주민들이 편하게 장을 봅니다. 시장 상인들은 한숨을 쉬며 앞날을 걱정합니다.",
-			"effects": { "finance": 9, "residents": 4, "environment": -3 },
+			"effects": { "finance": 9, "residents": 4 },
 			"set_flags": ["mall_built"]
 		},
 		"right_choice": {
 			"text": "거절하고 전통시장을 지원한다",
+			"reaction": "흠, 전통시장이라… 시대가 바뀌고 있는데 말이죠.",
+			"reaction_expression": "worried",
+			"memory": "대형마트를 막고 전통시장을 지원함",
 			"result": "시장에 새 지붕과 주차장이 생겼습니다. 상인들은 반기지만, 마트를 원하던 주민도 적지 않았습니다.",
-			"effects": { "finance": -6, "residents": 2 }
+			"effects": { "finance": -6, "residents": 2 },
+			"set_flags": ["mall_declined"]
 		}
 	},
 	{
 		"id": "local_food",
+		"npc": "rio",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "wetland_filled" }], "text": "\"습지를 메워 만든 땅에서 첫 수확을 했습니다. 이제 우리가 기른 농산물을 직접 팔 곳이 필요해요.\"" }
+		],
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "로컬푸드 직매장",
@@ -55,6 +77,11 @@
 	},
 	{
 		"id": "smart_farm",
+		"npc": "bruno",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "factory_built" }], "text": "\"공장에 이어 이번엔 농업입니다. 농지를 빌려 큰 온실 단지를 짓게 해 주십시오.\" 작은 농가들은 설 자리를 잃을까 걱정합니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "대형 스마트팜",
@@ -72,12 +99,16 @@
 	},
 	{
 		"id": "youth_startup",
+		"weight": 18,
+		"npc": "cherry",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "빈 상가",
 		"description": "상가 곳곳이 비어 가고 있습니다. 청년 가게를 들여 활기를 되찾자는 제안이 나왔습니다.",
 		"left_choice": {
 			"text": "청년 가게 월세를 지원한다",
+			"memory": "청년 가게를 지원함",
 			"result": "빈 상가에 청년들의 작은 가게들이 문을 열었습니다. 이 가게들이 앞으로 어떻게 될지는 아직 아무도 모릅니다.",
 			"effects": { "finance": -7, "residents": 4 },
 			"set_flags": ["startup_supported"]
@@ -90,12 +121,19 @@
 	},
 	{
 		"id": "delivery_hub",
+		"npc": "bruno",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "tunnel_built" }], "text": "\"터널이 뚫렸으니 이제 이 마을이 물류의 길목입니다. 큰 물류센터를 짓게 해 주십시오.\" 큰 트럭이 자주 다니게 됩니다." },
+			{ "conditions": [{ "type": "flag", "flag": "road_widened" }], "text": "\"넓어진 도로라면 큰 트럭도 문제없습니다. 물류센터를 지을 때가 됐습니다.\" 트럭이 마을을 자주 오가게 됩니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "물류센터",
 		"description": "택배 회사가 마을에 큰 물류센터를 짓겠다고 제안했습니다. 큰 트럭이 자주 다니게 됩니다.",
 		"left_choice": {
 			"text": "유치한다",
+			"memory": "물류센터를 유치함",
 			"result": "물류센터가 세금을 내고 일자리도 생겼습니다. 커다란 트럭이 마을 길을 오가며 매연과 위험이 늘었습니다.",
 			"effects": { "finance": 10, "safety": -5, "environment": -4 }
 		},
@@ -107,36 +145,56 @@
 	},
 	{
 		"id": "quarry",
+		"weight": 18,
+		"npc": "bruno",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "채석장 재가동",
 		"description": "문을 닫았던 채석장을 다시 열자는 요청이 들어왔습니다. 일자리가 생기지만 먼지와 소음이 걱정됩니다.",
 		"left_choice": {
 			"text": "다시 여는 것을 허가한다",
+			"reaction": "기계 소리가 다시 울리겠군요. 감사합니다!",
+			"reaction_expression": "happy",
+			"memory": "채석장 재가동을 허가함",
 			"result": "채석장에 다시 기계 소리가 울리고 일자리가 생겼습니다. 산이 깎여 나갈수록 어떤 일이 생길지는 두고 봐야 합니다.",
 			"effects": { "finance": 8, "residents": 3, "environment": -7 },
 			"set_flags": ["quarry_open"]
 		},
 		"right_choice": {
 			"text": "공원으로 되살린다",
+			"reaction": "채석장을 공원으로요? 아깝지만… 알겠습니다.",
+			"reaction_expression": "worried",
 			"result": "깎여 나갔던 산자락에 흙을 덮고 나무를 심었습니다. 시간이 지나면 다시 푸르러질 것입니다.",
 			"effects": { "finance": -8, "environment": 6 }
 		}
 	},
 	{
 		"id": "cafe_street",
+		"weight": 18,
+		"npc": "cherry",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "mall_built" }], "text": "\"마트가 생긴 뒤로 골목 손님이 많이 줄었어요. 조용한 주택가 골목을 카페 거리로 꾸며서 살려 보면 어떨까요?\"" },
+			{ "conditions": [{ "type": "flag", "flag": "mall_declined" }], "text": "\"지난번에 대형마트를 막아 주셔서 시장 상인들이 큰 힘을 얻었어요. 이번엔 조용한 골목도 카페 거리로 살려 보고 싶어요.\"" }
+		],
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["industry"],
 		"title": "카페 거리",
 		"description": "조용한 주택가 골목을 카페 거리로 꾸미자는 제안이 들어왔습니다.",
 		"left_choice": {
 			"text": "카페 거리를 만든다",
+			"reaction": "골목이 살아나겠어요! 손님들이 몰려올 거예요.",
+			"reaction_expression": "happy",
+			"memory": "골목을 카페 거리로 꾸밈",
 			"result": "예쁜 카페들이 생기고 골목에 사람들이 북적이기 시작했습니다. 골목의 인기가 오래된 가게들에게도 좋은 일일지는 아직 모릅니다.",
 			"effects": { "finance": 6, "residents": 5, "safety": -2 },
 			"set_flags": ["cafe_street"]
 		},
 		"right_choice": {
 			"text": "주택 골목으로 둔다",
+			"reaction": "조용한 골목도 좋지만… 장사는 어쩌죠.",
+			"reaction_expression": "worried",
 			"result": "골목은 조용한 주택가로 남았습니다. 새 가게를 열고 싶던 사람들은 다른 곳을 알아봅니다.",
 			"effects": { "safety": 2, "residents": -2 }
 		}
@@ -144,6 +202,8 @@
 
 	{
 		"id": "factory_noise",
+		"npc_expression": "angry",
+		"npc": "luka",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "공장 소음과 매연",
@@ -168,6 +228,8 @@
 	},
 	{
 		"id": "factory_jobs",
+		"npc_expression": "happy",
+		"npc": "bruno",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "일자리를 찾아온 가족들",
@@ -192,6 +254,8 @@
 	},
 	{
 		"id": "job_shortage",
+		"npc_expression": "worried",
+		"npc": "mina",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "떠나는 청년들",
@@ -210,29 +274,35 @@
 	},
 	{
 		"id": "market_decline",
+		"npc_expression": "worried",
+		"npc": "cherry",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "문 닫는 시장 가게",
 		"description": "대형마트가 생긴 뒤 전통시장 가게들이 잇달아 문을 닫고 있습니다.",
-		"conditions": [{ "type": "flag", "flag": "mall_built", "min_age": 3 }],
+		"conditions": [{ "type": "flag", "flag": "mall_built", "min_age": 4 }],
 		"left_choice": {
 			"text": "시장을 새롭게 고친다",
+			"memory": "전통시장을 새롭게 고침",
 			"result": "시장에 지붕을 올리고 배달 서비스도 시작했습니다. 손님들이 조금씩 돌아오고 있습니다.",
 			"effects": { "finance": -9, "residents": 5 }
 		},
 		"right_choice": {
 			"text": "시장 땅을 팔아 주차장으로 만든다",
+			"memory": "전통시장 자리를 주차장으로 바꿈",
 			"result": "시장 자리에 주차장이 들어섰습니다. 수십 년 이어진 시장의 이야기가 끝났습니다.",
 			"effects": { "finance": 7, "residents": -6, "environment": -2 }
 		}
 	},
 	{
 		"id": "quarry_dust",
+		"npc_expression": "angry",
+		"npc": "luka",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "채석장 먼지",
 		"description": "다시 연 채석장의 발파 진동과 먼지 때문에 근처 주민들이 불편을 호소합니다.",
-		"conditions": [{ "type": "flag", "flag": "quarry_open", "min_age": 3 }],
+		"conditions": [{ "type": "flag", "flag": "quarry_open", "min_age": 5 }],
 		"left_choice": {
 			"text": "먼지 막는 시설을 요구한다",
 			"result": "채석장 둘레에 높은 방진막이 세워졌습니다. 작업이 느려져 채석장 수입이 줄었습니다.",
@@ -246,13 +316,16 @@
 	},
 	{
 		"id": "rent_rise",
+		"npc_expression": "worried",
+		"npc": "cherry",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "떠나는 오래된 가게",
 		"description": "카페 거리가 인기를 끌자 가게 임대료가 치솟아, 오래된 가게들이 하나둘 떠나고 있습니다.",
-		"conditions": [{ "type": "flag", "flag": "cafe_street", "min_age": 4 }],
+		"conditions": [{ "type": "flag", "flag": "cafe_street", "min_age": 6 }],
 		"left_choice": {
 			"text": "건물주들과 임대료 약속을 맺는다",
+			"memory": "건물주와 임대료 상생 약속을 맺음",
 			"result": "건물주들이 임대료를 천천히 올리기로 약속했습니다. 오래된 가게들이 자리를 지킬 수 있게 되었습니다.",
 			"effects": { "finance": -5, "residents": 5 }
 		},
@@ -264,11 +337,13 @@
 	},
 	{
 		"id": "startup_success",
+		"npc_expression": "happy",
+		"npc": "cherry",
 		"category": "delayed",
 		"tags": ["industry"],
 		"title": "방송에 나온 청년 가게",
 		"description": "월세를 지원했던 청년 가게가 방송에 나오면서 손님이 몰려들고 있습니다.",
-		"conditions": [{ "type": "flag", "flag": "startup_supported", "min_age": 4 }],
+		"conditions": [{ "type": "flag", "flag": "startup_supported", "min_age": 8 }],
 		"left_choice": {
 			"text": "청년 창업 지원을 더 늘린다",
 			"result": "성공 소식을 듣고 새 청년 가게들이 줄지어 문을 엽니다. 마을에 젊은 활기가 돕니다.",

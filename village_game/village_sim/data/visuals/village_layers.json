@@ -1,0 +1,12 @@
+[
+	{ "id": "river", "conditions": [], "anim": { "type": "frames", "fps": 2 } },
+	{ "id": "trees", "conditions": [], "anim": { "type": "sway", "amplitude": 1, "period": 2.8 } },
+	{ "id": "park", "conditions": [{ "type": "flag", "flag": "park_built" }] },
+	{ "id": "shop", "conditions": [{ "type": "flag", "flag": "mall_built" }] },
+	{ "id": "factory", "conditions": [{ "type": "flag", "flag": "factory_built" }] },
+	{ "id": "smoke", "conditions": [{ "type": "flag", "flag": "factory_built" }], "anim": { "type": "drift", "amplitude": [3, 2], "period": 3.2 } },
+	{ "id": "lights", "conditions": [], "anim": { "type": "flicker", "min_alpha": 0.55, "period": 1.3 } },
+	{ "id": "protest", "conditions": [{ "type": "flag", "flag": "citizen_protest" }] },
+	{ "id": "warning", "conditions": [{ "type": "stat", "stat": "safety", "op": "<=", "value": 35 }] },
+	{ "id": "pollution", "conditions": [{ "type": "stat", "stat": "environment", "op": "<=", "value": 35 }] }
+]

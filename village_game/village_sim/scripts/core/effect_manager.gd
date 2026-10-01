@@ -15,7 +15,11 @@ static func scaled_delta(stat_id: String, delta: int, config: Dictionary) -> int
 
 
 static func apply_choice(state, choice: Dictionary, config: Dictionary, rng: RandomNumberGenerator) -> void:
-	state.stats = preview_stats(state.stats, choice, config)
+	var before: Dictionary = state.stats
+	state.stats = preview_stats(before, choice, config)
+	for stat_id in state.stats:
+		if int(state.stats[stat_id]) > int(before.get(stat_id, 0)):
+			state.raised_count[stat_id] = int(state.raised_count.get(stat_id, 0)) + 1
 	for entry in choice["set_flags"]:
 		var chance: float = entry["chance"]
 		if chance >= 1.0 or rng.randf() < chance:
@@ -36,11 +40,20 @@ static func preview_stats(stats: Dictionary, choice: Dictionary, config: Diction
 	return result
 
 
-## 힌트용: 이 선택지가 건드리는 상태 목록 (방향과 크기는 없음). 설정 파일의 상태 순서를 따른다.
-static func affected_stats(choice: Dictionary, stat_order: Array) -> Array:
-	var result: Array = []
+## 힌트용: 상태별 방향과 강도. 정확한 숫자 대신 이것만 화면에 보여 준다.
+##   1 = 조금 오름(↑), 2 = 크게 오름(↑↑), -1 = 조금 내림(↓), -2 = 크게 내림(↓↓)
+## 변화가 없는 상태는 빠진다. 키 순서는 설정 파일의 상태 순서를 따른다.
+static func preview_levels(choice: Dictionary, config: Dictionary) -> Dictionary:
+	var levels := {}
 	var effects: Dictionary = choice["effects"]
-	for stat_id in stat_order:
-		if int(effects.get(stat_id, 0)) != 0:
-			result.append(stat_id)
-	return result
+	for stat_id in config["stat_order"]:
+		var delta := scaled_delta(stat_id, int(effects.get(stat_id, 0)), config)
+		if delta != 0:
+			levels[stat_id] = level_of(delta, config)
+	return levels
+
+
+## 변화량 → 강도 단계. 설정의 strong_effect 이상이면 "크게".
+static func level_of(delta: int, config: Dictionary) -> int:
+	var strength := 2 if absi(delta) >= int(config["strong_effect"]) else 1
+	return strength * signi(delta)

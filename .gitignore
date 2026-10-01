@@ -1,6 +1,9 @@
 # 휴대용 Godot과 내보내기 템플릿 (용량이 크고 공식 사이트에서 받을 수 있음)
 /tools/
 
+# 받은 원본 그림 폴더 (게임에서 쓰는 사본은 village_game/village_sim/assets/ 에 있음)
+/새 폴더/
+
 # 빌드 결과물 (exe는 GitHub Releases에 올린다)
 /build/
 

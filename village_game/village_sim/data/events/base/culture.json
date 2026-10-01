@@ -1,47 +1,68 @@
 [
 	{
 		"id": "festival",
+		"weight": 18,
+		"npc": "mina",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "마을 축제",
 		"description": "올해 마을 축제를 어떤 규모로 열지 정해야 합니다.",
 		"left_choice": {
 			"text": "작게 연다",
+			"reaction": "에이, 작게요? 엄청 기대했는데…",
+			"reaction_expression": "worried",
 			"result": "소박한 축제가 열렸습니다. 돈은 아꼈지만 기대했던 주민들은 조금 싱거워합니다.",
 			"effects": { "finance": -2, "residents": -3 }
 		},
 		"right_choice": {
 			"text": "크게 연다",
+			"reaction": "와! 올해 축제는 최고일 거예요!",
+			"reaction_expression": "happy",
+			"memory": "마을 축제를 크게 엶",
 			"result": "마을이 떠들썩한 축제가 열렸고 멀리서도 구경꾼이 몰려왔습니다. 이 소문이 어디까지 퍼질지는 아무도 모릅니다.",
-			"effects": { "finance": -10, "residents": 9, "safety": -4 },
+			"effects": { "finance": -10, "residents": 9 },
 			"set_flags": ["festival_big"]
 		}
 	},
 	{
 		"id": "donated_land",
+		"npc": "luka",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "park_built" }], "text": "\"빈 땅에 공원을 만들어 주셨을 때 정말 고마웠습니다.\" 그 주민이 이번에는 도서관을 지어 달라며 땅을 기증했습니다. 짓고 나면 운영비는 마을이 내야 합니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "기증받은 땅",
 		"description": "한 주민이 도서관을 지어 달라며 땅을 기증했습니다. 짓고 나면 운영비는 마을이 내야 합니다.",
 		"left_choice": {
 			"text": "작은 도서관을 짓는다",
+			"memory": "기증받은 땅에 도서관을 지음",
 			"result": "작은 도서관이 문을 열었습니다. 방과 후 아이들이 책을 읽으러 모여듭니다.",
 			"effects": { "finance": -7, "residents": 7 }
 		},
 		"right_choice": {
 			"text": "땅을 개발해 마을 살림에 보탠다",
+			"memory": "기증받은 땅을 개발함",
 			"result": "마을 금고는 넉넉해졌습니다. 땅을 기증한 주민은 뜻이 지켜지지 않았다며 실망했습니다.",
 			"effects": { "finance": 10, "residents": -6, "environment": -3 }
 		}
 	},
 	{
 		"id": "heritage_house",
+		"npc": "owen",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "tourism_developed" }], "text": "\"관광객들이 한옥 골목을 찾아오기 시작했어요. 그런데 백 년 된 한옥 주인이 집을 팔겠다고 합니다.\" 문화재로 지정하자는 요청이 들어왔습니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "오래된 한옥",
 		"description": "백 년 된 한옥을 문화재로 지정하자는 요청이 들어왔습니다. 하지만 집주인은 집을 팔고 싶어 합니다.",
 		"left_choice": {
 			"text": "문화재로 지정하고 사들인다",
+			"memory": "백 년 된 한옥을 문화재로 지킴",
 			"result": "한옥이 마을의 문화재가 되었습니다. 주민들은 마을의 역사를 지켰다며 자랑스러워합니다.",
 			"effects": { "finance": -6, "residents": 4 }
 		},
@@ -53,6 +74,11 @@
 	},
 	{
 		"id": "sports_field",
+		"npc": "mina",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "festival_big" }], "text": "\"축제 때 정말 신났어요! 이번엔 비만 오면 진흙탕이 되는 운동장을 인조 잔디로 바꿔 주세요.\"" }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "흙먼지 운동장",
@@ -70,6 +96,8 @@
 	},
 	{
 		"id": "film_shoot",
+		"npc": "cherry",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "드라마 촬영",
@@ -87,6 +115,8 @@
 	},
 	{
 		"id": "mural_village",
+		"npc": "mina",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "어두운 골목 담장",
@@ -104,12 +134,19 @@
 	},
 	{
 		"id": "closed_school",
+		"npc": "mina",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "factory_refused" }], "text": "\"일자리가 없어서 친구들 가족이 하나둘 떠났고, 결국 학교가 문을 닫았어요.\" 빈 학교 건물을 어떻게 쓸지 정해야 합니다." },
+			{ "conditions": [{ "type": "flag", "flag": "festival_big" }], "text": "\"축제 때처럼 다 같이 모일 곳이 있으면 좋겠어요.\" 학생이 줄어 문을 닫은 학교 건물을 어떻게 쓸지 정해야 합니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "문 닫은 학교",
 		"description": "학생이 줄어 문을 닫은 학교 건물을 어떻게 쓸지 정해야 합니다.",
 		"left_choice": {
 			"text": "캠핑장으로 만든다",
+			"memory": "문 닫은 학교를 캠핑장으로 만듦",
 			"result": "주말마다 캠핑객이 찾아와 이용료가 들어옵니다. 쓰레기와 밤늦은 소음도 함께 늘었습니다.",
 			"effects": { "finance": 7, "environment": -4, "safety": -2 }
 		},
@@ -121,12 +158,16 @@
 	},
 	{
 		"id": "sister_city",
+		"weight": 18,
+		"npc": "owen",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["culture"],
 		"title": "자매도시 제안",
 		"description": "외국의 한 도시가 우리 마을과 자매도시를 맺고 싶다고 연락해 왔습니다.",
 		"left_choice": {
 			"text": "자매도시를 맺는다",
+			"memory": "외국 도시와 자매도시를 맺음",
 			"result": "두 도시가 협약서에 서명했습니다. 이 인연이 앞으로 어떤 만남으로 이어질지 기대하는 주민들이 있습니다.",
 			"effects": { "finance": -6, "residents": 4 },
 			"set_flags": ["sister_city"]
@@ -140,6 +181,8 @@
 
 	{
 		"id": "tour_package",
+		"npc_expression": "happy",
+		"npc": "cherry",
 		"category": "delayed",
 		"tags": ["culture"],
 		"title": "관광 코스 제안",
@@ -159,11 +202,13 @@
 	},
 	{
 		"id": "exchange_visit",
+		"npc_expression": "happy",
+		"npc": "mina",
 		"category": "delayed",
 		"tags": ["culture"],
 		"title": "자매도시 학생 방문단",
 		"description": "자매도시를 맺은 외국 도시에서 학생 방문단이 마을을 찾아온다고 합니다.",
-		"conditions": [{ "type": "flag", "flag": "sister_city", "min_age": 5 }],
+		"conditions": [{ "type": "flag", "flag": "sister_city", "min_age": 8 }],
 		"left_choice": {
 			"text": "주민 가정에서 머물게 한다",
 			"result": "외국 친구들이 주민 가정에서 지내며 함께 밥을 먹고 놀았습니다. 아이들에게 잊지 못할 추억이 생겼습니다.",

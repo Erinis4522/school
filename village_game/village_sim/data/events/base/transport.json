@@ -1,6 +1,9 @@
 [
 	{
 		"id": "road_widening",
+		"weight": 18,
+		"npc": "cain",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "좁은 중심 도로",
@@ -12,6 +15,7 @@
 		},
 		"right_choice": {
 			"text": "도로를 넓힌다",
+			"memory": "중심 도로를 넓힘",
 			"result": "도로가 넓어져 차들이 시원하게 달립니다. 넓어진 길이 앞으로 어떤 모습이 될지는 두고 봐야 합니다.",
 			"effects": { "finance": -12, "safety": 7, "environment": -5 },
 			"set_flags": ["road_widened"]
@@ -19,6 +23,8 @@
 	},
 	{
 		"id": "bus_route",
+		"npc": "luka",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "적자 버스 노선",
@@ -30,18 +36,23 @@
 		},
 		"right_choice": {
 			"text": "노선을 없앤다",
+			"memory": "적자 버스 노선을 없앰",
 			"result": "손해는 멈췄지만, 외곽 주민들은 차를 몰거나 먼 길을 걸어야 합니다.",
 			"effects": { "finance": 6, "residents": -8, "environment": -2 }
 		}
 	},
 	{
 		"id": "bike_lane",
+		"weight": 18,
+		"npc": "mina",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "자전거 도로",
 		"description": "차로 하나를 자전거 도로로 바꾸자는 제안이 들어왔습니다.",
 		"left_choice": {
 			"text": "자전거 도로를 만든다",
+			"memory": "자전거 도로를 만듦",
 			"result": "자전거로 출근하는 사람이 늘었습니다. 좁아진 차로 때문에 운전자들은 불편해합니다. 새 길이 잘 지켜질지는 지켜봐야 합니다.",
 			"effects": { "environment": 6, "finance": -5, "residents": -3 },
 			"set_flags": ["bike_lane"]
@@ -54,6 +65,11 @@
 	},
 	{
 		"id": "illegal_parking",
+		"npc": "cherry",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "mall_built" }], "text": "\"마트가 생긴 뒤로 상가 손님이 줄었어요. 가게 앞에 잠깐 세우는 것까지 막으면 정말 버티기 힘들어요.\" 하지만 불법 주차 때문에 사람들이 차도로 걸어야 합니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "상가 앞 불법 주차",
@@ -71,12 +87,15 @@
 	},
 	{
 		"id": "train_stop",
+		"npc": "owen",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "기차역 정차",
 		"description": "기차가 마을 역에 서게 하려면 마을도 비용을 나눠 내야 합니다.",
 		"left_choice": {
 			"text": "비용을 내고 역을 유치한다",
+			"memory": "기차역을 유치함",
 			"result": "마을 역에 기차가 서기 시작했습니다. 큰 도시에 오가기 쉬워졌지만, 비용이 매우 컸습니다.",
 			"effects": { "finance": -13, "residents": 8, "environment": 2 }
 		},
@@ -88,24 +107,38 @@
 	},
 	{
 		"id": "tunnel",
+		"weight": 18,
+		"npc": "bruno",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "road_widened" }], "text": "\"넓혀 주신 도로 덕분에 차가 잘 다닙니다. 이제 산에 터널만 뚫으면 이웃 도시까지 금방입니다.\"" },
+			{ "conditions": [{ "type": "flag", "flag": "factory_declined" }], "text": "\"공장 때는 아쉬웠지만, 터널만큼은 마을 모두를 위한 일입니다.\" 산을 뚫어 이웃 도시와 잇는 계획을 들고 왔습니다." }
+		],
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "산 너머 도시",
 		"description": "산을 뚫어 이웃 도시와 잇는 터널 계획이 나왔습니다.",
 		"left_choice": {
 			"text": "터널을 뚫는다",
+			"reaction": "이웃 도시까지 금방입니다. 기대하셔도 좋습니다!",
+			"reaction_expression": "happy",
+			"memory": "산을 뚫어 터널을 만듦",
 			"result": "터널이 뚫려 이웃 도시까지 금방 갈 수 있게 되었습니다. 길이 열리면 오가는 것은 사람만이 아닐지도 모릅니다.",
 			"effects": { "finance": -10, "residents": 7, "environment": -8 },
 			"set_flags": ["tunnel_built"]
 		},
 		"right_choice": {
 			"text": "옛길을 유지한다",
+			"reaction": "구불구불한 옛길로는 사람도 돈도 안 옵니다.",
+			"reaction_expression": "angry",
 			"result": "산은 그대로 남았고, 이웃 도시에 가려면 여전히 구불구불한 옛길을 넘어야 합니다.",
 			"effects": { "residents": -3, "environment": 2 }
 		}
 	},
 	{
 		"id": "ev_chargers",
+		"npc": "owen",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "전기차 충전소",
@@ -123,6 +156,11 @@
 	},
 	{
 		"id": "car_free_street",
+		"npc": "cherry",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "cafe_street" }], "text": "\"카페 거리 덕분에 사람들이 걸어서 골목을 찾아와요. 주말마다 중심가도 차 없는 거리로 만들면 어떨까요?\"" }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["transport"],
 		"title": "차 없는 거리",
@@ -141,6 +179,8 @@
 
 	{
 		"id": "speeding_cars",
+		"npc_expression": "worried",
+		"npc": "cain",
 		"category": "delayed",
 		"tags": ["transport"],
 		"title": "넓어진 도로의 과속",
@@ -159,11 +199,13 @@
 	},
 	{
 		"id": "shopping_outflow",
+		"npc_expression": "worried",
+		"npc": "cherry",
 		"category": "delayed",
 		"tags": ["transport"],
 		"title": "이웃 도시로 가는 손님",
 		"description": "터널이 뚫리자 주민들이 이웃 도시로 장을 보러 가면서, 마을 상점가가 한산해졌습니다.",
-		"conditions": [{ "type": "flag", "flag": "tunnel_built", "min_age": 3 }],
+		"conditions": [{ "type": "flag", "flag": "tunnel_built", "min_age": 5 }],
 		"left_choice": {
 			"text": "마을 상점가 할인 행사를 지원한다",
 			"result": "할인 행사에 주민들이 다시 마을 가게를 찾습니다. 상인들이 반가워합니다.",
@@ -177,11 +219,13 @@
 	},
 	{
 		"id": "bike_lane_parking",
+		"npc_expression": "angry",
+		"npc": "mina",
 		"category": "delayed",
 		"tags": ["transport"],
 		"title": "자전거 도로 위 자동차",
 		"description": "새로 만든 자전거 도로에 자동차를 세우는 일이 잦아 자전거 타는 사람들이 위험합니다.",
-		"conditions": [{ "type": "flag", "flag": "bike_lane", "min_age": 3 }],
+		"conditions": [{ "type": "flag", "flag": "bike_lane", "min_age": 5 }],
 		"left_choice": {
 			"text": "단속한다",
 			"result": "자전거 도로가 다시 자전거의 길이 되었습니다. 단속에 걸린 운전자들은 투덜댑니다.",

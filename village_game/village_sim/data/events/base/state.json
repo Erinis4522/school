@@ -1,14 +1,17 @@
 [
 	{
 		"id": "residents_crisis",
+		"npc_expression": "angry",
+		"npc": "luka",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
 		"title": "주민 대표의 편지",
-		"description": "주민 대표가 편지를 보내왔습니다. \"마을 운영에 크게 실망했습니다. 우리 목소리를 들어 주세요.\"",
+		"description": "\"마을 운영에 크게 실망했습니다. 우리 목소리를 들어 주세요.\" 주민 대표가 편지를 보내왔습니다.",
 		"conditions": [{ "type": "stat", "stat": "residents", "op": "<=", "value": 20 }],
 		"left_choice": {
 			"text": "매달 주민 간담회를 연다",
+			"memory": "주민 간담회를 매달 열기로 함",
 			"result": "첫 간담회에 많은 주민이 모였습니다. 이야기를 들어 주는 것만으로도 분위기가 조금 풀렸습니다.",
 			"effects": { "finance": -6, "residents": 12 }
 		},
@@ -20,30 +23,36 @@
 	},
 	{
 		"id": "finance_crisis",
+		"npc_expression": "worried",
+		"npc": "owen",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
 		"title": "텅 빈 금고",
-		"description": "금고가 거의 비어 다음 달 공공요금을 낼 돈도 부족합니다.",
+		"description": "\"금고가 거의 비었습니다. 다음 달 공공요금을 낼 돈도 부족합니다.\"",
 		"conditions": [{ "type": "stat", "stat": "finance", "op": "<=", "value": 20 }],
 		"left_choice": {
 			"text": "마을 공유지 일부를 판다",
+			"memory": "급한 돈을 위해 마을 공유지를 팖",
 			"result": "땅을 판 돈으로 급한 불을 껐습니다. 마을 뒷산 한 자락이 개발업자에게 넘어갔습니다.",
 			"effects": { "finance": 14, "environment": -6 }
 		},
 		"right_choice": {
 			"text": "세금을 올린다",
+			"memory": "금고가 바닥나 세금을 올림",
 			"result": "금고에 다시 돈이 쌓이기 시작했습니다. 늘어난 세금에 주민들의 불만이 커졌습니다.",
 			"effects": { "finance": 12, "residents": -7 }
 		}
 	},
 	{
 		"id": "environment_crisis",
+		"npc_expression": "angry",
+		"npc": "noel",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
 		"title": "숨 막히는 마을",
-		"description": "공기와 물이 눈에 띄게 나빠져 아이들이 밖에서 놀기 어려워졌습니다.",
+		"description": "\"공기와 물이 눈에 띄게 나빠졌어요. 아이들이 밖에서 놀기 어려울 정도예요.\"",
 		"conditions": [{ "type": "stat", "stat": "environment", "op": "<=", "value": 20 }],
 		"left_choice": {
 			"text": "대청소와 나무 심기 주간을 연다",
@@ -52,17 +61,20 @@
 		},
 		"right_choice": {
 			"text": "차량 2부제를 시행한다",
+			"memory": "차량 2부제를 시행함",
 			"result": "도로 위 차가 절반으로 줄자 하늘이 맑아졌습니다. 차를 못 쓰는 날이 생긴 주민들은 불편해합니다.",
 			"effects": { "environment": 10, "residents": -6 }
 		}
 	},
 	{
 		"id": "safety_crisis",
+		"npc_expression": "worried",
+		"npc": "cain",
 		"category": "state",
 		"tags": ["crisis"],
 		"priority": 100,
 		"title": "잇따른 사고",
-		"description": "한 달 사이 마을에서 사고가 여러 번 일어났습니다.",
+		"description": "\"한 달 사이 마을에서 사고가 여러 번 일어났습니다. 이대로는 안 됩니다.\"",
 		"conditions": [{ "type": "stat", "stat": "safety", "op": "<=", "value": 20 }],
 		"left_choice": {
 			"text": "마을 전체 안전 점검을 한다",
@@ -78,31 +90,35 @@
 
 	{
 		"id": "midterm_survey",
+		"npc": "luka",
 		"category": "state",
 		"tags": ["administration"],
 		"priority": 40,
 		"title": "임기 중간 주민 설문",
-		"description": "임기 중간에 주민 설문을 했더니, 주민들이 원하는 일과 세워 둔 계획이 달랐습니다.",
+		"description": "\"설문 결과를 보니, 주민들이 원하는 일과 세워 두신 계획이 꽤 다릅니다.\"",
 		"conditions": [{ "type": "turn", "op": ">=", "value": 15 }],
 		"left_choice": {
 			"text": "결과를 공개하고 계획을 고친다",
+			"memory": "주민 설문에 따라 계획을 고침",
 			"result": "설문 결과를 공개하고 계획을 고쳤습니다. 주민들은 목소리가 반영됐다며 반가워합니다. 계획을 바꾸는 데 돈이 조금 들었습니다.",
 			"effects": { "residents": 6, "finance": -4 }
 		},
 		"right_choice": {
 			"text": "세운 계획대로 밀고 간다",
+			"memory": "주민 설문과 달리 원래 계획을 지킴",
 			"result": "계획대로 흔들림 없이 일을 이어 갑니다. 계획을 바꾸지 않아 돈은 아꼈습니다.",
 			"effects": { "finance": 4 }
 		}
 	},
 	{
 		"id": "final_project",
+		"npc": "owen",
 		"category": "state",
 		"tags": ["administration"],
 		"priority": 40,
-		"title": "임기 마지막 큰 사업",
-		"description": "임기가 얼마 남지 않았습니다. 새 사업을 시작할지, 하던 일을 마무리할지 정해야 합니다.",
-		"conditions": [{ "type": "turn", "op": ">=", "value": 26 }],
+		"title": "임기 막바지 사업",
+		"description": "\"임기가 얼마 남지 않았습니다. 새 사업을 시작할지, 하던 일을 마무리할지 정해 주세요.\"",
+		"conditions": [{ "type": "turn", "op": ">=", "value": 24 }],
 		"left_choice": {
 			"text": "새 사업을 시작한다",
 			"result": "새 문화센터 공사가 시작되었습니다. 완성은 다음 운영자의 몫입니다.",
@@ -116,75 +132,103 @@
 	},
 
 	{
-		"id": "eco_famous",
+		"id": "regulation_backlash",
+		"npc_expression": "angry",
+		"npc": "cherry",
 		"category": "state",
 		"tags": ["environment"],
-		"title": "생태 마을로 소문남",
-		"description": "자연이 아름다운 마을로 소문이 나서 구경 오겠다는 문의가 쏟아집니다.",
-		"conditions": [{ "type": "stat", "stat": "environment", "op": ">=", "value": 85 }],
+		"title": "규제에 지친 상인들",
+		"description": "\"환경을 지키자는 건 알지만, 규제가 늘수록 장사하기가 너무 힘듭니다.\" 환경을 앞세운 결정이 이어지면서 상인과 기업의 불만이 커지고 있습니다.",
+		"conditions": [
+			{ "type": "trend", "stat": "environment", "op": ">=", "value": 6 },
+			{ "type": "stat", "stat": "environment", "op": ">=", "value": 70 }
+		],
 		"left_choice": {
-			"text": "방문객을 받는다",
-			"result": "방문객이 몰려와 마을 가게들이 바빠졌습니다. 숲길에 쓰레기가 늘기 시작했습니다.",
-			"effects": { "finance": 8, "environment": -5, "residents": -2 }
+			"text": "규제 일부를 풀어 준다",
+			"memory": "상인들의 요구로 환경 규제를 일부 풀어 줌",
+			"result": "숨통이 트였다며 상인들이 반깁니다. 환경 지킴이 노엘 씨는 \"이게 시작이 아니길 바란다\"며 걱정합니다.",
+			"effects": { "finance": 6, "environment": -5, "residents": 2 }
 		},
 		"right_choice": {
-			"text": "보호 구역으로 정해 지킨다",
-			"result": "숲과 하천을 보호 구역으로 정했습니다. 관리하는 데 돈이 들지만 자연은 더 건강해집니다.",
-			"effects": { "environment": 4, "finance": -3 }
+			"text": "규제를 지키고 상인들을 설득한다",
+			"memory": "상인들의 반발에도 환경 규제를 지킴",
+			"result": "규제는 그대로 남았습니다. 마을의 자연은 지켜졌지만, 문을 닫겠다는 가게 이야기가 들려옵니다.",
+			"effects": { "residents": -5, "environment": 3 }
 		}
 	},
 	{
-		"id": "full_treasury",
-		"category": "state",
-		"tags": ["administration"],
-		"title": "넉넉한 금고",
-		"description": "올해 예산이 크게 남았습니다. 어디에 쓸지 정해야 합니다.",
-		"conditions": [{ "type": "stat", "stat": "finance", "op": ">=", "value": 85 }],
-		"left_choice": {
-			"text": "세금 일부를 주민에게 돌려준다",
-			"result": "세금을 돌려받은 주민들이 기뻐합니다. 금고는 다시 가벼워졌습니다.",
-			"effects": { "finance": -12, "residents": 8 }
-		},
-		"right_choice": {
-			"text": "안전 시설에 투자한다",
-			"result": "낡은 가로등과 난간을 모두 새것으로 바꿨습니다. 마을이 한결 안전해졌습니다.",
-			"effects": { "finance": -10, "safety": 8 }
-		}
-	},
-	{
-		"id": "safety_award",
+		"id": "safety_overregulation",
+		"npc_expression": "worried",
+		"npc": "luka",
 		"category": "state",
 		"tags": ["safety"],
-		"title": "안전 마을 상",
-		"description": "가장 안전한 마을로 뽑혀 상금을 받게 되었습니다.",
-		"conditions": [{ "type": "stat", "stat": "safety", "op": ">=", "value": 85 }],
+		"title": "너무 많은 안전 규칙",
+		"description": "\"안전도 좋지만, 이건 하지 마라 저건 안 된다는 규칙이 너무 많아요.\" 안전을 앞세운 결정이 쌓이면서 주민과 상인들이 불편을 호소합니다.",
+		"conditions": [
+			{ "type": "trend", "stat": "safety", "op": ">=", "value": 6 },
+			{ "type": "stat", "stat": "safety", "op": ">=", "value": 70 }
+		],
 		"left_choice": {
-			"text": "상금으로 주민 잔치를 연다",
-			"result": "온 마을이 모여 수상을 축하했습니다. 남은 상금은 금고에 넣었습니다.",
-			"effects": { "finance": 5, "residents": 4 }
+			"text": "규칙을 정리해 줄인다",
+			"memory": "늘어난 안전 규칙을 정리해 줄임",
+			"result": "꼭 필요한 규칙만 남겼습니다. 주민들은 편해졌다고 하지만, 시설 담당자는 걱정스러운 얼굴입니다.",
+			"effects": { "residents": 6, "safety": -5 }
 		},
 		"right_choice": {
-			"text": "상금을 안전 교육에 쓴다",
-			"result": "상금 일부로 아이들과 어르신을 위한 안전 교육을 열었습니다.",
-			"effects": { "finance": 3, "safety": 3 }
+			"text": "안전이 먼저라며 그대로 둔다",
+			"memory": "불편 호소에도 안전 규칙을 지킴",
+			"result": "규칙은 그대로입니다. 사고는 줄었지만, 마을 분위기가 답답하다는 말이 나옵니다.",
+			"effects": { "residents": -6, "finance": -2 }
 		}
 	},
 	{
-		"id": "popular_town",
+		"id": "demands_overload",
+		"npc_expression": "happy",
+		"npc": "luka",
 		"category": "state",
 		"tags": ["welfare"],
-		"title": "이사 오고 싶은 마을",
-		"description": "이사 오려는 사람이 크게 늘어 살 집이 부족합니다.",
-		"conditions": [{ "type": "stat", "stat": "residents", "op": ">=", "value": 85 }],
+		"title": "쏟아지는 요구",
+		"description": "\"이번에도 들어주실 거죠?\" 요구를 잘 들어준다는 소문이 나자, 여러 주민 단체가 한꺼번에 요구를 들고 찾아왔습니다.",
+		"conditions": [
+			{ "type": "trend", "stat": "residents", "op": ">=", "value": 7 },
+			{ "type": "stat", "stat": "residents", "op": ">=", "value": 70 }
+		],
 		"left_choice": {
-			"text": "새 아파트 단지를 짓는다",
-			"result": "아파트 단지가 들어서고 새 이웃이 늘었습니다. 마을 둘레의 들판이 줄었습니다.",
-			"effects": { "finance": 8, "environment": -8, "residents": 2 }
+			"text": "모두 들어준다",
+			"memory": "한꺼번에 쏟아진 주민 요구를 모두 들어줌",
+			"result": "모두가 만족했지만 금고가 눈에 띄게 줄었습니다. 다음 요구는 더 커질지도 모릅니다.",
+			"effects": { "finance": -10, "residents": 4 }
 		},
 		"right_choice": {
-			"text": "개발 속도를 조절한다",
-			"result": "마을은 천천히 자라기로 했습니다. 이사 오지 못한 사람들은 아쉬워하고, 집값 걱정도 나옵니다.",
-			"effects": { "environment": 3, "residents": -4 }
+			"text": "우선순위를 정해 일부만 들어준다",
+			"memory": "주민 요구에 우선순위를 정함",
+			"result": "급한 일부터 처리하기로 했습니다. 뒤로 밀린 단체들은 서운함을 감추지 않습니다.",
+			"effects": { "residents": -6, "finance": -2 }
+		}
+	},
+	{
+		"id": "treasury_criticism",
+		"npc_expression": "worried",
+		"npc": "owen",
+		"category": "state",
+		"tags": ["administration"],
+		"title": "쌓아 두기만 하는 금고",
+		"description": "\"금고는 넉넉하다는데 왜 마을 시설은 낡아 가나요?\" 돈을 아끼는 결정이 이어지자 비판의 목소리가 나오고 있습니다.",
+		"conditions": [
+			{ "type": "trend", "stat": "finance", "op": ">=", "value": 6 },
+			{ "type": "stat", "stat": "finance", "op": ">=", "value": 70 }
+		],
+		"left_choice": {
+			"text": "모아 둔 돈을 크게 쓴다",
+			"memory": "모아 둔 돈으로 낡은 시설을 한꺼번에 고침",
+			"result": "낡은 시설을 한꺼번에 고쳤습니다. 주민들은 반기지만, 금고는 다시 가벼워졌습니다.",
+			"effects": { "finance": -12, "safety": 5, "residents": 4 }
+		},
+		"right_choice": {
+			"text": "비상금을 지킨다",
+			"memory": "비판에도 비상금을 지킴",
+			"result": "만일을 위해 돈을 지켰습니다. 하지만 낡은 시설 앞에서 주민들의 불만은 커집니다.",
+			"effects": { "residents": -5, "safety": -3 }
 		}
 	}
 ]

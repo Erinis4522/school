@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="마을 운영 시뮬레이션"
+config/name="마을의 선택"
 run/main_scene="res://village_sim/scenes/main/main.tscn"
 config/features=PackedStringArray("4.7")
 
@@ -33,3 +33,10 @@ theme/custom_font="res://village_sim/assets/fonts/NotoSansKR-Regular.otf"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=3
+
+[importer_defaults]
+
+texture={
+"mipmaps/generate": true
+}

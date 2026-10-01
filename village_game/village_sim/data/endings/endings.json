@@ -36,6 +36,22 @@
 		"text": "반복되는 사고로 주요 시설이 폐쇄되었고,\n마을 운영을 계속하기 어려워졌습니다."
 	},
 	{
+		"id": "term_growth",
+		"type": "term_end",
+		"priority": 10,
+		"conditions": [{ "type": "flag", "flag": "legacy_growth" }],
+		"title": "더 크게, 더 빠르게",
+		"text": "임기의 마지막 결정은 마을을 키우는 쪽이었습니다.\n새 건물과 일자리가 늘어날 마을에서, 사람들은 기대와 걱정을 함께 품고 다음 운영자를 기다립니다."
+	},
+	{
+		"id": "term_care",
+		"type": "term_end",
+		"priority": 10,
+		"conditions": [{ "type": "flag", "flag": "legacy_care" }],
+		"title": "지금을 지키는 마을",
+		"text": "임기의 마지막 결정은 지금 가진 것을 지키는 쪽이었습니다.\n마을은 천천히 바뀌겠지만, 더 빨리 커지기를 바랐던 사람들의 아쉬움도 함께 남았습니다."
+	},
+	{
 		"id": "term_complete",
 		"type": "term_end",
 		"priority": 0,

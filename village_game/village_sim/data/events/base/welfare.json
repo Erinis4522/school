@@ -1,6 +1,8 @@
 [
 	{
 		"id": "center_floor",
+		"npc": "luka",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "주민센터 빈 층",
@@ -18,6 +20,8 @@
 	},
 	{
 		"id": "shared_childcare",
+		"npc": "luka",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "공동 육아 나눔터",
@@ -35,6 +39,8 @@
 	},
 	{
 		"id": "access_ramp",
+		"npc": "luka",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "가게 앞 계단",
@@ -42,7 +48,7 @@
 		"left_choice": {
 			"text": "경사로 설치비를 지원한다",
 			"result": "가게마다 경사로가 생겼습니다. 휠체어를 탄 주민도, 유모차를 끄는 부모도 편하게 드나듭니다.",
-			"effects": { "finance": -5, "safety": 3, "residents": 2 }
+			"effects": { "finance": -5, "safety": 3 }
 		},
 		"right_choice": {
 			"text": "가게 자율에 맡긴다",
@@ -52,6 +58,8 @@
 	},
 	{
 		"id": "after_school",
+		"npc": "mina",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "방과 후 돌봄교실",
@@ -59,7 +67,7 @@
 		"left_choice": {
 			"text": "교실을 늘린다",
 			"result": "기다리던 아이들이 모두 돌봄교실에 들어갔습니다. 부모들은 마음 놓고 일할 수 있게 되었습니다.",
-			"effects": { "finance": -7, "residents": 4, "safety": 4 }
+			"effects": { "finance": -7, "residents": 5 }
 		},
 		"right_choice": {
 			"text": "지금 규모를 유지한다",
@@ -69,6 +77,8 @@
 	},
 	{
 		"id": "clinic_hours",
+		"npc": "owen",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "보건소 진료 시간",
@@ -86,6 +96,8 @@
 	},
 	{
 		"id": "sharing_fridge",
+		"npc": "luka",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "나눔 냉장고",
@@ -103,6 +115,8 @@
 	},
 	{
 		"id": "language_class",
+		"npc": "owen",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "한국어 교실",
@@ -120,6 +134,8 @@
 	},
 	{
 		"id": "youth_rent",
+		"npc": "mina",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "청년 월세 부담",
@@ -137,6 +153,8 @@
 	},
 	{
 		"id": "public_bath",
+		"npc": "luka",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["welfare"],
 		"title": "동네 목욕탕 폐업",

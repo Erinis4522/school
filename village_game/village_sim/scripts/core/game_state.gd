@@ -8,6 +8,9 @@ var turn: int = 1                   # 지금 진행 중인 턴 (1부터 시작)
 var seen_events: Dictionary = {}    # event_id -> 등장한 턴
 var choice_log: Array = []          # [{turn, event_id, side}]
 var recent_tags: Array = []         # 최근 등장한 사건들의 태그 목록 (가장 최근이 마지막)
+var raised_count: Dictionary = {}   # stat_id -> 그 상태를 올린 선택 횟수 (한쪽 정책이 누적됐는지 판단)
+var memories: Array = []            # [{turn, text}] 회상할 만한 주요 결정 (중간 결산·엔딩에서 사용)
+var met_npcs: Dictionary = {}       # npc_id -> 처음 만난 턴 (자기소개는 한 판에 한 번)
 var rng_seed: int = 0
 
 
@@ -39,5 +42,7 @@ func to_dict() -> Dictionary:
 		"turn": turn,
 		"seen_events": seen_events.duplicate(),
 		"choice_log": choice_log.duplicate(true),
+		"raised_count": raised_count.duplicate(),
+		"memories": memories.duplicate(true),
 		"rng_seed": rng_seed,
 	}

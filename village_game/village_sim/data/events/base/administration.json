@@ -1,12 +1,19 @@
 [
 	{
 		"id": "old_houses",
+		"npc": "bruno",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "quarry_open" }], "text": "\"채석장 일로 인연을 맺었지요. 이번엔 낡은 주택가 재개발을 맡겨 주십시오.\" 오래 살아온 주민들은 떠나야 할까 봐 걱정합니다." },
+			{ "conditions": [{ "type": "flag", "flag": "factory_built" }], "text": "\"공장 덕분에 사람이 늘었으니, 낡은 주택가도 새로 지어야 합니다.\" 오래 살아온 주민들은 떠나야 할까 봐 걱정합니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "오래된 주택가",
 		"description": "낡은 주택가 주민 일부가 재개발을 요구합니다. 오래 살아온 주민들은 떠나야 할까 봐 걱정합니다.",
 		"left_choice": {
 			"text": "재개발을 허가한다",
+			"memory": "오래된 주택가 재개발을 허가함",
 			"result": "낡은 집들이 헐리고 튼튼한 새 건물이 올라갑니다. 오래 살던 주민 몇 가구는 결국 마을을 떠났습니다.",
 			"effects": { "finance": 10, "safety": 5, "residents": -9 }
 		},
@@ -18,12 +25,16 @@
 	},
 	{
 		"id": "participatory_budget",
+		"weight": 18,
+		"npc": "owen",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "주민참여예산",
 		"description": "마을 예산 일부를 주민들이 직접 정하게 하자는 제안이 나왔습니다.",
 		"left_choice": {
 			"text": "도입한다",
+			"memory": "주민참여예산을 도입함",
 			"result": "주민들이 모여 어디에 돈을 쓸지 의논하기 시작했습니다. 어떤 사업이 뽑힐지는 주민들 손에 달렸습니다.",
 			"effects": { "residents": 5, "finance": -4 },
 			"set_flags": ["pb_adopted"]
@@ -36,6 +47,8 @@
 	},
 	{
 		"id": "town_hall_move",
+		"npc": "owen",
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "비좁은 마을회관",
@@ -53,6 +66,8 @@
 	},
 	{
 		"id": "online_services",
+		"npc": "owen",
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "민원 온라인화",
@@ -70,6 +85,11 @@
 	},
 	{
 		"id": "move_in_bonus",
+		"npc": "owen",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "factory_refused" }], "text": "일자리를 찾아 청년들이 떠난 뒤로, 이사 오는 사람보다 떠나는 사람이 더 많아졌습니다. 마을이 점점 조용해지고 있습니다." }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "줄어드는 인구",
@@ -87,6 +107,8 @@
 	},
 	{
 		"id": "leash_rule",
+		"npc": "luka",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "반려견 목줄",
@@ -104,6 +126,8 @@
 	},
 	{
 		"id": "rename_town",
+		"npc": "owen",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "마을 이름 바꾸기",
@@ -121,6 +145,11 @@
 	},
 	{
 		"id": "trash_bag_price",
+		"npc": "owen",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "factory_built" }], "text": "\"공장이 들어선 뒤로 쓰레기 처리 비용이 크게 올랐습니다. 쓰레기봉투 가격을 올릴지 정해 주셔야 합니다.\"" }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "쓰레기봉투 가격",
@@ -138,17 +167,29 @@
 	},
 	{
 		"id": "greenbelt",
+		"npc": "bruno",
+		"description_variants": [
+			{ "conditions": [{ "type": "flag", "flag": "factory_built" }], "text": "\"공장 때 믿어 주신 덕분에 저희 회사도 마을에 뿌리를 내렸습니다. 이번엔 개발 제한 구역을 풀어 주시면 더 큰 일을 해 보겠습니다.\" 땅 주인들도 함께 찾아왔습니다." },
+			{ "conditions": [{ "type": "flag", "flag": "factory_declined" }], "text": "\"공장 때는 거절하셨지요. 이번만큼은 제 이야기를 들어 주십시오. 개발 제한 구역을 풀면 마을에 일자리가 생깁니다.\" 땅 주인들도 함께 찾아왔습니다." },
+			{ "conditions": [{ "type": "flag", "flag": "mall_built" }], "text": "\"마트를 허가해 주신 덕분에 마을 입구 상권이 커졌습니다. 이번에는 개발 제한 구역을 풀어 추가 개발을 하고 싶습니다.\"" }
+		],
+		"phases": ["late"],
 		"category": "general",
 		"tags": ["administration"],
 		"title": "개발 제한 구역",
 		"description": "개발이 금지된 땅의 주인들이 제한을 풀어 달라고 요청했습니다.",
 		"left_choice": {
 			"text": "제한을 푼다",
+			"reaction": "드디어! 마을에 새 바람이 불 겁니다.",
+			"reaction_expression": "happy",
+			"memory": "개발 제한 구역을 풀어 줌",
 			"result": "그 땅에 건물이 들어서기 시작했고 세금도 더 걷힙니다. 마을을 감싸던 푸른 띠가 조금씩 줄어듭니다.",
 			"effects": { "finance": 10, "environment": -9, "residents": 2 }
 		},
 		"right_choice": {
 			"text": "제한을 유지한다",
+			"reaction": "또 막히는군요. 이 마을과는 인연이 없나 봅니다.",
+			"reaction_expression": "angry",
 			"result": "마을 둘레의 숲과 들판은 그대로입니다. 땅 주인들은 재산을 쓸 수 없다며 억울해합니다.",
 			"effects": { "environment": 3, "residents": -4 }
 		}
@@ -156,6 +197,8 @@
 
 	{
 		"id": "citizen_rally",
+		"npc_expression": "angry",
+		"npc": "luka",
 		"category": "delayed",
 		"tags": ["administration"],
 		"title": "주민 집회",
@@ -163,12 +206,18 @@
 		"conditions": [{ "type": "flag", "flag": "citizen_protest", "min_age": 1 }],
 		"left_choice": {
 			"text": "공청회를 연다",
+			"reaction": "들어 주셔서 고맙습니다. 이제 얘기가 되네요.",
+			"reaction_expression": "happy",
+			"memory": "주민 집회에 공청회로 답함",
 			"result": "공청회에서 주민들의 이야기를 끝까지 들었습니다. 모든 문제가 풀리진 않았지만, 분위기는 한결 누그러졌습니다.",
 			"effects": { "finance": -3, "residents": 6 },
 			"clear_flags": ["citizen_protest"]
 		},
 		"right_choice": {
 			"text": "대응하지 않는다",
+			"reaction": "이렇게 외면하시면 다음엔 더 많이 모일 겁니다.",
+			"reaction_expression": "angry",
+			"memory": "주민 집회에 대응하지 않음",
 			"result": "집회는 흩어졌지만 주민들의 마음은 더 멀어졌습니다. 마을 분위기가 무겁습니다.",
 			"effects": { "residents": -9, "safety": -3 },
 			"clear_flags": ["citizen_protest"]
@@ -176,6 +225,8 @@
 	},
 	{
 		"id": "pb_first_project",
+		"npc_expression": "happy",
+		"npc": "owen",
 		"category": "delayed",
 		"tags": ["administration"],
 		"title": "주민이 고른 첫 사업",

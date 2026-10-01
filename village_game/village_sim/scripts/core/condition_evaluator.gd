@@ -6,6 +6,7 @@ extends RefCounted
 ##   {"type": "turn", "op": ">=", "value": 15}
 ##   {"type": "flag", "flag": "factory_built", "min_age": 3}     # min_age, max_age는 선택
 ##   {"type": "no_flag", "flag": "factory_settled"}
+##   {"type": "trend", "stat": "environment", "op": ">=", "value": 6}   # 그 상태를 올린 선택 횟수
 ##
 ## 새 조건 종류를 추가하려면:
 ##   1) REQUIRED_FIELDS에 종류와 필수 필드를 등록한다. (데이터 검증에 쓰인다)
@@ -18,6 +19,7 @@ const REQUIRED_FIELDS := {
 	"turn": ["op", "value"],
 	"flag": ["flag"],
 	"no_flag": ["flag"],
+	"trend": ["stat", "op", "value"],
 }
 
 
@@ -45,6 +47,8 @@ static func check(condition: Dictionary, state) -> bool:
 			return true
 		"no_flag":
 			return not state.has_flag(condition["flag"])
+		"trend":
+			return compare(int(state.raised_count.get(condition["stat"], 0)), condition["op"], condition["value"])
 	push_warning("알 수 없는 조건 종류: %s" % condition.get("type"))
 	return false
 

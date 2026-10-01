@@ -10,6 +10,12 @@ extends RefCounted
 const CONFIG_FILE := "config/game_config.json"
 const EVENTS_DIR := "events"
 const ENDINGS_DIR := "endings"
+const NPCS_DIR := "npcs"
+const STORY_FILE := "story/story.json"
+const LAYERS_FILE := "visuals/village_layers.json"
+const BACKGROUNDS_FILE := "visuals/backgrounds.json"
+const TITLE_FILE := "visuals/title.json"
+const DIALOGUE_DIR := "dialogue"
 
 var _errors: Array = []
 
@@ -42,10 +48,62 @@ func load_all(data_dir: String = "") -> Dictionary:
 			if not ending.is_empty():
 				endings.append(ending)
 
+	var npcs: Array = []
+	for path in _list_json_files(data_dir.path_join(NPCS_DIR)):
+		for raw in _as_array(_read_json(path), path):
+			if raw is Dictionary:
+				var lines := {}
+				var raw_lines: Variant = raw.get("lines", {})
+				if raw_lines is Dictionary:
+					for expression in raw_lines:
+						lines[String(expression)] = _string_array(raw_lines[expression])
+				npcs.append({
+					"id": String(raw.get("id", "")),
+					"name": String(raw.get("name", "")),
+					"role": String(raw.get("role", "")),
+					"concern": String(raw.get("concern", "")),   # 이 인물이 가장 신경 쓰는 상태 (기본 반응 표정 결정)
+					"lines": lines,                              # 표정별 기본 반응 대사
+					"intro": _string_array(raw.get("intro", [])),   # 처음 등장할 때 한 번 하는 자기소개 (줄마다 한 번 클릭)
+				})
+
+	var layers: Array = []
+	var layers_path := data_dir.path_join(LAYERS_FILE)
+	for raw in _as_array(_read_json(layers_path), layers_path):
+		if raw is Dictionary:
+			var anim: Variant = raw.get("anim", {})
+			layers.append({
+				"id": String(raw.get("id", "")),
+				"conditions": _as_array(raw.get("conditions", []), layers_path),   # 비어 있으면 항상 켜짐
+				"anim": anim if anim is Dictionary else {},                        # 미세 움직임 (village_backdrop.gd 참고)
+			})
+
+	# 사건 앞 대화: 사건 id -> {"left": {"npc", "line"}, "right": {"npc", "line"}}
+	# 왼쪽·오른쪽 선택지를 지지하는 인물과 그 인물의 한마디. (data/dialogue/ 아래 모든 .json)
+	var debates := {}
+	for path in _list_json_files(data_dir.path_join(DIALOGUE_DIR)):
+		for raw in _as_array(_read_json(path), path):
+			if not (raw is Dictionary):
+				continue
+			var entry := {"source": path}
+			for side in ["left", "right"]:
+				var part: Dictionary = raw.get(side, {}) if raw.get(side, {}) is Dictionary else {}
+				entry[side] = {"npc": String(part.get("npc", "")), "line": String(part.get("line", ""))}
+			debates[String(raw.get("event", ""))] = entry
+
+	var story: Variant = _read_json(data_dir.path_join(STORY_FILE))
+	var backgrounds: Variant = _read_json(data_dir.path_join(BACKGROUNDS_FILE))
+	var title: Variant = _read_json(data_dir.path_join(TITLE_FILE))
+
 	return {
 		"config": config,
 		"events": events,
 		"endings": endings,
+		"npcs": npcs,
+		"story": story if story is Dictionary else {},
+		"layers": layers,
+		"debates": debates,
+		"backgrounds": backgrounds if backgrounds is Dictionary else {},
+		"title": title if title is Dictionary else {},
 		"load_errors": _errors,
 	}
 
@@ -118,13 +176,26 @@ func _normalize_config(raw: Variant) -> Dictionary:
 		})
 		stat_order.append(stat_id)
 
+	var acts: Array = []
+	for act in source.get("acts", []):
+		if act is Dictionary:
+			acts.append({
+				"id": String(act.get("id", "")),
+				"name": String(act.get("name", "")),
+				"from": int(act.get("from", 1)),
+				"to": int(act.get("to", 1)),
+				"follow_up_chance": float(act.get("follow_up_chance", 1.0)),
+			})
+
 	var selection: Dictionary = source.get("selection", {})
 	return {
 		"max_turns": int(source.get("max_turns", 30)),
 		"stat_min": int(source.get("stat_min", 0)),
 		"stat_max": int(source.get("stat_max", 100)),
+		"strong_effect": int(source.get("strong_effect", 8)),
 		"stats": stats,
 		"stat_order": stat_order,
+		"acts": acts,
 		"selection": {
 			"default_weight": float(selection.get("default_weight", 10)),
 			"recent_tag_window": int(selection.get("recent_tag_window", 2)),
@@ -141,9 +212,29 @@ func _normalize_event(raw: Variant, path: String, config: Dictionary) -> Diction
 		return {}
 	var category := String(raw.get("category", "general"))
 	var default_priority: int = int(config["default_priority"].get(category, 0))
+
+	# phases가 없으면 모든 막에 나올 수 있다
+	var phases := _string_array(raw.get("phases", []))
+	if phases.is_empty():
+		for act in config["acts"]:
+			phases.append(act["id"])
+
+	# 과거 선택에 따라 바뀌는 설명: [{"conditions": [...], "text": "..."}] 위에서부터 처음 맞는 것
+	var variants: Array = []
+	for variant in _as_array(raw.get("description_variants", []), path):
+		if variant is Dictionary:
+			variants.append({
+				"conditions": _as_array(variant.get("conditions", []), path),
+				"text": String(variant.get("text", "")),
+			})
+
 	return {
 		"id": String(raw.get("id", "")),
 		"category": category,
+		"phases": phases,
+		"npc": String(raw.get("npc", "")),
+		"npc_expression": String(raw.get("npc_expression", "neutral")),
+		"description_variants": variants,
 		"tags": _string_array(raw.get("tags", [])),
 		"title": String(raw.get("title", "")),
 		"description": String(raw.get("description", "")),
@@ -177,6 +268,10 @@ func _normalize_choice(raw: Variant) -> Dictionary:
 	return {
 		"text": String(source.get("text", "")),
 		"result": String(source.get("result", "")),
+		"memory": String(source.get("memory", "")),
+		"npc": String(source.get("npc", "")),                                  # 비우면 사건의 인물
+		"reaction": String(source.get("reaction", "")),                        # 비우면 인물의 기본 대사
+		"reaction_expression": String(source.get("reaction_expression", "")),  # 비우면 자동 (관심 상태가 오르면 happy 등)
 		"effects": effects,
 		"set_flags": set_flags,
 		"clear_flags": _string_array(source.get("clear_flags", [])),

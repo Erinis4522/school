@@ -1,0 +1,8 @@
+{
+	"image": "title/title",
+	"image_size": [1672, 941],
+	"buttons": [
+		{ "action": "new_game", "label": "새 게임", "rect": [655, 722, 370, 90] },
+		{ "action": "quit", "label": "종료", "rect": [678, 824, 318, 74] }
+	]
+}

@@ -1,17 +1,27 @@
 [
 	{
 		"id": "old_bridge",
+		"npc_expression": "worried",
+		"weight": 18,
+		"npc": "cain",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "낡은 다리",
 		"description": "점검 결과 마을 다리 곳곳에서 균열이 발견되었습니다. 제대로 고치려면 큰 돈이 듭니다.",
 		"left_choice": {
 			"text": "당장 보수한다",
+			"reaction": "튼튼하게 고치겠습니다. 이제 안심하세요.",
+			"reaction_expression": "happy",
+			"memory": "낡은 다리를 바로 보수함",
 			"result": "몇 달의 공사 끝에 다리가 튼튼해졌습니다. 마을 금고는 그만큼 가벼워졌습니다.",
 			"effects": { "finance": -11, "safety": 10 }
 		},
 		"right_choice": {
 			"text": "통행만 제한한다",
+			"reaction": "통행만 막아 두면… 언젠가 탈이 날 수도 있습니다.",
+			"reaction_expression": "worried",
+			"memory": "낡은 다리를 통행 제한만 하고 둠",
 			"result": "큰 차는 다리를 건널 수 없게 되어 주민들이 멀리 돌아다닙니다. 균열이 난 다리가 언제까지 버틸지는 아무도 장담할 수 없습니다.",
 			"effects": { "residents": -5, "safety": -3 },
 			"set_flags": [{ "flag": "bridge_neglected", "chance": 0.5 }]
@@ -19,6 +29,8 @@
 	},
 	{
 		"id": "alley_cctv",
+		"npc": "luka",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "골목 CCTV",
@@ -36,17 +48,27 @@
 	},
 	{
 		"id": "monsoon_warning",
+		"npc_expression": "worried",
+		"weight": 18,
+		"npc": "cain",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "장마 예보",
 		"description": "올여름에는 폭우가 잦을 것이라는 예보가 나왔습니다.",
 		"left_choice": {
 			"text": "배수로를 정비한다",
+			"reaction": "이번 장마는 걱정 없겠습니다.",
+			"reaction_expression": "happy",
+			"memory": "장마 전에 배수로를 정비함",
 			"result": "막혀 있던 배수로를 모두 뚫고 넓혔습니다. 비가 많이 와도 물이 잘 빠질 것 같습니다.",
 			"effects": { "finance": -9, "safety": 9 }
 		},
 		"right_choice": {
 			"text": "모래주머니만 준비한다",
+			"reaction": "모래주머니로 버틸 수 있을지…",
+			"reaction_expression": "worried",
+			"memory": "장마를 모래주머니로만 대비함",
 			"result": "모래주머니를 쌓아 두고 돈을 아꼈습니다. 이걸로 충분할지는 비가 와 봐야 알 수 있습니다.",
 			"effects": { "finance": -2 },
 			"set_flags": [{ "flag": "flood_unprepared", "chance": 0.7 }]
@@ -54,6 +76,8 @@
 	},
 	{
 		"id": "school_zone",
+		"npc": "luka",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "어린이 보호구역",
@@ -71,12 +95,15 @@
 	},
 	{
 		"id": "fire_station",
+		"npc": "cain",
+		"phases": ["mid", "late"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "먼 소방서",
 		"description": "마을에 불이 나면 소방차가 도착하기까지 오래 걸립니다.",
 		"left_choice": {
 			"text": "소방 분소를 유치한다",
+			"memory": "소방 분소를 유치함",
 			"result": "마을 안에 작은 소방서가 생겼습니다. 불이 나도 금방 달려올 수 있지만, 짓고 운영하는 데 큰 돈이 듭니다.",
 			"effects": { "finance": -12, "safety": 11 }
 		},
@@ -88,6 +115,8 @@
 	},
 	{
 		"id": "old_playground",
+		"npc": "mina",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "녹슨 놀이기구",
@@ -105,6 +134,8 @@
 	},
 	{
 		"id": "quake_drill",
+		"npc": "cain",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "지진 대피 훈련",
@@ -122,6 +153,8 @@
 	},
 	{
 		"id": "stray_dogs",
+		"npc": "luka",
+		"phases": ["mid"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "떠돌이 개",
@@ -139,6 +172,8 @@
 	},
 	{
 		"id": "icy_roads",
+		"npc": "cain",
+		"phases": ["early"],
 		"category": "general",
 		"tags": ["safety"],
 		"title": "겨울 빙판길",
@@ -157,6 +192,8 @@
 
 	{
 		"id": "bridge_accident",
+		"npc_expression": "worried",
+		"npc": "cain",
 		"category": "delayed",
 		"tags": ["safety"],
 		"title": "다리 일부 붕괴",
@@ -164,6 +201,7 @@
 		"conditions": [{ "type": "flag", "flag": "bridge_neglected", "min_age": 3 }],
 		"left_choice": {
 			"text": "다리를 새로 짓는다",
+			"memory": "무너진 다리를 새로 지음",
 			"result": "무너진 다리를 헐고 새 다리를 세웠습니다. 처음에 보수하는 것보다 훨씬 많은 돈이 들었습니다.",
 			"effects": { "finance": -13, "safety": 6 }
 		},
@@ -175,6 +213,8 @@
 	},
 	{
 		"id": "flood_damage",
+		"npc_expression": "worried",
+		"npc": "cain",
 		"category": "delayed",
 		"tags": ["safety"],
 		"title": "침수 피해",

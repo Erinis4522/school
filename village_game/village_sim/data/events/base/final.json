@@ -1,0 +1,108 @@
+[
+	{
+		"id": "final_second_factory",
+		"npc_expression": "happy",
+		"npc": "bruno",
+		"category": "final",
+		"tags": ["industry"],
+		"priority": 20,
+		"title": "마지막 결정: 2공장",
+		"description": "\"공장이 자리를 잡았습니다. 임기를 마치시기 전에 2공장 증설을 허가해 주십시오.\" 공장 근처 주민들은 이번에도 숨을 죽이고 결정을 기다립니다.",
+		"conditions": [{ "type": "flag", "flag": "factory_built" }],
+		"left_choice": {
+			"text": "2공장을 허가한다",
+			"reaction": "임기 마지막까지 믿어 주셔서 감사합니다!",
+			"reaction_expression": "happy",
+			"memory": "임기 마지막에 2공장 증설을 허가함",
+			"result": "2공장 공사가 시작되었습니다. 일자리와 세금은 더 늘겠지만, 굴뚝도 하나 더 늘었습니다.",
+			"effects": { "finance": 12, "environment": -10, "residents": 3 },
+			"set_flags": ["legacy_growth"]
+		},
+		"right_choice": {
+			"text": "공장은 지금 규모로 충분하다",
+			"reaction": "…마지막 기회였는데, 아쉽습니다.",
+			"reaction_expression": "angry",
+			"memory": "임기 마지막에 2공장 증설을 거절함",
+			"result": "브루노 대표는 아쉬운 얼굴로 돌아갔습니다. 마을은 지금의 모습을 지키기로 했습니다.",
+			"effects": { "finance": -5, "environment": 6 },
+			"set_flags": ["legacy_care"]
+		}
+	},
+	{
+		"id": "final_budget_gap",
+		"npc_expression": "worried",
+		"npc": "owen",
+		"category": "final",
+		"tags": ["administration"],
+		"priority": 15,
+		"title": "마지막 결정: 모자란 예산",
+		"description": "\"다음 운영자에게 넘길 예산이 모자랍니다. 벌여 둔 사업을 줄이든, 빚을 내서라도 마무리하든 정해 주셔야 합니다.\"",
+		"conditions": [{ "type": "stat", "stat": "finance", "op": "<=", "value": 35 }],
+		"left_choice": {
+			"text": "진행 중인 사업을 줄인다",
+			"memory": "임기 마지막에 사업을 줄여 예산을 남김",
+			"result": "몇몇 사업이 멈췄습니다. 기다리던 주민들은 실망했지만, 다음 운영자에게 빚을 넘기지는 않았습니다.",
+			"effects": { "finance": 10, "residents": -6 },
+			"set_flags": ["legacy_care"]
+		},
+		"right_choice": {
+			"text": "빚을 내서라도 마무리한다",
+			"memory": "임기 마지막에 빚을 내 사업을 마무리함",
+			"result": "약속한 사업은 모두 마무리되었습니다. 그 빚은 다음 운영자와 주민들이 함께 갚아야 합니다.",
+			"effects": { "finance": -8, "residents": 7 },
+			"set_flags": ["legacy_growth"]
+		}
+	},
+	{
+		"id": "final_green_hills",
+		"npc_expression": "worried",
+		"npc": "noel",
+		"category": "final",
+		"tags": ["environment"],
+		"priority": 10,
+		"title": "마지막 결정: 뒷산의 미래",
+		"description": "\"뒷산을 보호 구역으로 묶어 주세요.\" 노엘 씨의 부탁과 함께, 브루노 대표는 같은 자리에 신도시를 짓자는 계획서를 내밀었습니다.",
+		"conditions": [{ "type": "stat", "stat": "environment", "op": ">=", "value": 60 }],
+		"left_choice": {
+			"text": "보호 구역으로 지정한다",
+			"memory": "임기 마지막에 뒷산을 보호 구역으로 지정함",
+			"result": "뒷산은 오래도록 지금 모습으로 남게 되었습니다. 신도시를 기대한 사람들은 아쉬워합니다.",
+			"effects": { "environment": 8, "finance": -6 },
+			"set_flags": ["legacy_care"]
+		},
+		"right_choice": {
+			"text": "신도시 계획을 승인한다",
+			"memory": "임기 마지막에 뒷산 신도시 계획을 승인함",
+			"result": "신도시 설계가 시작되었습니다. 새 집과 일자리가 생기겠지만, 뒷산의 숲은 크게 줄어들 것입니다.",
+			"effects": { "finance": 10, "environment": -9, "residents": 4 },
+			"set_flags": ["legacy_growth"]
+		}
+	},
+	{
+		"id": "final_ten_year_plan",
+		"npc": "luka",
+		"category": "final",
+		"tags": ["administration"],
+		"priority": 0,
+		"title": "마지막 결정: 다음 10년",
+		"description": "\"임기를 마치시기 전에, 다음 10년 마을 계획의 방향을 정해 주세요.\" 주민들이 마지막 결정을 기다립니다.",
+		"left_choice": {
+			"text": "생활 시설을 늘리는 계획",
+			"reaction": "주민들 얼굴에 웃음이 피겠어요.",
+			"reaction_expression": "happy",
+			"memory": "다음 10년을 생활 시설 중심으로 계획함",
+			"result": "도서관, 놀이터, 쉼터를 늘리는 계획이 세워졌습니다. 살림은 빠듯해지겠지만 주민들의 기대가 큽니다.",
+			"effects": { "finance": -7, "residents": 7 },
+			"set_flags": ["legacy_care"]
+		},
+		"right_choice": {
+			"text": "일자리와 개발 중심 계획",
+			"reaction": "일자리는 반갑지만, 동네가 너무 바뀌진 않을까요…",
+			"reaction_expression": "worried",
+			"memory": "다음 10년을 개발 중심으로 계획함",
+			"result": "새 산업 단지와 도로를 짓는 계획이 세워졌습니다. 마을이 커질 거라는 기대와 함께 숲 걱정도 나옵니다.",
+			"effects": { "finance": 8, "environment": -6 },
+			"set_flags": ["legacy_growth"]
+		}
+	}
+]

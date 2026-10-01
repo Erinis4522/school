@@ -1,0 +1,11 @@
+{
+	"default": "normal",
+	"danger_threshold": 30,
+	"by_stat": {
+		"residents": "complain",
+		"finance": "poor",
+		"environment": "pollution",
+		"safety": "danger"
+	},
+	"fade_seconds": 0.6
+}

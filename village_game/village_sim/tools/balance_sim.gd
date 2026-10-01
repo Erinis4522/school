@@ -54,6 +54,7 @@ func _init() -> void:
 	lines.append_array(_section_dominant(results["careful"], titles))
 	lines.append_array(_section_conditional_frequency(results["random"], titles, categories, runs))
 	lines.append_array(_section_general_frequency(results["random"], categories, runs))
+	lines.append_array(_section_acts(results, config))
 
 	var text := "\n".join(PackedStringArray(lines))
 	print(text)
@@ -76,12 +77,19 @@ func _simulate(data: Dictionary, strategy: String, runs: int) -> Dictionary:
 		"long_streak_runs": 0,
 		"event_seen": {},
 		"choices": {},
+		"act_turns": {},       # 막 id -> 진행된 턴 수
+		"act_follow_ups": {},  # 막 id -> 지연 사건이 나온 턴 수
+		"act_linked": {},      # 막 id -> 지난 선택과 이어진 턴 수 (지연 사건 + 과거 선택에 따른 대사)
+		"checkpoints": 0,
 	}
 	for i in runs:
 		session.start(i + 1)
 		var streak := 0
 		var max_streak := 0
 		while not session.is_over():
+			if session.is_showing_dialogue() or session.is_showing_checkpoint():
+				session.proceed()   # 첫 인사·자기소개 대사, 중간 결산은 넘긴다
+				continue
 			var event: Dictionary = session.current_event
 			var is_conditional: bool = event["category"] != "general"
 			streak = streak + 1 if is_conditional else 0
@@ -89,6 +97,12 @@ func _simulate(data: Dictionary, strategy: String, runs: int) -> Dictionary:
 			if is_conditional:
 				result["conditional_total"] += 1
 			_count(result["event_seen"], event["id"])
+			var act_id := String(session.get_current_act().get("id", "?"))
+			_count(result["act_turns"], act_id)
+			if event["category"] == "delayed":
+				_count(result["act_follow_ups"], act_id)
+			if event.get("linked_to_past", false):
+				_count(result["act_linked"], act_id)
 
 			var side := _decide(session, strategy)
 			if not result["choices"].has(event["id"]):
@@ -96,6 +110,9 @@ func _simulate(data: Dictionary, strategy: String, runs: int) -> Dictionary:
 			result["choices"][event["id"]][side] += 1
 			session.choose(side)
 			session.proceed()
+			while session.is_showing_checkpoint():
+				result["checkpoints"] += 1
+				session.proceed()
 
 		var ending: Dictionary = session.ending
 		_count(result["endings"], ending["id"])
@@ -240,6 +257,29 @@ func _section_general_frequency(random_result: Dictionary, categories: Dictionar
 	if count > 0:
 		lines.append("- 사건 %d개, 판당 평균 %.1f개 등장" % [count, total])
 		lines.append("- 사건별 등장률: 최저 %s / 평균 %s / 최고 %s" % [_pct(low, 1.0), _pct(total / count, 1.0), _pct(high, 1.0)])
+	lines.append("")
+	return lines
+
+
+## 막별로 "지난 선택과 이어진 턴"의 비율. 1막은 낮고 2·3막은 높아야 의도대로다.
+##   지연: 지난 선택 때문에 생긴 사건 / 연결: 지연 사건 + 지난 선택에 따라 인물의 말이 바뀐 사건
+func _section_acts(results: Dictionary, config: Dictionary) -> Array[String]:
+	var header := "| 전략 |"
+	var divider := "|---|"
+	for act in config["acts"]:
+		header += " %s (%d~%d턴) 지연 / 연결 |" % [act["name"], act["from"], act["to"]]
+		divider += "---|"
+	header += " 판당 중간 결산 |"
+	divider += "---|"
+	var lines: Array[String] = ["## 막별로 지난 선택과 이어진 턴의 비율", "", header, divider]
+	for strategy in STRATEGIES:
+		var r: Dictionary = results[strategy]
+		var row := "| %s |" % strategy
+		for act in config["acts"]:
+			var turns := float(r["act_turns"].get(act["id"], 0))
+			row += " %s / %s |" % [_pct(r["act_follow_ups"].get(act["id"], 0), turns), _pct(r["act_linked"].get(act["id"], 0), turns)]
+		row += " %.1f |" % (float(r["checkpoints"]) / r["runs"])
+		lines.append(row)
 	lines.append("")
 	return lines
 
