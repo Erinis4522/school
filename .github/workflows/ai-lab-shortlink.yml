@@ -1,0 +1,40 @@
+name: Create classroom short link
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-lab-shortlink.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shorten:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or verify is.gd/aisw26
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request, urllib.error
+          target = "https://erinis4522.github.io/school/ai-lab/"
+          slug = "aisw26"
+          params = urllib.parse.urlencode({"format":"json", "url":target, "shorturl":slug})
+          request = urllib.request.Request("https://is.gd/create.php?" + params, headers={"User-Agent":"school-ai-lab-classroom/1.0"})
+          try:
+              with urllib.request.urlopen(request, timeout=25) as response:
+                  result = json.load(response)
+          except urllib.error.HTTPError as exc:
+              result = json.loads(exc.read().decode("utf-8"))
+          print("Creation response:", result)
+          if result.get("shorturl") != "https://is.gd/" + slug:
+              lookup = "https://is.gd/forward.php?" + urllib.parse.urlencode({"format":"json", "shorturl":slug})
+              with urllib.request.urlopen(lookup, timeout=25) as response:
+                  previous = json.load(response)
+              print("Existing lookup:", previous)
+              if previous.get("forwardurl", "").rstrip("/") != target.rstrip("/"):
+                  raise SystemExit("Requested short link could not be reserved for our game")
+          print("Classroom short link confirmed: https://is.gd/" + slug)
+          PY
