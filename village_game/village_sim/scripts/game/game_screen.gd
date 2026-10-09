@@ -10,7 +10,7 @@ extends Control
 ##   → 왼쪽을 지지하는 인물의 한마디 → 오른쪽을 지지하는 인물의 한마디 → 선택
 ##   선택: 메인 창 위에 "당신의 선택은?" 안내 그림이 뜨고, 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자가 선다.
 ##         메인 창의 왼쪽/오른쪽을 누르면 그쪽 지지자의 인물 카드가 메인 창 뒤에서 비스듬히 펼쳐진다.
-##         (인물 그림 / 선택지 문구 / 예상 변화) 반대쪽을 누르면 카드가 바뀌고, 같은 쪽을 한 번 더 누르면 결정.
+##         (인물 그림 / 이름 / 제안 정책) 반대쪽을 누르면 카드가 바뀌고, 같은 쪽을 한 번 더 누르면 결정.
 ##   결정: 인물 카드가 들어가고, 고른 쪽 지지자가 메인 창 가운데에 올라와 반응한다. 대화창에는 반응 대사와 결과.
 ##   대사·결과·중간 결산에서는 아무 곳이나 누르면 다음으로 넘어간다.
 ##   키보드: ← / → 는 같은 동작, Enter / Space 는 결정 또는 다음
@@ -19,6 +19,7 @@ extends Control
 ## 정확한 숫자는 보여 주지 않는다. 그림은 AssetLibrary가 찾는다(실제 그림 → 임시 그림).
 
 enum Phase { CHOOSING, RESULT, CHECKPOINT, DIALOGUE }
+signal title_requested
 
 const TextUtil = preload("res://village_sim/scripts/game/text_util.gd")
 const AssetLibrary = preload("res://village_sim/scripts/game/asset_library.gd")
@@ -34,7 +35,7 @@ const STAGE_PAIR_GAP := 110                   # 선택 때 좌우 두 인물 사
 const BANNER_WIDTH := 400.0                   # 선택 안내 그림(assets/ui/choice) 폭. 높이는 그림 비율대로
 const BANNER_OVERLAP := 14.0                  # 선택 안내 그림이 메인 창 위 테두리를 덮는 정도
 const BANNER_SPACE := 80                      # 선택 안내 그림이 들어갈 자리 (메인 창 위 빈칸)
-const STAGE_PAIR_PORTRAIT := Vector2(220, 226) # 선택 때 좌우 지지자 (아래에 예상 변화가 붙는다)
+const STAGE_PAIR_PORTRAIT := Vector2(215, 185) # 이름·정책 문구 자리를 확보하도록 조정
 const PERSON_CARD_SIZE := Vector2(300, 470)   # 인물 카드 (고정 크기)
 const PERSON_PORTRAIT_HEIGHT := 200
 const CIRCLE_DELAY := 0.18                    # 카드가 펼쳐지기 시작하고 빨간 동그라미를 긋기까지
@@ -70,8 +71,9 @@ var _main: PanelContainer
 var _stage: HBoxContainer
 var _stage_portrait                 # PortraitView (가운데 한 명)
 var _stage_sides: Dictionary = {}   # "left" / "right" -> PortraitView (선택 때 좌우 지지자)
-var _stage_holders: Dictionary = {} # "left" / "right" -> 초상화 + 예상 변화 묶음
-var _stage_chips: Dictionary = {}   # "left" / "right" -> 예상 변화 (아이콘 + 화살표)
+var _stage_holders: Dictionary = {} # "left" / "right" -> 초상화 + 이름 + 정책
+var _stage_names: Dictionary = {}   # "left" / "right" -> 이름 Label
+var _stage_policies: Dictionary = {} # "left" / "right" -> 정책 Label
 var _banner: TextureRect            # 선택할 때 메인 창 위에 뜨는 안내 그림
 var _banner_tween: Tween
 var _heading_box: PanelContainer    # 사건 제목 칸
@@ -82,6 +84,7 @@ var _name_label: Label
 var _line_label: Label
 var _sub_label: Label
 var _guide_label: Label
+var _title_button: Button
 
 
 func _ready() -> void:
@@ -95,6 +98,8 @@ func setup(session) -> void:
 		_stat_names[stat["id"]] = stat["name"]
 		_add_stat_view(stat["id"], stat["name"])
 	_ignore_mouse_on_children()
+	# 메인 영역 클릭으로 선택하는 구조이므로 타이틀 버튼만 입력을 직접 받도록 둔다.
+	_title_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	session.dialogue_presented.connect(_on_dialogue_presented)
 	session.event_presented.connect(_on_event_presented)
 	session.choice_resolved.connect(_on_choice_resolved)
@@ -242,10 +247,9 @@ func _on_choice_resolved(result: Dictionary) -> void:
 	if result.get("important", false):
 		_pixel_burst(_stage_portrait if _stage.visible else _main)
 
-	# 상태 반응: 게이지 옆 화살표가 반짝이고, 아이콘이 튀거나 흔들린다.
+	# 상태 반응: 방향·강도 화살표를 표시하지 않고 게이지와 반응 애니메이션만 보여 준다.
 	var changes: Dictionary = result["changes"]
-	_show_markers(changes)
-	_flash_markers(changes)
+	_show_markers({})
 	for stat_id in changes:
 		_react(stat_id, int(changes[stat_id]))
 	_lock_input()
@@ -299,7 +303,7 @@ func _show_speaker(npc: Dictionary, expression: String, react: bool) -> void:
 
 ## 선택할 때: 가운데 인물 대신 메인 창 왼쪽에 왼쪽 지지자, 오른쪽에 오른쪽 지지자. (담담한 neutral 얼굴)
 ## 밝은 얼굴(delight)은 그쪽을 눌러 옆으로 펼쳐지는 인물 카드에서만 쓴다.
-## 각 초상화 아래에는 그 선택지를 고르면 달라질 상태(아이콘 + 화살표)를 보여 준다.
+## 각 초상화 아래에는 인물 이름과 제안 정책을 표시한다. 징조는 오른쪽 상태 게이지에만 표시한다.
 ## 그림이 없는 쪽은 빈자리로 둔다(반대쪽 인물이 가운데로 쏠리지 않게).
 func _show_pair() -> void:
 	_stage_portrait.visible = false
@@ -310,7 +314,8 @@ func _show_pair() -> void:
 		var preview: Dictionary = _session.get_side_preview(side)
 		var found: bool = view.set_character(String(preview["npc"].get("id", "")), "neutral")
 		_stage_holders[side].visible = true
-		_fill_effect_chips(_stage_chips[side], _hints.get(side, {}))
+		_stage_names[side].text = _npc_name(preview["npc"])
+		_stage_policies[side].text = TextUtil.keep_words(String(preview.get("text", "")))
 		view.modulate.a = 1.0 if found else 0.0
 		if found:
 			view.play_enter()
@@ -441,30 +446,6 @@ func _update_turn_label() -> void:
 	_turn_label.text = "%s%d / %d" % [prefix, _session.state.turn, int(_session.config["max_turns"])]
 
 
-## 화살표 그림 묶음 (단계 ±1 → 1개, ±2 → 2개). 그림이 없으면 ↑ ↓ 글자.
-func _make_arrows(level: int) -> HBoxContainer:
-	var arrows := HBoxContainer.new()
-	arrows.add_theme_constant_override("separation", 0)
-	arrows.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var texture := AssetLibrary.texture("ui/arrow_up" if level > 0 else "ui/arrow_down")
-	for i in absi(level):
-		if texture != null:
-			var image := TextureRect.new()
-			image.texture = texture
-			image.custom_minimum_size = Vector2(14, 18)
-			AssetLibrary.apply_filter(image, texture, image.custom_minimum_size)
-			image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			arrows.add_child(image)
-		else:
-			var label := Label.new()
-			label.text = "↑" if level > 0 else "↓"
-			label.add_theme_color_override("font_color", UiStyle.level_color(level))
-			arrows.add_child(label)
-	return arrows
-
-
 func _make_icon(stat_id: String, icon_size: float) -> TextureRect:
 	var icon := TextureRect.new()
 	icon.texture = AssetLibrary.stat_icon(stat_id)
@@ -476,33 +457,22 @@ func _make_icon(stat_id: String, icon_size: float) -> TextureRect:
 	return icon
 
 
-## 게이지 옆 표시. levels에 없는 상태는 비운다.
+## 우측 상단 상태 게이지: 미리 본 선택으로 영향받는 항목만 작은 기호로 표시.
+## 증가/감소 방향과 변화 크기는 공개하지 않는다. 선택하지 않은 상태에서는 숨긴다.
 func _show_markers(levels: Dictionary) -> void:
 	for stat_id in _stat_views:
 		var marker: HBoxContainer = _stat_views[stat_id]["marker"]
 		for child in marker.get_children():
+			marker.remove_child(child)
 			child.queue_free()
-		if levels.has(stat_id):
-			marker.add_child(_make_arrows(int(levels[stat_id])))
-
-
-## 예상 변화: [아이콘] 주민 ↑ (색 + 화살표를 함께 써서 색만으로 전달하지 않음)
-func _fill_effect_chips(box: Container, levels: Dictionary) -> void:
-	for child in box.get_children():
-		child.queue_free()
-	for stat_id in levels:
-		var level := int(levels[stat_id])
-		var chip := HBoxContainer.new()
-		chip.add_theme_constant_override("separation", 3)
-		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		chip.add_child(_make_icon(stat_id, 24))
-		var name_label := Label.new()
-		name_label.text = _stat_names.get(stat_id, stat_id)
-		name_label.add_theme_font_size_override("font_size", 16)
-		name_label.add_theme_color_override("font_color", UiStyle.level_color(level))
-		chip.add_child(name_label)
-		chip.add_child(_make_arrows(level))
-		box.add_child(chip)
+		if levels.has(stat_id) and int(levels[stat_id]) != 0:
+			var symbol := Label.new()
+			symbol.text = "◆"
+			symbol.tooltip_text = "이 선택으로 변화가 예상되는 항목 (방향·크기는 비공개)"
+			symbol.add_theme_font_size_override("font_size", 14)
+			symbol.add_theme_color_override("font_color", UiStyle.HEADING_TEXT)
+			symbol.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			marker.add_child(symbol)
 
 
 # --- 연출 ------------------------------------------------------------------------
@@ -610,6 +580,17 @@ func _build_layout() -> void:
 	_turn_label.add_theme_font_size_override("font_size", 18)
 	turn_panel.add_child(_turn_label)
 
+	# 교실 수업 중 언제든 본편을 나가 다른 학생에게 시범을 보여 줄 수 있도록 한다.
+	_title_button = Button.new()
+	_title_button.text = "← 타이틀로"
+	_title_button.position = Vector2(24, 64)
+	_title_button.custom_minimum_size = Vector2(130, 36)
+	_title_button.add_theme_font_size_override("font_size", 15)
+	_title_button.pressed.connect(func():
+		_sfx("button")
+		title_requested.emit())
+	add_child(_title_button)
+
 	# 오른쪽 위: 상태 게이지
 	var stats_panel := PanelContainer.new()
 	stats_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -689,22 +670,33 @@ func _build_layout() -> void:
 			_stage.add_child(portrait)
 			_stage_portrait = portrait
 			continue
-		# 좌우 지지자: 초상화 아래에 그 선택지를 고르면 달라질 상태(아이콘 + 화살표)
+		# 좌우 지지자: 초상화 아래에는 이름과 그 인물이 제안하는 정책만 표시한다.
 		var holder := VBoxContainer.new()
 		holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		holder.add_theme_constant_override("separation", 6)
+		holder.custom_minimum_size.x = STAGE_PAIR_PORTRAIT.x
+		holder.add_theme_constant_override("separation", 4)
 		holder.visible = false
 		_stage.add_child(holder)
 		portrait.custom_minimum_size = STAGE_PAIR_PORTRAIT
 		holder.add_child(portrait)
-		var chips := HFlowContainer.new()
-		chips.alignment = FlowContainer.ALIGNMENT_CENTER
-		chips.custom_minimum_size = Vector2(STAGE_PAIR_PORTRAIT.x, 26)
-		chips.add_theme_constant_override("h_separation", 10)
-		holder.add_child(chips)
+		var person_name := Label.new()
+		person_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		person_name.add_theme_font_size_override("font_size", 15)
+		person_name.add_theme_color_override("font_color", UiStyle.HEADING_TEXT)
+		holder.add_child(person_name)
+		var policy := Label.new()
+		policy.custom_minimum_size.x = STAGE_PAIR_PORTRAIT.x
+		policy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		policy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		policy.max_lines_visible = 3
+		policy.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		policy.add_theme_font_size_override("font_size", 14)
+		policy.add_theme_color_override("font_color", UiStyle.TEXT)
+		holder.add_child(policy)
 		_stage_sides[side] = portrait
 		_stage_holders[side] = holder
-		_stage_chips[side] = chips
+		_stage_names[side] = person_name
+		_stage_policies[side] = policy
 
 	# 대화창: 둥근 직사각형. 이름표 + 대사 + 작은 글
 	var box := PanelContainer.new()
@@ -853,7 +845,7 @@ func _make_side_card(side: String) -> Dictionary:
 	}
 
 
-## 게이지 한 줄: [아이콘] 이름 [게이지] [화살표]
+## 게이지 한 줄: [아이콘] 이름 [게이지] [변화 가능성 ◆]
 ## 반응 애니메이션 때 컨테이너가 위치를 되돌리지 않도록 일반 Control(holder) 안에 둔다.
 func _add_stat_view(stat_id: String, display_name: String) -> void:
 	var holder := Control.new()
