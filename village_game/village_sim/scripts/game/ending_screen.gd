@@ -3,6 +3,7 @@ extends Control
 ## assets/endings/<엔딩 id>.png 가 있으면 엔딩 그림을 함께 보여 준다. 없으면 글만 나온다.
 
 signal restart_requested
+signal title_requested
 
 const TextUtil = preload("res://village_sim/scripts/game/text_util.gd")
 const AssetLibrary = preload("res://village_sim/scripts/game/asset_library.gd")
@@ -91,6 +92,10 @@ func _build_layout() -> void:
 	_recap_label.add_theme_color_override("font_color", UiStyle.TEXT_SOFT)
 	column.add_child(_recap_label)
 
+	var actions := HBoxContainer.new()
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions.add_theme_constant_override("separation", 14)
+	column.add_child(actions)
 	var restart_button := Button.new()
 	restart_button.text = "다시 시작"
 	restart_button.custom_minimum_size = Vector2(240, 56)
@@ -99,4 +104,13 @@ func _build_layout() -> void:
 	restart_button.pressed.connect(func():
 		get_tree().call_group("village_audio", "play_sfx", "button")
 		restart_requested.emit())
-	column.add_child(restart_button)
+	actions.add_child(restart_button)
+	var title_button := Button.new()
+	title_button.text = "타이틀로 돌아가기"
+	title_button.custom_minimum_size = Vector2(240, 50)
+	title_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	title_button.add_theme_font_size_override("font_size", 18)
+	title_button.pressed.connect(func():
+		get_tree().call_group("village_audio", "play_sfx", "button")
+		title_requested.emit())
+	actions.add_child(title_button)
