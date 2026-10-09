@@ -13,20 +13,29 @@ jobs:
   shorten:
     runs-on: ubuntu-latest
     steps:
-      - name: Check published classroom game
-        run: |
-          curl -sSIL --max-time 20 "https://erinis4522.github.io/school/ai-lab/" | head -n 14
-      - name: Look up is.gd address and try is.gd or v.gd
+      - name: Create custom short link at zip1.io
         shell: bash
         run: |
-          set +e
-          for url in \
-            "https://is.gd/forward.php?format=json&shorturl=aisw26" \
-            "https://v.gd/forward.php?format=json&shorturl=aisw26" \
-            "https://v.gd/create.php?format=json&url=https%3A%2F%2Ferinis4522.github.io%2Fschool%2Fai-lab%2F&shorturl=aisw26" ; do
-            echo "Checking: $url"
-            curl -LsS --max-time 25 -D /tmp/h -o /tmp/b "$url"
-            head -n 4 /tmp/h
-            head -c 800 /tmp/b
-            echo
-          done
+          set -e
+          curl -sS -L -D /tmp/headers -o /tmp/result \
+            --max-time 35 \
+            -X POST 'https://zip1.io/api/create' \
+            -H 'Content-Type: application/json' \
+            --data '{"url":"https://erinis4522.github.io/school/ai-lab/","alias":"aisw26"}'
+          head -n 3 /tmp/headers
+          cat /tmp/result
+          echo
+          python3 - <<'PY'
+          import json
+          data = json.load(open("/tmp/result"))
+          print("Creation result:", data)
+          if data.get("short_url") != "https://zip1.io/aisw26":
+              raise SystemExit("Short URL could not be created")
+          PY
+      - name: Verify redirect points to the classroom game
+        shell: bash
+        run: |
+          set -e
+          curl -sS -I --max-time 20 "https://zip1.io/aisw26" > /tmp/redirect
+          head -n 20 /tmp/redirect
+          grep -i -E '^location: https://erinis4522.github.io/school/ai-lab/?' /tmp/redirect
