@@ -7,6 +7,7 @@ const GameSession = preload("res://village_sim/scripts/core/game_session.gd")
 const TitleScreenScene: PackedScene = preload("res://village_sim/scenes/title/title.tscn")
 const GameScreenScene: PackedScene = preload("res://village_sim/scenes/game/game.tscn")
 const EndingScreenScene: PackedScene = preload("res://village_sim/scenes/ending/ending.tscn")
+const AILabScene: PackedScene = preload("res://village_sim/scenes/ai_lab.tscn")
 const VillageBackdrop = preload("res://village_sim/scripts/game/village_backdrop.gd")
 const AudioPlayer = preload("res://village_sim/scripts/game/audio_player.gd")
 
@@ -42,11 +43,22 @@ func _ready() -> void:
 
 func _show_title() -> void:
 	_audio.play_bgm("title")
+	_backdrop.set_background("normal", 0.3)
+	_backdrop.refresh([])
 	var screen = TitleScreenScene.instantiate()
 	_swap_screen(screen)
 	screen.setup(_data.get("title", {}))
 	screen.new_game_requested.connect(_start_game)
+	screen.ai_lab_requested.connect(_show_ai_lab)
 	screen.quit_requested.connect(func(): get_tree().quit())
+
+
+func _show_ai_lab() -> void:
+	_audio.play_bgm("title")
+	var screen = AILabScene.instantiate()
+	_swap_screen(screen)
+	screen.setup(_data)
+	screen.back_requested.connect(_show_title)
 
 
 func _start_game() -> void:
@@ -54,6 +66,7 @@ func _start_game() -> void:
 	var screen = GameScreenScene.instantiate()
 	_swap_screen(screen)
 	screen.setup(_session)
+	screen.title_requested.connect(_show_title)
 	_session.start()
 
 
@@ -68,6 +81,7 @@ func _on_game_ended(ending: Dictionary, summary: Dictionary) -> void:
 	_swap_screen(screen)
 	screen.show_ending(ending, summary)
 	screen.restart_requested.connect(_start_game)
+	screen.title_requested.connect(_show_title)
 
 
 func _swap_screen(screen: Control) -> void:
