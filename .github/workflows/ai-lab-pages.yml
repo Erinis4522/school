@@ -1,0 +1,51 @@
+name: Build and publish AI lab (separate URL)
+
+on:
+  push:
+    branches:
+      - ai-lab-v10-deploy
+      - main
+    paths:
+      - "village_game/**"
+      - ".github/workflows/ai-lab-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot and web export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.2
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import Godot resources
+        run: godot --headless --path village_game --import --quit
+
+      - name: Check deck and storm training
+        run: godot --headless --path village_game --script res://village_sim/tools/ai_deck_smoke_test.gd
+
+      - name: Export website
+        run: |
+          mkdir -p website
+          godot --headless --path village_game --export-release "Web" "${GITHUB_WORKSPACE}/website/index.html"
+          cp village_game/web/og.jpg website/og.jpg
+          test -s website/index.html
+          test -s website/index.wasm
+
+      - name: Publish only under /ai-lab/
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./website
+          destination_dir: ai-lab
+          keep_files: true

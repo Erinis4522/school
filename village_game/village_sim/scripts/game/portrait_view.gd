@@ -24,7 +24,14 @@ const BLINK_SECONDS := 0.12
 const BLINK_INTERVAL := Vector2(2.5, 5.0)   # 다음 깜빡임까지 (최소, 최대) 초
 const ENTER_PIXELS := 36.0
 const ENTER_SECONDS := 0.3
-const COVER_TOP := 0.02          # cover 모드에서 그림 위쪽을 얼마나 잘라 낼지 (그림 높이 비율)
+const COVER_ZOOM := 1.06 # 얼굴 위치를 조정할 수 있도록 가장자리를 조금만 더 확대
+# 원본 이미지는 그대로 두고, 캐릭터별 얼굴 중심에 맞춰 그림 위치만 조정한다.
+const FACE_FOCUS := {
+	"cherry": Vector2(0.50, 0.33), "luka": Vector2(0.49, 0.33),
+	"noel": Vector2(0.50, 0.32), "rio": Vector2(0.51, 0.32),
+	"mina": Vector2(0.50, 0.31), "cain": Vector2(0.54, 0.33),
+	"owen": Vector2(0.54, 0.33), "bruno": Vector2(0.55, 0.33),
+}
 
 @export_enum("cover", "contain") var fit_mode := "cover"
 
@@ -36,6 +43,7 @@ var _texture: Texture2D
 var _blink: Texture2D
 var _scale := 1.0
 var _pixel_art := false
+var _face_focus := Vector2(0.5, 0.33)
 var _time := 0.0
 var _next_blink := 3.0
 var _blink_left := 0.0
@@ -71,6 +79,7 @@ func _ready() -> void:
 
 ## 인물과 표정을 바꾼다. 그림이 없으면 false.
 func set_character(npc_id: String, expression: String) -> bool:
+	_face_focus = FACE_FOCUS.get(npc_id, Vector2(0.5, 0.33))
 	var found := AssetLibrary.portrait_set(npc_id, expression)
 	_texture = found.get("texture")
 	_blink = found.get("blink")
@@ -138,7 +147,7 @@ func _layout() -> void:
 	var texture_size := _texture.get_size()
 	var fit_w := size.x / texture_size.x
 	var fit_h := size.y / texture_size.y
-	var fit := maxf(fit_w, fit_h) if fit_mode == "cover" else minf(fit_w, fit_h)
+	var fit := maxf(fit_w, fit_h) * COVER_ZOOM if fit_mode == "cover" else minf(fit_w, fit_h)
 	_pixel_art = fit > 1.0
 	_scale = floorf(fit) if _pixel_art and fit_mode == "contain" else fit
 	_image.size = texture_size * _scale
@@ -149,7 +158,9 @@ func _layout() -> void:
 ## cover: 가로 가운데, 위쪽 기준 / contain: 아래쪽 가운데. 정수 위치로 맞춘다.
 ## cover에서는 숨쉬기 때 위쪽에 틈이 보이지 않게 숨쉬기 폭 이상은 잘라 둔다.
 func _base_position() -> Vector2:
-	var x := roundf((size.x - _image.size.x) / 2.0)
 	if fit_mode == "cover":
-		return Vector2(x, -maxf(roundf(_image.size.y * COVER_TOP), BREATH_PIXELS * 2.0))
-	return Vector2(x, roundf(size.y - _image.size.y))
+		var x := roundf(size.x * 0.5 - _image.size.x * _face_focus.x)
+		var y := roundf(size.y * 0.46 - _image.size.y * _face_focus.y)
+		# 틀이 비지 않도록 확대된 그림을 틀 안쪽으로만 이동한다.
+		return Vector2(clampf(x, size.x - _image.size.x, 0.0), clampf(y, size.y - _image.size.y, 0.0))
+	return Vector2(roundf((size.x - _image.size.x) / 2.0), roundf(size.y - _image.size.y))
