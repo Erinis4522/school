@@ -1,6 +1,13 @@
 name: Build and publish AI lab (separate URL)
 
 on:
+  push:
+    branches:
+      - ai-lab-v10-deploy
+      - main
+    paths:
+      - "village_game/**"
+      - ".github/workflows/ai-lab-pages.yml"
   workflow_dispatch:
 
 permissions:
