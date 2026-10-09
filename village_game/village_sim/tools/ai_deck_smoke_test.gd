@@ -21,7 +21,7 @@ func _init() -> void:
 	trainer.configure("normal", "balance")
 	trainer.train_until(8)
 	assert(trainer.trained == 8, "훈련 횟수 오류")
-	var original_weights := trainer.agent.weights.duplicate()
+	var original_weights = trainer.agent.weights.duplicate()
 	trainer.set_deck(["environment", "careful", "explore"])
 	assert(trainer.agent.weights == original_weights, "카드 변경만으로 학습 결과가 변하면 안 됨")
 	trainer.train_until(16)
