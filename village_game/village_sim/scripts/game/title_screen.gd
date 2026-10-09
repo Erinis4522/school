@@ -7,6 +7,7 @@ extends Control
 ## 타이틀 그림을 바꾸면 이 숫자만 고치면 된다. 그림이 없으면 글자 제목과 일반 버튼을 보여 준다.
 
 signal new_game_requested
+signal ai_lab_requested
 signal quit_requested
 
 const AssetLibrary = preload("res://village_sim/scripts/game/asset_library.gd")
@@ -31,6 +32,7 @@ func setup(layout: Dictionary) -> void:
 	var texture := AssetLibrary.texture(String(layout.get("image", "title/title")))
 	if texture == null:
 		_build_fallback()
+		_build_ai_lab_button()
 		return
 	_image = TextureRect.new()
 	_image.texture = texture
@@ -44,6 +46,7 @@ func setup(layout: Dictionary) -> void:
 		add_child(button)
 		_buttons.append({"button": button, "rect": Rect2(r[0], r[1], r[2], r[3])})
 	_place_buttons()
+	_build_ai_lab_button()
 	if not _buttons.is_empty():
 		_buttons[0]["button"].grab_focus()
 
@@ -88,6 +91,8 @@ func _on_action(action: String) -> void:
 	match action:
 		"new_game":
 			new_game_requested.emit()
+		"ai_lab":
+			ai_lab_requested.emit()
 		"quit":
 			quit_requested.emit()
 
@@ -110,3 +115,18 @@ func _build_fallback() -> void:
 		button.custom_minimum_size = Vector2(260, 56)
 		button.add_theme_font_size_override("font_size", 22)
 		column.add_child(button)
+
+
+## 원본 타이틀 그림(새 게임·종료가 그림에 포함됨)을 수정하지 않고
+## 오른쪽 상단에 교육용 실험실 버튼만 따로 추가한다.
+func _build_ai_lab_button() -> void:
+	var button := _make_button("ai_lab", "AI 학습 실험실", false)
+	button.text = "AI 학습 실험실"
+	button.anchor_left = 1.0
+	button.anchor_right = 1.0
+	button.offset_left = -240.0
+	button.offset_right = -24.0
+	button.offset_top = 22.0
+	button.offset_bottom = 74.0
+	button.add_theme_font_size_override("font_size", 18)
+	add_child(button)
