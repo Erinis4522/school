@@ -3,8 +3,7 @@ name: Create classroom short link
 on:
   push:
     branches: [main]
-    paths:
-      - ".github/workflows/ai-lab-shortlink.yml"
+    paths: [".github/workflows/ai-lab-shortlink.yml"]
   workflow_dispatch:
 
 permissions:
@@ -14,28 +13,20 @@ jobs:
   shorten:
     runs-on: ubuntu-latest
     steps:
-      - name: Create or inspect classroom short link
+      - name: Check published classroom game
+        run: |
+          curl -sSIL --max-time 20 "https://erinis4522.github.io/school/ai-lab/" | head -n 14
+      - name: Look up is.gd address and try is.gd or v.gd
         shell: bash
         run: |
-          set -e
-          curl -sSL -D /tmp/headers -o /tmp/body --max-time 30 --get \
-            --data-urlencode "format=json" \
-            --data-urlencode "url=https://erinis4522.github.io/school/ai-lab/" \
-            --data-urlencode "shorturl=aisw26" \
-            "https://is.gd/create.php"
-          echo "Response headers:"
-          head -n 15 /tmp/headers
-          echo "Response body:"
-          head -c 1200 /tmp/body
-          echo
-          python3 - <<'PY'
-          import json
-          payload = open("/tmp/body", encoding="utf-8").read()
-          try:
-              data = json.loads(payload)
-          except ValueError:
-              raise SystemExit("Short link API did not return JSON; see response above")
-          print("Result:", data)
-          if data.get("shorturl") != "https://is.gd/aisw26":
-              raise SystemExit("Short link was not created")
-          PY
+          set +e
+          for url in \
+            "https://is.gd/forward.php?format=json&shorturl=aisw26" \
+            "https://v.gd/forward.php?format=json&shorturl=aisw26" \
+            "https://v.gd/create.php?format=json&url=https%3A%2F%2Ferinis4522.github.io%2Fschool%2Fai-lab%2F&shorturl=aisw26" ; do
+            echo "Checking: $url"
+            curl -LsS --max-time 25 -D /tmp/h -o /tmp/b "$url"
+            head -n 4 /tmp/h
+            head -c 800 /tmp/b
+            echo
+          done
