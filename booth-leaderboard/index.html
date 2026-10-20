@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부스 리더보드</title>
+<style>
+  :root{
+    --bg:#0e1120; --bg2:#151a30; --panel:#1b2140; --line:#2b3358;
+    --text:#f4f5fa; --muted:#9aa3c4; --accent:#ffb020; --accent2:#5b8cff;
+    --gold:#ffd166; --silver:#d7dee8; --bronze:#e09a63;
+    --danger:#ff5f6d; --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Pretendard","Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+
+  /* ---------- 전체 레이아웃: 왼쪽(설명 + 입력) / 오른쪽(리더보드) ---------- */
+  #app{display:flex;height:100vh;width:100vw}
+  .left{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;border-right:2px solid var(--line)}
+  .right{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;padding:3.5vh 3vw 3vh;background:var(--bg)}
+
+  /* 왼쪽 위: 부스 이름 + 설명 */
+  .info{
+    flex:1 1 auto;min-height:0;padding:4vh 3.5vw 2.5vh;display:flex;flex-direction:column;gap:2.2vh;
+    background:linear-gradient(165deg,#1a2042 0%,#0e1120 80%);
+  }
+  .booth-tag{font-size:1.8vh;letter-spacing:.3em;color:var(--accent);font-weight:700}
+  .booth-title{font-size:min(6.2vh,4.4vw);font-weight:900;line-height:1.15;margin:0;word-break:keep-all}
+  .booth-img{max-width:100%;max-height:22vh;border-radius:var(--radius);object-fit:contain;align-self:flex-start;display:none;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+  .booth-img.show{display:block}
+  .booth-desc{flex:1 1 auto;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:1.4vh;padding-right:.5vw}
+  .step{display:flex;gap:1vw;align-items:flex-start;font-size:min(2.6vh,1.85vw);line-height:1.5;color:#e4e7f5;word-break:keep-all}
+  .step .n{
+    flex:0 0 auto;width:1.7em;height:1.7em;border-radius:50%;background:var(--accent);color:#1a1300;
+    font-weight:900;display:flex;align-items:center;justify-content:center;font-size:.85em;margin-top:.15em
+  }
+  .step .t{flex:1 1 auto;padding-top:.1em}
+  .para{font-size:min(2.6vh,1.85vw);line-height:1.5;color:#e4e7f5;white-space:pre-wrap;word-break:keep-all}
+
+  /* 왼쪽 아래: 기록 입력 탭 */
+  .entry-area{
+    flex:0 0 44vh;height:44vh;min-height:0;display:flex;flex-direction:column;gap:1.1vh;padding:1.8vh 2.4vw 1.6vh;
+    background:#0b0e1a;border-top:2px solid var(--accent2);
+  }
+  .entry-head{display:flex;align-items:center;gap:.8vw;flex-wrap:wrap}
+  .entry-head h3{margin:0;font-size:2.2vh;color:var(--accent2)}
+  .entry-head .spacer{flex:1}
+  .entry-head .btn{padding:.6vh .8vw;font-size:1.5vh}
+  .btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:.7vh 1vw;font-size:1.6vh;font-weight:700;white-space:nowrap}
+  .btn:hover{border-color:var(--accent2)}
+  .btn.primary{background:var(--accent2);border-color:var(--accent2);color:#fff}
+  .btn.danger{color:var(--danger);border-color:rgba(255,95,109,.5)}
+  .btn.ghost{background:transparent}
+  form.entry{display:flex;gap:.7vw;align-items:center;flex-wrap:wrap}
+  form.entry input{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:1.1vh 1.1vw;font-size:2.3vh;outline:none;min-width:0}
+  form.entry input:focus{border-color:var(--accent2)}
+  form.entry input[name=name]{flex:3 1 12vw}
+  form.entry input[name=score]{flex:2 1 7vw;font-variant-numeric:tabular-nums}
+  form.entry .btn.primary{font-size:2.1vh;padding:1.1vh 1.8vw}
+  .hint{color:var(--muted);font-size:1.5vh}
+  #editing{display:none;color:var(--accent);font-weight:700;font-size:1.6vh}
+  #editing.show{display:inline}
+
+  .list{overflow:auto;min-height:0;flex:1 1 auto;border:1px solid var(--line);border-radius:12px}
+  .list table{width:100%;border-collapse:collapse;font-size:1.7vh}
+  .list th,.list td{padding:.6vh .8vw;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  .list th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:700}
+  .list td.num{font-variant-numeric:tabular-nums}
+  .list td.act{text-align:right}
+  .list .mini{border:1px solid var(--line);background:transparent;border-radius:8px;padding:.25vh .6vw;font-size:1.5vh;margin-left:.3vw}
+  .list .mini.del{color:var(--danger)}
+  .list tr.hl td{background:rgba(255,176,32,.12)}
+  .list .none{color:var(--muted);text-align:center;padding:2vh}
+
+  /* ---------- 오른쪽: 리더보드 (1위가 가장 크고 아래로 갈수록 작아짐) ---------- */
+  .board-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2vh}
+  .board-head h2{margin:0;font-size:4.4vh;font-weight:900;letter-spacing:.02em}
+  .board-head h2 span{color:var(--accent)}
+  .board-head .sub{color:var(--muted);font-size:1.9vh}
+  .board{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:.9vh}
+  .row{
+    min-height:0;display:grid;grid-template-columns:2.1em 1fr auto;align-items:center;gap:.5em;
+    padding:0 .7em;background:var(--panel);border:1px solid var(--line);border-radius:.45em;
+  }
+  .row .rank{font-weight:900;text-align:center;font-size:1em;color:var(--muted)}
+  .row .name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .score{font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row .score small{font-size:.55em;font-weight:600;color:var(--muted);margin-left:.2em}
+  .row.r1{background:linear-gradient(90deg,rgba(255,209,102,.25),var(--panel));border-color:var(--gold)}
+  .row.r1 .rank{color:var(--gold)}
+  .row.r2{background:linear-gradient(90deg,rgba(215,222,232,.16),var(--panel));border-color:var(--silver)}
+  .row.r2 .rank{color:var(--silver)}
+  .row.r3{background:linear-gradient(90deg,rgba(224,154,99,.18),var(--panel));border-color:var(--bronze)}
+  .row.r3 .rank{color:var(--bronze)}
+  .row.slot{opacity:.45}
+  .row.slot .name{color:var(--muted);font-weight:500}
+  .row.new{animation:pop 1.2s ease-out 3}
+  @keyframes pop{
+    0%{box-shadow:0 0 0 0 rgba(255,176,32,.9);transform:scale(1)}
+    40%{box-shadow:0 0 0 .3em rgba(255,176,32,0);transform:scale(1.015)}
+    100%{box-shadow:0 0 0 0 rgba(255,176,32,0);transform:scale(1)}
+  }
+
+  /* ---------- 토스트 ---------- */
+  #toast{
+    position:fixed;left:75%;top:3vh;transform:translate(-50%,-150%);opacity:0;
+    background:var(--accent);color:#1a1300;font-weight:900;font-size:2.8vh;padding:1.3vh 2.6vw;border-radius:999px;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.2,.9,.3,1.3),opacity .2s;z-index:50;pointer-events:none;white-space:nowrap
+  }
+  #toast.show{transform:translate(-50%,0);opacity:1}
+
+  /* ---------- 설정 모달 ---------- */
+  #modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
+  #modal.open{display:flex}
+  .dialog{
+    background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);width:min(92vw,860px);max-height:90vh;overflow:auto;
+    padding:3vh 2.4vw;display:flex;flex-direction:column;gap:1.6vh;box-shadow:0 30px 80px rgba(0,0,0,.6)
+  }
+  .dialog h3{margin:0;font-size:2.8vh}
+  .field{display:flex;flex-direction:column;gap:.6vh;min-width:0}
+  .field label{font-size:1.7vh;color:var(--muted);font-weight:700}
+  .field input,.field select,.field textarea{
+    width:100%;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1vh 1vw;font-size:2vh;outline:none
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2)}
+  .field textarea{min-height:18vh;resize:vertical;line-height:1.5}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2vw}
+  .dialog .actions{display:flex;gap:.8vw;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+  .dialog .actions .spacer{flex:1}
+  .imgrow{display:flex;gap:1vw;align-items:center;flex-wrap:wrap}
+  .imgrow img{height:8vh;border-radius:8px;display:none}
+  .imgrow img.show{display:block}
+
+  @media (max-width:800px){
+    #app{flex-direction:column}
+    .left{border-right:none;border-bottom:2px solid var(--line);flex:0 0 auto}
+    .info{max-height:38vh}
+    .entry-area{flex:0 0 auto;max-height:34vh}
+    .grid2{grid-template-columns:1fr}
+    #toast{left:50%}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- 왼쪽 -->
+  <section class="left">
+    <div class="info">
+      <div class="booth-tag">BOOTH</div>
+      <h1 class="booth-title" id="boothTitle"></h1>
+      <img class="booth-img" id="boothImg" alt="">
+      <div class="booth-desc" id="boothDesc"></div>
+    </div>
+
+    <div class="entry-area">
+      <div class="entry-head">
+        <h3>✏️ 기록 입력</h3>
+        <span id="editing">✎ 수정 중 <button type="button" class="btn ghost" id="cancelEdit" style="padding:.1vh .5vw;font-size:1.5vh">취소</button></span>
+        <span class="spacer"></span>
+        <button class="btn" id="btnSettings" title="부스 이름·설명·순위 기준">⚙ 설정</button>
+        <button class="btn" id="btnExport" title="JSON 백업 저장">⬇ 백업</button>
+        <button class="btn" id="btnImport" title="JSON 백업 불러오기">⬆ 복원</button>
+        <button class="btn" id="btnFull" title="전체화면 (F11)">⛶</button>
+        <button class="btn danger" id="btnClear">🗑 전체 삭제</button>
+      </div>
+      <form class="entry" id="entryForm" autocomplete="off">
+        <input name="name" placeholder="이름 (팀명)" maxlength="30" required>
+        <input name="score" placeholder="기록" inputmode="decimal" required>
+        <button class="btn primary" type="submit">등록 (Enter)</button>
+      </form>
+      <span class="hint"><span id="meta"></span> · <span id="dupHint"></span></span>
+      <div class="list">
+        <table>
+          <thead><tr><th>순위</th><th>이름</th><th>기록</th><th>시각</th><th></th></tr></thead>
+          <tbody id="listBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 오른쪽: 리더보드 -->
+  <section class="right">
+    <div class="board-head">
+      <h2>🏆 <span>LEADER</span>BOARD</h2>
+      <div class="sub" id="boardSub"></div>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+</div>
+
+<div id="toast"></div>
+
+<!-- 설정 모달 -->
+<div id="modal">
+  <form class="dialog" id="settingsForm">
+    <h3>⚙ 부스 설정</h3>
+    <div class="field"><label>부스 이름</label><input name="title" maxlength="60"></div>
+    <div class="field"><label>부스 설명 (한 줄에 한 항목. "1. " 처럼 번호로 시작하면 번호 뱃지로 표시됩니다)</label><textarea name="desc"></textarea></div>
+    <div class="field">
+      <label>이미지 (선택 · 예시 도면, 포스터, QR 코드 등)</label>
+      <div class="imgrow">
+        <img id="imgPreview" alt="">
+        <input type="file" id="imgFile" accept="image/*">
+        <button type="button" class="btn ghost" id="imgRemove">이미지 제거</button>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>순위 기준</label>
+        <select name="order">
+          <option value="desc">기록이 클수록 좋음 (오래 걸린 시간, 높은 점수)</option>
+          <option value="asc">기록이 작을수록 좋음 (빠른 시간)</option>
+        </select>
+      </div>
+      <div class="field"><label>단위 표시 (예: 초, 점, 개)</label><input name="unit" maxlength="8"></div>
+      <div class="field"><label>같은 이름을 다시 입력하면</label>
+        <select name="dup">
+          <option value="best">더 좋은 기록만 남김 (최고 기록)</option>
+          <option value="replace">새 기록으로 덮어씀</option>
+          <option value="append">별도 기록으로 추가</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <span class="hint">모든 데이터는 이 컴퓨터의 브라우저 안에만 저장됩니다. 인터넷이 필요 없습니다.</span>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="settingsCancel">취소</button>
+      <button type="submit" class="btn primary">저장</button>
+    </div>
+  </form>
+</div>
+
+<input type="file" id="importFile" accept="application/json,.json" style="display:none">
+
+<script>
+(() => {
+  const KEY = 'booth-leaderboard-v2';
+  const TOP_N = 10;
+  const defaults = {
+    settings: {
+      title: '그래비트랙스 거북이 대회',
+      desc: '1. 예시 도면을 보며 그래비트랙스 연습을 해 본다.\n2. 필요한 블록을 선택하여 대회에 도전한다.\n3. 20분 내에 가장 오래 걸리는 그래비트랙스 코스를 만들자.\n4. 시간 내에 완성하면 성공! 상품을 랜덤박스에서 뽑으세요.',
+      order: 'desc', unit: '초', dup: 'best', image: null,
+    },
+    entries: [],
+  };
+
+  const $ = (s) => document.querySelector(s);
+  let state = load();
+  let editingId = null;
+  let highlightId = null;
+  let highlightTimer = null;
+
+  function load() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY));
+      if (s && s.settings && Array.isArray(s.entries)) {
+        return { settings: { ...defaults.settings, ...s.settings }, entries: s.entries };
+      }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(defaults));
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { alert('저장에 실패했습니다. 저장 공간이 부족할 수 있습니다.\n이미지를 제거하거나 백업 후 전체 삭제를 해 주세요.'); }
+  }
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const fmt = (n) => Number(n).toLocaleString('ko-KR', { maximumFractionDigits: 3 });
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const timeStr = (ts) => { const d = new Date(ts); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+
+  function ranked() {
+    const dir = state.settings.order === 'desc' ? -1 : 1;
+    const sorted = [...state.entries].sort((a, b) => (a.score - b.score) * dir || a.ts - b.ts);
+    let rank = 0, prev = null;
+    return sorted.map((e, i) => {
+      if (prev === null || e.score !== prev) { rank = i + 1; prev = e.score; }
+      return { ...e, rank };
+    });
+  }
+
+  // 설명: "1. " 로 시작하는 줄은 번호 뱃지, 나머지는 일반 문단
+  function renderDesc(text) {
+    return text.split('\n').map((line) => {
+      const m = line.match(/^\s*(\d+)[.)]\s*(.*)$/);
+      if (m) return `<div class="step"><div class="n">${m[1]}</div><div class="t">${esc(m[2])}</div></div>`;
+      if (!line.trim()) return '';
+      return `<div class="para">${esc(line)}</div>`;
+    }).join('');
+  }
+
+  // ---------- 렌더링 ----------
+  function render() {
+    const s = state.settings;
+    document.title = `${s.title} - 리더보드`;
+    $('#boothTitle').textContent = s.title;
+    $('#boothDesc').innerHTML = renderDesc(s.desc);
+    const img = $('#boothImg');
+    if (s.image) { img.src = s.image; img.classList.add('show'); } else { img.removeAttribute('src'); img.classList.remove('show'); }
+
+    const list = ranked();
+    const rows = [];
+    for (let i = 0; i < TOP_N; i++) {
+      const e = list[i];
+      // 1위가 가장 크고 아래로 갈수록 작아짐: 글자 크기와 행 높이를 순서대로 줄임
+      const fs = (5.6 - i * 0.33).toFixed(2);
+      const grow = 14 - i;
+      const style = `font-size:${fs}vh;flex-grow:${grow}`;
+      if (e) {
+        rows.push(`<div class="row r${e.rank <= 3 ? e.rank : 'x'} ${e.id === highlightId ? 'new' : ''}" style="${style}">
+          <div class="rank">${e.rank}</div>
+          <div class="name">${esc(e.name)}</div>
+          <div class="score">${fmt(e.score)}<small>${esc(s.unit)}</small></div>
+        </div>`);
+      } else {
+        rows.push(`<div class="row slot" style="${style}">
+          <div class="rank">${i + 1}</div>
+          <div class="name">—</div>
+          <div class="score"></div>
+        </div>`);
+      }
+    }
+    $('#board').innerHTML = rows.join('');
+    $('#boardSub').textContent = s.order === 'desc' ? `TOP ${TOP_N} · 기록이 큰 순` : `TOP ${TOP_N} · 기록이 작은 순`;
+    $('#meta').textContent = list.length ? `참여 ${state.entries.length}명 · 1위 ${list[0].name} ${fmt(list[0].score)}${s.unit}` : '아직 기록이 없습니다';
+
+    // 관리 목록 (최근 입력 순)
+    const recent = [...list].sort((a, b) => b.ts - a.ts);
+    $('#listBody').innerHTML = recent.length ? recent.map((e) => `
+      <tr class="${e.id === highlightId ? 'hl' : ''}" data-id="${e.id}">
+        <td class="num">${e.rank}위</td>
+        <td>${esc(e.name)}</td>
+        <td class="num">${fmt(e.score)}${esc(s.unit)}</td>
+        <td class="num">${timeStr(e.ts)}</td>
+        <td class="act"><button type="button" class="mini" data-act="edit">수정</button><button type="button" class="mini del" data-act="del">삭제</button></td>
+      </tr>`).join('') : '<tr><td colspan="5" class="none">이름과 기록을 입력하고 Enter를 누르면 바로 리더보드에 올라갑니다.</td></tr>';
+
+    const dupMsg = { best: '같은 이름을 다시 입력하면 더 좋은 기록만 남습니다.', replace: '같은 이름을 다시 입력하면 새 기록으로 덮어씁니다.', append: '같은 이름도 별도 기록으로 추가됩니다.' };
+    $('#dupHint').textContent = dupMsg[s.dup] || '';
+  }
+
+  function setHighlight(id) {
+    highlightId = id;
+    clearTimeout(highlightTimer);
+    highlightTimer = setTimeout(() => { highlightId = null; render(); }, 4000);
+  }
+
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  // ---------- 입력 ----------
+  function submitEntry(name, scoreRaw) {
+    name = name.trim();
+    const score = Number(String(scoreRaw).replace(/,/g, '').trim());
+    if (!name) { toast('이름을 입력해 주세요'); return false; }
+    if (scoreRaw.trim() === '' || !Number.isFinite(score)) { toast('기록은 숫자로 입력해 주세요'); return false; }
+    const s = state.settings;
+    let target = null;
+
+    if (editingId) {
+      target = state.entries.find((e) => e.id === editingId);
+      if (target) { target.name = name; target.score = score; }
+      editingId = null;
+      $('#editing').classList.remove('show');
+    } else {
+      const existing = s.dup === 'append' ? null : state.entries.find((e) => e.name === name);
+      if (existing && s.dup === 'replace') {
+        existing.score = score; existing.ts = Date.now(); target = existing;
+      } else if (existing && s.dup === 'best') {
+        const better = s.order === 'desc' ? score > existing.score : score < existing.score;
+        if (better) { existing.score = score; existing.ts = Date.now(); target = existing; }
+        else {
+          setHighlight(existing.id); save(); render();
+          toast(`${name}님의 기존 기록 ${fmt(existing.score)}${s.unit}이(가) 더 좋아 유지합니다`);
+          return true;
+        }
+      } else {
+        target = { id: uid(), name, score, ts: Date.now() };
+        state.entries.push(target);
+      }
+    }
+    if (target) setHighlight(target.id);
+    save(); render();
+    if (target) {
+      const r = ranked().find((e) => e.id === target.id);
+      toast(r ? `${name} — 현재 ${r.rank}위! (${fmt(score)}${s.unit})` : `${name} 등록 완료`);
+    }
+    return true;
+  }
+
+  $('#entryForm').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const f = ev.target;
+    if (submitEntry(f.name.value, f.score.value)) { f.reset(); f.name.focus(); }
+  });
+  $('#cancelEdit').addEventListener('click', () => {
+    editingId = null; $('#editing').classList.remove('show'); $('#entryForm').reset(); $('#entryForm').name.focus();
+  });
+
+  $('#listBody').addEventListener('click', (ev) => {
+    const btn = ev.target.closest('button[data-act]'); if (!btn) return;
+    const id = btn.closest('tr').dataset.id;
+    const e = state.entries.find((x) => x.id === id); if (!e) return;
+    if (btn.dataset.act === 'del') {
+      if (confirm(`"${e.name}" (${fmt(e.score)}${state.settings.unit}) 기록을 삭제할까요?`)) {
+        state.entries = state.entries.filter((x) => x.id !== id);
+        if (editingId === id) { editingId = null; $('#editing').classList.remove('show'); }
+        save(); render();
+      }
+    } else {
+      editingId = id;
+      const f = $('#entryForm'); f.name.value = e.name; f.score.value = e.score;
+      $('#editing').classList.add('show'); f.score.focus(); f.score.select();
+    }
+  });
+
+  // ---------- 설정 ----------
+  const modal = $('#modal');
+  let pendingImage;  // undefined = 변경 없음, null = 제거, string = 새 이미지
+  function openSettings() {
+    const f = $('#settingsForm'); const s = state.settings;
+    f.title.value = s.title; f.desc.value = s.desc; f.order.value = s.order;
+    f.unit.value = s.unit; f.dup.value = s.dup;
+    pendingImage = undefined; showPreview(s.image); $('#imgFile').value = '';
+    modal.classList.add('open'); f.title.focus();
+  }
+  function closeSettings() { modal.classList.remove('open'); $('#entryForm').name.focus(); }
+  function showPreview(src) { const p = $('#imgPreview'); if (src) { p.src = src; p.classList.add('show'); } else { p.removeAttribute('src'); p.classList.remove('show'); } }
+  $('#btnSettings').addEventListener('click', openSettings);
+  $('#settingsCancel').addEventListener('click', closeSettings);
+  modal.addEventListener('click', (ev) => { if (ev.target === modal) closeSettings(); });
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && modal.classList.contains('open')) closeSettings(); });
+  $('#settingsForm').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const f = ev.target; const s = state.settings;
+    s.title = f.title.value.trim() || defaults.settings.title;
+    s.desc = f.desc.value;
+    s.order = f.order.value; s.unit = f.unit.value.trim(); s.dup = f.dup.value;
+    if (pendingImage !== undefined) s.image = pendingImage;
+    save(); render(); closeSettings(); toast('설정을 저장했습니다');
+  });
+  $('#imgRemove').addEventListener('click', () => { pendingImage = null; showPreview(null); $('#imgFile').value = ''; });
+  $('#imgFile').addEventListener('change', (ev) => {
+    const file = ev.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        // 저장 용량을 위해 최대 1200px로 축소
+        const max = 1200; const sc = Math.min(1, max / Math.max(im.width, im.height));
+        const c = document.createElement('canvas'); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        pendingImage = file.type === 'image/png' ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .88);
+        showPreview(pendingImage);
+      };
+      im.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------- 백업 / 복원 / 초기화 / 전체화면 ----------
+  $('#btnExport').addEventListener('click', () => {
+    const d = new Date(); const pad = (n) => String(n).padStart(2, '0');
+    const name = `리더보드_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('백업 파일을 저장했습니다');
+  });
+  $('#btnImport').addEventListener('click', () => $('#importFile').click());
+  $('#importFile').addEventListener('change', (ev) => {
+    const file = ev.target.files[0]; ev.target.value = ''; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const d = JSON.parse(reader.result);
+        if (!d || !Array.isArray(d.entries)) throw new Error('bad');
+        if (!confirm(`백업 파일에 ${d.entries.length}개 기록이 있습니다.\n현재 데이터를 이 파일의 내용으로 바꿀까요?`)) return;
+        state = {
+          settings: { ...defaults.settings, ...(d.settings || {}) },
+          entries: d.entries
+            .filter((e) => e && typeof e.name === 'string' && Number.isFinite(Number(e.score)))
+            .map((e) => ({ id: e.id || uid(), name: e.name, score: Number(e.score), ts: e.ts || Date.now() })),
+        };
+        save(); render(); toast('백업을 복원했습니다');
+      } catch (e) { alert('올바른 리더보드 백업 파일이 아닙니다.'); }
+    };
+    reader.readAsText(file);
+  });
+  $('#btnClear').addEventListener('click', () => {
+    if (!state.entries.length) { toast('삭제할 기록이 없습니다'); return; }
+    if (confirm(`모든 기록 ${state.entries.length}개를 삭제할까요?\n(부스 설정은 유지됩니다. 삭제 전 백업을 권장합니다.)`)) {
+      state.entries = []; editingId = null; $('#editing').classList.remove('show'); save(); render(); toast('모든 기록을 삭제했습니다');
+    }
+  });
+  $('#btnFull').addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(() => toast('전체화면은 F11 키를 눌러 주세요'));
+  });
+
+  // ---------- 시작 ----------
+  render();
+  $('#entryForm').name.focus();
+})();
+</script>
+</body>
+</html>
