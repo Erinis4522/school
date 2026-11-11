@@ -1,0 +1,8 @@
+{
+	"enemies": {
+		"NORMAL": {"name": "일반 슬라임", "asset": "normal", "color": "#7cc96b", "hp": 25, "speed": 1.0, "armor": 0.0, "base_damage": 1, "radius": 0.30},
+		"FAST": {"name": "빠른 슬라임", "asset": "fast", "color": "#f2d14b", "hp": 14, "speed": 1.8, "armor": 0.0, "base_damage": 1, "radius": 0.24},
+		"ARMORED": {"name": "갑옷 슬라임", "asset": "armored", "color": "#8899aa", "hp": 85, "speed": 0.65, "armor": 0.30, "base_damage": 1, "radius": 0.38},
+		"BOSS": {"name": "보스 슬라임", "asset": "boss", "color": "#c0392b", "hp": 250, "speed": 0.55, "armor": 0.10, "base_damage": 2, "radius": 0.58}
+	}
+}

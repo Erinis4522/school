@@ -1,0 +1,68 @@
+{
+	"order": ["SWORD", "ARCHER", "SNIPER", "FIRE", "ICE", "LIGHTNING", "BOMB", "MARK"],
+	"heroes": {
+		"SWORD": {
+			"name": "검객", "glyph": "검", "asset": "sword", "color": "#e05a4f",
+			"attack": "근접 베기", "feature": "가까운 적 2명 동시 타격",
+			"desc": "짧은 거리에서 두 명을 한꺼번에 베어요.",
+			"special_name": "몰려 있는 적 베기",
+			"range": 1.9, "damage": 6, "interval": 0.65,
+			"max_targets": 2, "cluster_radius": 1.2
+		},
+		"ARCHER": {
+			"name": "궁수", "glyph": "궁", "asset": "archer", "color": "#5cb85c",
+			"attack": "빠른 화살", "feature": "약해진 적 마무리",
+			"desc": "화살을 빠르게 쏘아 체력이 적은 적을 끝내요.",
+			"special_name": "약해진 적 마무리",
+			"range": 3.7, "damage": 6, "interval": 0.65
+		},
+		"SNIPER": {
+			"name": "저격수", "glyph": "저", "asset": "sniper", "color": "#8a6d3b",
+			"attack": "강한 한 방", "feature": "방어력 50% 무시",
+			"desc": "멀리서 느리지만 아주 세게 쏴요. 단단한 적에게 강해요.",
+			"special_name": "단단한 적 노리기",
+			"range": 5.8, "damage": 20, "interval": 1.8,
+			"armor_pierce": 0.5, "hp_ref": 200
+		},
+		"FIRE": {
+			"name": "화염술사", "glyph": "화", "asset": "fire", "color": "#f0883e",
+			"attack": "작은 불꽃 폭발", "feature": "화상: 3초간 초당 2 피해",
+			"desc": "작은 범위에 불을 붙여 계속 피해를 줘요.",
+			"special_name": "모인 적 불태우기",
+			"range": 3.1, "damage": 9, "interval": 1.5,
+			"aoe_radius": 0.9, "burn_duration": 3.0, "burn_dps": 2.0
+		},
+		"ICE": {
+			"name": "빙결술사", "glyph": "빙", "asset": "ice", "color": "#4fb3e0",
+			"attack": "얼음 화살", "feature": "이동속도 35% 감소",
+			"desc": "맞은 적을 잠깐 느리게 만들어요.",
+			"special_name": "빠른 적 느리게 하기",
+			"range": 3.3, "damage": 8, "interval": 1.1,
+			"slow": 0.35, "slow_duration": 1.8
+		},
+		"LIGHTNING": {
+			"name": "번개술사", "glyph": "번", "asset": "lightning", "color": "#9b6bd6",
+			"attack": "연쇄 번개", "feature": "주변 적 2명에게 전이",
+			"desc": "번개가 근처 적에게 차례로 옮겨 가요.",
+			"special_name": "번개 이어 맞히기",
+			"range": 3.2, "damage": 9, "interval": 1.5,
+			"chain_count": 2, "chain_range": 1.6, "chain_falloff": 0.7
+		},
+		"BOMB": {
+			"name": "폭탄공학자", "glyph": "폭", "asset": "bomb", "color": "#6c757d",
+			"attack": "느린 폭탄", "feature": "반경 1.2 폭발",
+			"desc": "느리게 날아가는 폭탄이 넓게 터져요.",
+			"special_name": "모인 적 폭파",
+			"range": 4.3, "damage": 14, "interval": 2.5,
+			"blast_radius": 1.2, "projectile_speed": 7.0
+		},
+		"MARK": {
+			"name": "표식술사", "glyph": "표", "asset": "mark", "color": "#e0c040",
+			"attack": "표식 마법", "feature": "받는 피해 35% 증가",
+			"desc": "표식을 붙인 적은 동료에게 더 아프게 맞아요.",
+			"special_name": "함께 칠 적 표시",
+			"range": 3.2, "damage": 5, "interval": 0.9,
+			"mark_amp": 0.35, "mark_duration": 2.5
+		}
+	}
+}

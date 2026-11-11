@@ -1,0 +1,274 @@
+{
+  "character_id": "swordswoman",
+  "source_file": "selected_sword_fighter_v03.png",
+  "canvas_size": [
+    512,
+    512
+  ],
+  "designed_as": "2D chibi 2.6-2.8 heads tall; vector-derived riggable first-pass prototype",
+  "coordinate_origin": "top-left; +x right, +y down",
+  "part_layers": [
+    {
+      "name": "coat_back",
+      "z": 0,
+      "pivot": [
+        256,
+        307
+      ],
+      "parent": null,
+      "description": "Jacket tails; slight wind sway",
+      "crop_bounds_xyxy": [
+        178,
+        288,
+        338,
+        396
+      ],
+      "sprite_offset_from_pivot": [
+        -78,
+        -19
+      ]
+    },
+    {
+      "name": "scabbard",
+      "z": 1,
+      "pivot": [
+        311,
+        301
+      ],
+      "parent": null,
+      "description": "Static sheathed spare sword",
+      "crop_bounds_xyxy": [
+        281,
+        267,
+        378,
+        451
+      ],
+      "sprite_offset_from_pivot": [
+        -30,
+        -34
+      ]
+    },
+    {
+      "name": "hair_back",
+      "z": 2,
+      "pivot": [
+        256,
+        196
+      ],
+      "parent": null,
+      "description": "Back-of-head hair incl. cheek locks",
+      "crop_bounds_xyxy": [
+        158,
+        44,
+        357,
+        239
+      ],
+      "sprite_offset_from_pivot": [
+        -98,
+        -152
+      ]
+    },
+    {
+      "name": "leg_left",
+      "z": 3,
+      "pivot": [
+        232,
+        342
+      ],
+      "parent": null,
+      "description": "Left pant leg and boot, pivot at hip",
+      "crop_bounds_xyxy": [
+        192,
+        321,
+        260,
+        477
+      ],
+      "sprite_offset_from_pivot": [
+        -40,
+        -21
+      ]
+    },
+    {
+      "name": "leg_right",
+      "z": 4,
+      "pivot": [
+        280,
+        342
+      ],
+      "parent": null,
+      "description": "Right pant leg and boot, pivot at hip",
+      "crop_bounds_xyxy": [
+        251,
+        321,
+        318,
+        483
+      ],
+      "sprite_offset_from_pivot": [
+        -29,
+        -21
+      ]
+    },
+    {
+      "name": "torso",
+      "z": 5,
+      "pivot": [
+        256,
+        270
+      ],
+      "parent": null,
+      "description": "Hoodie, steel chest plate, waist belt, coat tabs",
+      "crop_bounds_xyxy": [
+        193,
+        194,
+        328,
+        373
+      ],
+      "sprite_offset_from_pivot": [
+        -63,
+        -76
+      ]
+    },
+    {
+      "name": "upper_arm_left",
+      "z": 6,
+      "pivot": [
+        212,
+        245
+      ],
+      "parent": null,
+      "description": "Visual left shoulder and upper sleeve",
+      "crop_bounds_xyxy": [
+        174,
+        237,
+        235,
+        308
+      ],
+      "sprite_offset_from_pivot": [
+        -38,
+        -8
+      ]
+    },
+    {
+      "name": "forearm_left",
+      "z": 7,
+      "pivot": [
+        194,
+        289
+      ],
+      "parent": "upper_arm_left",
+      "description": "Visual left forearm, cuff and hand, driven by elbow",
+      "crop_bounds_xyxy": [
+        175,
+        280,
+        214,
+        366
+      ],
+      "sprite_offset_from_pivot": [
+        -19,
+        -9
+      ]
+    },
+    {
+      "name": "upper_arm_right",
+      "z": 8,
+      "pivot": [
+        299,
+        245
+      ],
+      "parent": null,
+      "description": "Visual right shoulder and upper sleeve; red shoulder patch",
+      "crop_bounds_xyxy": [
+        280,
+        237,
+        347,
+        308
+      ],
+      "sprite_offset_from_pivot": [
+        -19,
+        -8
+      ]
+    },
+    {
+      "name": "forearm_right",
+      "z": 9,
+      "pivot": [
+        326,
+        289
+      ],
+      "parent": "upper_arm_right",
+      "description": "Visual right forearm and hand",
+      "crop_bounds_xyxy": [
+        303,
+        282,
+        345,
+        364
+      ],
+      "sprite_offset_from_pivot": [
+        -23,
+        -7
+      ]
+    },
+    {
+      "name": "weapon_sword",
+      "z": 10,
+      "pivot": [
+        195,
+        351
+      ],
+      "parent": "forearm_left",
+      "description": "Silver sword; attached beneath elbow chain and rotated at sword hand",
+      "crop_bounds_xyxy": [
+        80,
+        322,
+        225,
+        481
+      ],
+      "sprite_offset_from_pivot": [
+        -115,
+        -29
+      ]
+    },
+    {
+      "name": "head_face",
+      "z": 11,
+      "pivot": [
+        256,
+        196
+      ],
+      "parent": null,
+      "description": "Skin face with amber eyes and neutral expression",
+      "crop_bounds_xyxy": [
+        183,
+        81,
+        335,
+        233
+      ],
+      "sprite_offset_from_pivot": [
+        -73,
+        -115
+      ]
+    },
+    {
+      "name": "hair_front",
+      "z": 12,
+      "pivot": [
+        256,
+        196
+      ],
+      "parent": null,
+      "description": "Front bangs and side tufts, darker than original concept",
+      "crop_bounds_xyxy": [
+        165,
+        49,
+        344,
+        209
+      ],
+      "sprite_offset_from_pivot": [
+        -91,
+        -147
+      ]
+    }
+  ],
+  "technical_note": "Each full-canvas PNG uses identical 512x512 registration; to animate, rotate its Node2D at pivot while rendering its Sprite2D at local (-pivot.x,-pivot.y). Forearms are children of upper arms; local position = elbow_global - shoulder_global. These vector drawings are a first-pass stylized interpretation of the selected source, not a faithful pixel-for-pixel style conversion.",
+  "rig_advice": "For a stationary tower, prototype idle (torso 1-2deg sway) and attack (weapon+left arm swing) before extra animations."
+}
