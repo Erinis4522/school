@@ -137,8 +137,11 @@ func _draw() -> void:
 	match phase:
 		GameController.ATTRACT:
 			_draw_attract()
-		GameController.SELECT, GameController.PLACE:
+		GameController.SELECT:
+			_draw_lineup()
+		GameController.PLACE:
 			_draw_setup_banner()
+
 		GameController.RESULT:
 			_draw_result()
 	if controller.show_fps:
@@ -220,7 +223,7 @@ func _draw_setup() -> void:
 		var m: Dictionary = used[slot]
 		var c := w2s(GameData.slots[slot])
 		_draw_hero_at(m["type"], _anim("s%d" % slot, m["type"], slot), c)
-		_label_under_hero(c, GameData.hero(m["type"])["name"] + " · " + GameData.principle_name(m["principle"]))
+		_label_under_hero(c, GameData.person(m["type"]) + " · " + GameData.principle_name(m["principle"]))
 
 
 func _label_under_hero(c: Vector2, t: String) -> void:
@@ -379,7 +382,7 @@ func _draw_bubble(st: GameState) -> void:
 		return
 	var h: Entities.Hero = st.heroes[b["hero"]]
 	var anchor := w2s(h.pos) + Vector2(0, -_scale * (HERO_H - 0.25))
-	var text := "%s: %s" % [GameData.hero(h.type)["name"], b["text"]]
+	var text := "%s: %s" % [GameData.person(h.type), b["text"]]
 	var fs := 30
 	var r := _bubble_rect(anchor, text, fs, 520)
 	_draw_box(r, Color(1, 1, 1, 0.96), Color(0.2, 0.2, 0.25), anchor)
@@ -408,7 +411,7 @@ func _draw_suggestion(st: GameState) -> void:
 	var c := w2s(h.pos)
 	draw_circle(c, _scale * 0.7, Color(1, 1, 0.6, 0.35))
 	_draw_hero_at(h.type, _anim("h%d" % h.id, h.type, h.slot), c, 1.25)
-	var title := "%s의 %s" % [GameData.hero(h.type)["name"], "제안" if s["has_change"] else "의견"]
+	var title := "%s의 %s" % [GameData.person(h.type), "제안" if s["has_change"] else "의견"]
 	var body: String = s["message"]
 	var fs := 34
 	var max_w := minf(1100.0, size.x - 120)
@@ -480,7 +483,7 @@ func _draw_result() -> void:
 	y += 20
 	var fin: Array = []
 	for h in r["heroes"]:
-		fin.append("%s: %s" % [GameData.hero(h["type"])["name"], GameData.principle_name(h["principle"])])
+		fin.append("%s: %s" % [GameData.person(h["type"]), GameData.principle_name(h["principle"])])
 	_text("내가 정한 최종 작전 — " + "  ·  ".join(fin), Vector2(cx, y), 30, Color(0.85, 0.95, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
 	y += 46
 	var dec: Array = r["decisions"]
@@ -549,3 +552,62 @@ func _on_attack_anim(ev: Dictionary) -> void:
 	if a.special and a.atk_t0 == now:
 		fx.append({"kind": "special", "pos": from, "hero_type": ev["hero_type"], "t0": now, "dur": 0.9,
 			"text": str(GameData.hero(ev["hero_type"]).get("special_name", "특기")) + "!"})
+
+
+# ---------------- 선택 화면: 위 모니터에 팀 초상화 ----------------
+
+var _lineup_t0: Dictionary = {}  # 캐릭터 → 처음 확정된 시각 (등장 연출용)
+
+
+func _draw_lineup() -> void:
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.05, 0.07, 0.11, 0.82))
+	var sel: Array = controller.selected
+	for k in _lineup_t0.keys():
+		if not sel.has(k):
+			_lineup_t0.erase(k)
+	for t in sel:
+		if not _lineup_t0.has(t):
+			_lineup_t0[t] = now
+	var cx := size.x * 0.5
+	var title := "우리 팀 (%d / 3)" % sel.size()
+	_text(title, Vector2(cx, 96), 64, Color(1, 0.92, 0.55), HORIZONTAL_ALIGNMENT_CENTER, true)
+	var sub := "아래 터치 화면에서 캐릭터를 눌러 자세히 보고, 확정하면 여기에 나타나요"
+	if sel.size() == 3:
+		sub = "팀 완성! 아래 터치 화면에서 [게임 화면으로]를 눌러요"
+	_text(sub, Vector2(cx, 150), 32, Color(0.92, 0.92, 0.92), HORIZONTAL_ALIGNMENT_CENTER)
+	var fw := minf(size.x * 0.28, 520.0)
+	var fh := size.y - 260.0
+	var gap := (size.x - fw * 3) / 4.0
+	for i in 3:
+		var r := Rect2(Vector2(gap + i * (fw + gap), 200), Vector2(fw, fh))
+		if i >= sel.size():
+			_draw_box(r, Color(1, 1, 1, 0.05), Color(1, 1, 1, 0.25))
+			_text("?", r.get_center() + Vector2(0, 40), 160, Color(1, 1, 1, 0.2), HORIZONTAL_ALIGNMENT_CENTER)
+			_text("%d번째 팀원" % (i + 1), Vector2(r.get_center().x, r.end.y - 40), 30, Color(1, 1, 1, 0.35), HORIZONTAL_ALIGNMENT_CENTER)
+			continue
+		var t: String = sel[i]
+		var d: Dictionary = GameData.hero(t)
+		var col := PlaceholderArt.hero_color(t)
+		var k := clampf((now - float(_lineup_t0[t])) / 0.55, 0.0, 1.0)
+		# 등장: 위에서 떨어지며 살짝 튕김 + 빛 고리
+		var drop := (1.0 - _ease_out_back(k)) * -220.0
+		_draw_box(r, Color(col.r * 0.25, col.g * 0.25, col.b * 0.3, 0.92), col.lightened(0.2))
+		if k < 1.0:
+			draw_arc(r.get_center(), fw * (0.3 + 0.5 * k), 0, TAU, 48, Color(1, 1, 0.8, 0.8 * (1.0 - k)), 6.0, true)
+		var feet := Vector2(r.get_center().x, r.position.y + fh * 0.66 + drop)
+		draw_set_transform(feet, 0.0, Vector2(1.0, 0.28))
+		draw_circle(Vector2.ZERO, fw * 0.3, Color(0, 0, 0, 0.35))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		var a := _anim("p" + t, t, i + 7)
+		if not HeroSprite.draw(self, a, feet, fh * 0.58, now, k):
+			PlaceholderArt.draw_hero(self, t, feet + Vector2(0, -fh * 0.2), fh * 0.18, font, k)
+		var ty := r.position.y + fh * 0.66 + 70
+		_text(str(d.get("person", d["name"])), Vector2(r.get_center().x, ty), 52, Color(1, 1, 1, k), HORIZONTAL_ALIGNMENT_CENTER, true)
+		_text("%s · %s" % [d["name"], d.get("profile", "")], Vector2(r.get_center().x, ty + 50), 28, Color(col.lightened(0.45).r, col.lightened(0.45).g, col.lightened(0.45).b, k), HORIZONTAL_ALIGNMENT_CENTER)
+		_text("★ " + str(d["feature"]), Vector2(r.get_center().x, ty + 98), 28, Color(1, 0.92, 0.6, k), HORIZONTAL_ALIGNMENT_CENTER)
+
+
+func _ease_out_back(x: float) -> float:
+	var c1 := 1.70158
+	var c3 := c1 + 1.0
+	return 1.0 + c3 * pow(x - 1.0, 3) + c1 * pow(x - 1.0, 2)

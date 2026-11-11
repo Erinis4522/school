@@ -52,26 +52,34 @@ func _process(delta: float) -> bool:
 				_cmd("start")
 				stage = 1
 		1:
-			if t > 2.5:
-				_cmd("toggle_hero", {"type": "SWORD"})
-				_cmd("toggle_hero", {"type": "FIRE"})
-				_cmd("toggle_hero", {"type": "ICE"})
+			if t > 2.0 and main.control_view._focus == "" and c.selected.is_empty():
+				main.control_view._focus = "SNIPER"  # 카드 누름
+			if t > 2.8 and c.selected.is_empty():
+				_shot("detail")
+				_cmd("confirm_hero", {"type": "SNIPER"})
+				main.control_view._focus = ""
+				main.control_view._focus_shown = ""
+			if t > 3.0 and t < 3.2 and c.selected.size() == 1:
+				_shot("lineup_drop")
+			if t > 3.6:
+				_cmd("confirm_hero", {"type": "FIRE"})
+				_cmd("confirm_hero", {"type": "BOMB"})
 				stage = 2
 		2:
-			if t > 3.5:
+			if t > 5.0:
 				_shot("select")
 				_cmd("to_place")
 				_cmd("place_slot", {"slot": 3})
 				_cmd("place_slot", {"slot": 5})
 				stage = 3
 		3:
-			if t > 4.5:
+			if t > 6.0:
 				_shot("place_partial")
 				_cmd("place_slot", {"slot": 6})
 				_cmd("set_principle", {"index": 1, "principle": "SPECIAL"})
 				stage = 4
 		4:
-			if t > 5.5:
+			if t > 7.0:
 				_shot("place_done")
 				_cmd("battle_start")
 				Engine.time_scale = 3.0

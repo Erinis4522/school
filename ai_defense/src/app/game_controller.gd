@@ -84,6 +84,23 @@ func _apply(name: String, a: Dictionary) -> bool:
 			else:
 				return false
 			return true
+		"confirm_hero":
+			# 터치 화면 상세 패널에서 '이 캐릭터로 확정' → 위 모니터에 초상화가 뜸
+			if phase != SELECT:
+				return false
+			var ct: String = a.get("type", "")
+			if not GameData.heroes.has(ct) or selected.has(ct) or selected.size() >= 3:
+				return false
+			selected.append(ct)
+			return true
+		"unconfirm_hero":
+			if phase != SELECT:
+				return false
+			var ut: String = a.get("type", "")
+			if not selected.has(ut):
+				return false
+			selected.erase(ut)
+			return true
 		"recommended":
 			if phase != SELECT:
 				return false

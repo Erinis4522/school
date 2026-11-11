@@ -2,65 +2,89 @@
 	"order": ["SWORD", "ARCHER", "SNIPER", "FIRE", "ICE", "LIGHTNING", "BOMB", "MARK"],
 	"heroes": {
 		"SWORD": {
-			"name": "검객", "glyph": "검", "asset": "sword", "color": "#e05a4f",
+			"name": "검객", "person": "윤한결", "profile": "15살 · 견습 기사 소년",
+			"bio": "기사단에 막 들어온 견습생. 겁이 많지만 친구를 지킬 때는 누구보다 먼저 앞으로 나서요.",
+			"glyph": "검", "asset": "sword", "color": "#e05a4f", "art_status": "interim",
 			"attack": "근접 베기", "feature": "가까운 적 2명 동시 타격",
 			"desc": "짧은 거리에서 두 명을 한꺼번에 베어요.",
 			"special_name": "몰려 있는 적 베기",
+			"look": {"skin": "#f3cfa8", "hair": "#2a2a33", "hair_style": "spiky", "outfit": "#34558b", "accent": "#c9d2df", "boots": "#6b4a2b", "eyes": "#3b2a20"},
 			"range": 1.9, "damage": 6, "interval": 0.65,
 			"max_targets": 2, "cluster_radius": 1.2
 		},
 		"ARCHER": {
-			"name": "궁수", "glyph": "궁", "asset": "archer", "color": "#5cb85c",
+			"name": "궁수", "person": "나래", "profile": "13살 · 숲지기 소녀",
+			"bio": "깊은 숲에서 자란 아이. 눈이 아주 좋아서 멀리서 움직이는 작은 것도 놓치지 않아요.",
+			"glyph": "궁", "asset": "archer", "color": "#5cb85c", "art_status": "final",
 			"attack": "빠른 화살", "feature": "약해진 적 마무리",
 			"desc": "화살을 빠르게 쏘아 체력이 적은 적을 끝내요.",
 			"special_name": "약해진 적 마무리",
+			"look": {"skin": "#f6d7b8", "hair": "#e8c977", "hair_style": "ponytail", "outfit": "#3d6b3a", "accent": "#8b5a2b", "boots": "#3a2a1c", "eyes": "#3f7a3a"},
 			"range": 3.7, "damage": 6, "interval": 0.65
 		},
 		"SNIPER": {
-			"name": "저격수", "glyph": "저", "asset": "sniper", "color": "#8a6d3b",
+			"name": "저격수", "person": "백석 할아버지", "profile": "72살 · 은퇴한 등대지기",
+			"bio": "50년 동안 등대에서 밤바다를 지켜본 할아버지. 서두르지 않고 모노클로 겨눠 딱 한 방을 쏴요.",
+			"glyph": "저", "asset": "sniper", "color": "#8a6d3b", "art_status": "placeholder",
 			"attack": "강한 한 방", "feature": "방어력 50% 무시",
 			"desc": "멀리서 느리지만 아주 세게 쏴요. 단단한 적에게 강해요.",
 			"special_name": "단단한 적 노리기",
+			"look": {"skin": "#ecc9a6", "hair": "#e9e9ee", "hair_style": "bald_sides", "beard": "full", "glasses": "monocle", "hat": "captain", "outfit": "#2f4a5f", "accent": "#d9b44a", "boots": "#2b2b2b", "eyes": "#2a2a2a", "elder": true},
 			"range": 5.8, "damage": 20, "interval": 1.8,
 			"armor_pierce": 0.5, "hp_ref": 200
 		},
 		"FIRE": {
-			"name": "화염술사", "glyph": "화", "asset": "fire", "color": "#f0883e",
+			"name": "화염술사", "person": "강철수 아저씨", "profile": "45살 · 마을 대장장이",
+			"bio": "대장간 불을 30년 동안 다룬 아저씨. 화덕의 불꽃을 망치에 담아 휘둘러요. 큰 소리로 잘 웃어요.",
+			"glyph": "화", "asset": "fire", "color": "#f0883e", "art_status": "placeholder",
 			"attack": "작은 불꽃 폭발", "feature": "화상: 3초간 초당 2 피해",
 			"desc": "작은 범위에 불을 붙여 계속 피해를 줘요.",
 			"special_name": "모인 적 불태우기",
+			"look": {"skin": "#a8714a", "hair": "#1e1a18", "hair_style": "short", "beard": "stubble", "hat": "bandana", "outfit": "#e07a2e", "accent": "#5a3a22", "boots": "#3a2a1c", "eyes": "#1e1a18", "big": true},
 			"range": 3.1, "damage": 9, "interval": 1.5,
 			"aoe_radius": 0.9, "burn_duration": 3.0, "burn_dps": 2.0
 		},
 		"ICE": {
-			"name": "빙결술사", "glyph": "빙", "asset": "ice", "color": "#4fb3e0",
+			"name": "빙결술사", "person": "서리", "profile": "17살 · 설산 마을 마법사",
+			"bio": "북쪽 설산 마을에서 온 언니. 말투는 차분하지만 친구들이 다치면 누구보다 먼저 달려와요.",
+			"glyph": "빙", "asset": "ice", "color": "#4fb3e0", "art_status": "final",
 			"attack": "얼음 화살", "feature": "이동속도 35% 감소",
 			"desc": "맞은 적을 잠깐 느리게 만들어요.",
 			"special_name": "빠른 적 느리게 하기",
+			"look": {"skin": "#f8e1d0", "hair": "#cfd9ea", "hair_style": "long", "outfit": "#3b5fa0", "accent": "#ffffff", "boots": "#2b2f45", "eyes": "#4a78c0"},
 			"range": 3.3, "damage": 8, "interval": 1.1,
 			"slow": 0.35, "slow_duration": 1.8
 		},
 		"LIGHTNING": {
-			"name": "번개술사", "glyph": "번", "asset": "lightning", "color": "#9b6bd6",
+			"name": "번개술사", "person": "이도윤", "profile": "11살 · 꼬마 발명가",
+			"bio": "번개를 모으는 전도봉을 직접 만든 꼬마 발명가. 실험이 실패해도 \"다시 해 보면 돼!\" 하고 웃어요.",
+			"glyph": "번", "asset": "lightning", "color": "#9b6bd6", "art_status": "placeholder",
 			"attack": "연쇄 번개", "feature": "주변 적 2명에게 전이",
 			"desc": "번개가 근처 적에게 차례로 옮겨 가요.",
 			"special_name": "번개 이어 맞히기",
+			"look": {"skin": "#f5d3b0", "hair": "#6b4a2b", "hair_style": "messy", "glasses": "goggles", "outfit": "#6a4aa8", "accent": "#ffd23f", "boots": "#3a3a3a", "eyes": "#3b2a20", "small": true},
 			"range": 3.2, "damage": 9, "interval": 1.5,
 			"chain_count": 2, "chain_range": 1.6, "chain_falloff": 0.7
 		},
 		"BOMB": {
-			"name": "폭탄공학자", "glyph": "폭", "asset": "bomb", "color": "#6c757d",
+			"name": "폭탄공학자", "person": "말순 할머니", "profile": "68살 · 불꽃놀이 장인",
+			"bio": "마을 축제 불꽃놀이를 40년 동안 만들어 온 할머니. 화약 냄새만 맡아도 얼마나 터질지 알아요.",
+			"glyph": "폭", "asset": "bomb", "color": "#6c757d", "art_status": "placeholder",
 			"attack": "느린 폭탄", "feature": "반경 1.2 폭발",
 			"desc": "느리게 날아가는 폭탄이 넓게 터져요.",
 			"special_name": "모인 적 폭파",
+			"look": {"skin": "#efcfb2", "hair": "#c9c9cf", "hair_style": "bun", "glasses": "goggles", "hat": "headscarf", "outfit": "#7a3b3b", "accent": "#d9a441", "boots": "#3a2a1c", "eyes": "#2a2a2a", "elder": true},
 			"range": 4.3, "damage": 14, "interval": 2.5,
 			"blast_radius": 1.2, "projectile_speed": 7.0
 		},
 		"MARK": {
-			"name": "표식술사", "glyph": "표", "asset": "mark", "color": "#e0c040",
+			"name": "표식술사", "person": "하은", "profile": "19살 · 별빛 도서관 사서",
+			"bio": "별빛 도서관의 견습 사서. 마법 두루마리로 적에게 빛나는 표식을 붙여 동료들이 함께 칠 수 있게 도와요.",
+			"glyph": "표", "asset": "mark", "color": "#e0c040", "art_status": "final",
 			"attack": "표식 마법", "feature": "받는 피해 35% 증가",
 			"desc": "표식을 붙인 적은 동료에게 더 아프게 맞아요.",
 			"special_name": "함께 칠 적 표시",
+			"look": {"skin": "#f6dccb", "hair": "#c8c3d8", "hair_style": "long", "hat": "beret", "outfit": "#3a2f4a", "accent": "#e0c040", "boots": "#2a2a2a", "eyes": "#7a5ab0"},
 			"range": 3.2, "damage": 5, "interval": 0.9,
 			"mark_amp": 0.35, "mark_duration": 2.5
 		}

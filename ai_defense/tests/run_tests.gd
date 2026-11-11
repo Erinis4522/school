@@ -14,7 +14,7 @@ func _init() -> void:
 		"t00_data", "t01_effects", "t02_principle_changes_target", "t03_range_and_retarget",
 		"t04_speech_truth_and_cooldown", "t05_events_once", "t06_gap_and_cancel",
 		"t07_choice_applies_to_one_hero", "t08_recommendation_consistency", "t09_determinism_no_mutation",
-		"t10_controller_flow", "t11_command_once", "t12_hero_art_and_anim",
+		"t10_controller_flow", "t11_command_once", "t12_hero_art_and_anim", "t13_confirm_flow",
 	]
 	for t in tests:
 		_current = t
@@ -563,3 +563,22 @@ func t12_hero_art_and_anim() -> void:
 	# 연출 표시는 전투 결과에 영향 없음: special 키가 있어도 같은 시드면 같은 결과 (t09에서 재현성 확인)
 	var s := full_game(21, ["SWORD", "SNIPER", "ICE"], [3, 5, 6])
 	check(s.state.outcome != "", "특기 표시가 있어도 게임 정상 종료")
+
+
+func t13_confirm_flow() -> void:
+	var c := GameController.new()
+	c.command("start")
+	check(c.command("confirm_hero", {"type": "SNIPER"})["ok"], "확정 → 팀에 추가")
+	check(not c.command("confirm_hero", {"type": "SNIPER"})["ok"], "같은 캐릭터 두 번 확정 안 됨")
+	c.command("confirm_hero", {"type": "FIRE"})
+	c.command("confirm_hero", {"type": "BOMB"})
+	check(not c.command("confirm_hero", {"type": "ICE"})["ok"] and c.selected.size() == 3, "최대 3명")
+	check(c.command("unconfirm_hero", {"type": "FIRE"})["ok"] and c.selected == ["SNIPER", "BOMB"], "팀에서 빼기")
+	check(not c.command("to_place")["ok"], "3명 전에는 게임 화면으로 못 감")
+	c.command("confirm_hero", {"type": "ICE"})
+	check(c.command("to_place")["ok"] and c.phase == GameController.PLACE, "3명 확정 후 게임 화면(배치)으로")
+	for t in GameData.hero_order:
+		var d: Dictionary = GameData.hero(t)
+		check(str(d.get("person", "")) != "" and str(d.get("profile", "")) != "" and str(d.get("bio", "")) != "", "인물 정보: " + t)
+		check(HeroSprite.has_art(t), "그림 또는 도형 인물: " + t)
+	c.free()

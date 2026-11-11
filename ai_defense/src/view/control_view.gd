@@ -9,6 +9,8 @@ var _seq := 0
 var _built_key := ""
 var _root: VBoxContainer
 var _other_mode := false  # 제안 화면에서 '다른 원칙 고르기'를 펼쳤는가
+var _focus := ""  # 선택 화면에서 자세히 보는 캐릭터 (터치 화면 안에서만 쓰는 상태)
+var _focus_shown := ""  # 상세 패널 펼침 애니메이션을 이미 보여 준 캐릭터
 var _teacher_open := false
 var _teacher_info := ""
 var _corner_down := -1.0
@@ -21,7 +23,10 @@ var _live_timer: Label
 
 func setup(c: GameController) -> void:
 	controller = c
-	controller.phase_changed.connect(func(_p): _other_mode = false)
+	controller.phase_changed.connect(func(_p):
+		_other_mode = false
+		_focus = ""
+		_focus_shown = "")
 	controller.suggestion_opened.connect(func(_s): _other_mode = false)
 
 
@@ -65,7 +70,7 @@ func _process(delta: float) -> void:
 	if _corner_down >= 0.0 and _now - _corner_down >= 2.0:
 		_corner_down = -1.0
 		toggle_teacher()
-	var key := "%s|%d|%s|%s|%s|%s" % [controller.phase, controller.state_version,
+	var key := "%s|%d|%s|%s|%s|%s|%s" % [controller.phase, controller.state_version, _focus,
 		str(controller.session != null and controller.session.is_paused()), str(_other_mode), str(_teacher_open), _teacher_info]
 	if key != _built_key:
 		_built_key = key
@@ -143,81 +148,11 @@ func _build_attract() -> void:
 	_root.add_child(UiStyle.label(GameData.text("ui", "ai_note"), 24, UiStyle.C_SUB, HORIZONTAL_ALIGNMENT_CENTER))
 
 
-func _build_select() -> void:
-	var top := _hbox()
-	var title := UiStyle.label("캐릭터 3명을 골라 줘  (%d / 3)" % controller.selected.size(), 46, UiStyle.C_ACCENT)
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(title)
-	var rec := UiStyle.button("추천 팀으로 시작", 380, 84)
-	rec.pressed.connect(func(): _send("recommended"))
-	top.add_child(rec)
-	_root.add_child(top)
-	var names: Array = []
-	for r in GameData.config.get("recommended_team", []):
-		names.append(GameData.hero(r["type"])["name"])
-	_root.add_child(UiStyle.label("추천 팀: " + ", ".join(names) + " (자리까지 자동으로 놓아 줘요. 나중에 바꿀 수 있어요)", 24, UiStyle.C_SUB))
-	var grid := GridContainer.new()
-	grid.columns = 4
-	grid.add_theme_constant_override("h_separation", 18)
-	grid.add_theme_constant_override("v_separation", 18)
-	grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	for t in GameData.hero_order:
-		grid.add_child(_hero_card(t))
-	_root.add_child(grid)
-	var bottom := _hbox()
-	var back := UiStyle.button("◀ 처음으로", 280)
-	back.pressed.connect(func(): _send("back"))
-	bottom.add_child(back)
-	bottom.add_child(_hspacer())
-	var nxt := UiStyle.button("다음: 자리 정하기 ▶", 460)
-	nxt.disabled = controller.selected.size() != 3
-	nxt.pressed.connect(func(): _send("to_place"))
-	bottom.add_child(nxt)
-	_root.add_child(bottom)
-
-
 func _hspacer() -> Control:
 	var c := Control.new()
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return c
-
-
-func _hero_card(t: String) -> Control:
-	var d: Dictionary = GameData.hero(t)
-	var b := Button.new()
-	b.focus_mode = Control.FOCUS_NONE
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	b.custom_minimum_size = Vector2(400, 330)
-	var on := controller.selected.has(t)
-	UiStyle.set_selected(b, on)
-	b.pressed.connect(func(): _send("toggle_hero", {"type": t}))
-	var v := VBoxContainer.new()
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	v.offset_left = 14
-	v.offset_right = -14
-	v.offset_top = 10
-	v.offset_bottom = -10
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 4)
-	var head := _hbox(12)
-	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	head.add_child(HeroIcon.new(t, 116))
-	var hv := VBoxContainer.new()
-	hv.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hv.add_child(UiStyle.label(d["name"], 40, UiStyle.C_ACCENT if on else UiStyle.C_TEXT))
-	hv.add_child(UiStyle.label(d["attack"], 26, UiStyle.C_SUB))
-	head.add_child(hv)
-	v.add_child(head)
-	v.add_child(UiStyle.label("★ " + str(d["feature"]), 27, UiStyle.C_TEXT))
-	v.add_child(UiStyle.label(d["desc"], 24, UiStyle.C_SUB))
-	v.add_child(UiStyle.label("사거리 %.1f · 공격 %d · %.2f초마다" % [float(d["range"]), int(d["damage"]), float(d["interval"])], 22, UiStyle.C_SUB))
-	if on:
-		v.add_child(UiStyle.label("✔ %d번째로 선택" % (controller.selected.find(t) + 1), 26, UiStyle.C_ACCENT))
-	b.add_child(v)
-	return b
 
 
 func _build_place() -> void:
@@ -314,7 +249,8 @@ func _build_battle() -> void:
 		var ic := HeroIcon.new(h.type, 160)
 		ic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		v.add_child(ic)
-		v.add_child(UiStyle.label(GameData.hero(h.type)["name"], 40, UiStyle.C_TEXT, HORIZONTAL_ALIGNMENT_CENTER))
+		v.add_child(UiStyle.label(GameData.person(h.type), 40, UiStyle.C_TEXT, HORIZONTAL_ALIGNMENT_CENTER))
+		v.add_child(UiStyle.label(GameData.hero(h.type)["name"], 26, UiStyle.C_SUB, HORIZONTAL_ALIGNMENT_CENTER))
 		v.add_child(UiStyle.label("행동 원칙", 24, UiStyle.C_SUB, HORIZONTAL_ALIGNMENT_CENTER))
 		v.add_child(UiStyle.label(GameData.principle_name(h.principle), 38, UiStyle.C_ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
 		panel.add_child(v)
@@ -328,7 +264,7 @@ func _build_battle() -> void:
 func _build_suggestion() -> void:
 	var s: Dictionary = controller.session.active
 	var h: Entities.Hero = controller.session.state.heroes[s["hero_id"]]
-	var name: String = GameData.hero(h.type)["name"]
+	var name: String = GameData.person(h.type)
 	var head := _hbox(24)
 	head.add_child(HeroIcon.new(h.type, 150))
 	var hv := VBoxContainer.new()
@@ -423,7 +359,7 @@ func _build_result() -> void:
 	var kinds := {"crisis": "방어선 위기", "first_hit": "기지 첫 피격", "test": "테스트"}
 	var choice_txt := {"accept": "제안대로 바꿨어요", "keep": "그대로 유지했어요", "other": "직접 다른 원칙을 골랐어요", "timeout": "시간이 지나 그대로 유지했어요"}
 	for dd in decisions:
-		var hn: String = GameData.hero(dd["hero_type"])["name"]
+		var hn: String = GameData.person(dd["hero_type"])
 		var line := "• %s 때 %s: " % [kinds.get(dd["kind"], dd["kind"]), hn]
 		if dd["has_change"]:
 			line += "‘%s’→‘%s’ 제안 → " % [GameData.principle_name(dd["from"]), GameData.principle_name(dd["to"])]
@@ -435,7 +371,7 @@ func _build_result() -> void:
 		v.add_child(UiStyle.label(line, 28, UiStyle.C_TEXT))
 	var fin: Array = []
 	for h in r["heroes"]:
-		fin.append("%s ‘%s’" % [GameData.hero(h["type"])["name"], GameData.principle_name(h["principle"])])
+		fin.append("%s ‘%s’" % [GameData.person(h["type"]), GameData.principle_name(h["principle"])])
 	v.add_child(UiStyle.label("최종 작전: " + ", ".join(fin), 28, UiStyle.C_SUB))
 	panel.add_child(v)
 	_root.add_child(panel)
@@ -505,7 +441,7 @@ func _update_live() -> void:
 			_live_status.text = "%s · 기지 HP %d/%d · 처치 %d · %d초" % [w, st.base_hp, st.base_hp_max, st.kills, int(st.time)]
 		if _live_bubble != null:
 			if controller.last_bubble_text != "" and controller.last_bubble_hero >= 0:
-				_live_bubble.text = "최근 보고 — %s: “%s”" % [GameData.hero(st.heroes[controller.last_bubble_hero].type)["name"], controller.last_bubble_text]
+				_live_bubble.text = "최근 보고 — %s: “%s”" % [GameData.person(st.heroes[controller.last_bubble_hero].type), controller.last_bubble_text]
 			else:
 				_live_bubble.text = "최근 보고 — (아직 없음)"
 	if _live_timer != null:
@@ -521,3 +457,157 @@ func _fit_to_viewport() -> void:
 	if position != Vector2.ZERO or size != vr.size:
 		position = Vector2.ZERO
 		size = vr.size
+
+
+# ---------------- 캐릭터 선택 (카드 → 상세 패널 → 확정) ----------------
+
+const DETAIL_H := 470.0
+
+
+func _build_select() -> void:
+	var n := controller.selected.size()
+	var top := _hbox()
+	var title := UiStyle.label("함께 싸울 캐릭터 3명을 골라 줘  (%d / 3)" % n, 44, UiStyle.C_ACCENT, HORIZONTAL_ALIGNMENT_LEFT, false)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(title)
+	top.add_child(UiStyle.label("카드를 누르면 자세히 볼 수 있어요", 26, UiStyle.C_SUB, HORIZONTAL_ALIGNMENT_RIGHT, false))
+	_root.add_child(top)
+	if _focus != "":
+		_root.add_child(_detail_holder(_focus))
+	var grid := GridContainer.new()
+	grid.columns = 4
+	grid.add_theme_constant_override("h_separation", 16)
+	grid.add_theme_constant_override("v_separation", 16)
+	grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	for t in GameData.hero_order:
+		grid.add_child(_hero_card(t))
+	_root.add_child(grid)
+	var bottom := _hbox()
+	var back := UiStyle.button("◀ 처음으로", 260)
+	back.pressed.connect(func(): _send("back"))
+	bottom.add_child(back)
+	var rec := UiStyle.button("추천 팀으로 바로 시작", 400)
+	rec.pressed.connect(func(): _send("recommended"))
+	bottom.add_child(rec)
+	bottom.add_child(_hspacer())
+	var go := UiStyle.button("게임 화면으로 ▶", 440, 96, 40)
+	go.disabled = n != 3
+	go.pressed.connect(func(): _send("to_place"))
+	if n == 3:
+		UiStyle.set_selected(go, true)
+	bottom.add_child(go)
+	_root.add_child(bottom)
+
+
+func _hero_card(t: String) -> Control:
+	var d: Dictionary = GameData.hero(t)
+	var b := Button.new()
+	b.focus_mode = Control.FOCUS_NONE
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	b.custom_minimum_size = Vector2(400, 150)
+	var picked := controller.selected.has(t)
+	UiStyle.set_selected(b, picked or t == _focus)
+	b.pressed.connect(func():
+		if _focus == t:
+			_focus = ""
+			_focus_shown = ""
+		else:
+			_focus = t)
+	var h := _hbox(10)
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 10
+	h.offset_right = -10
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var icon := HeroIcon.new(t, 130)
+	icon.dim = controller.selected.size() >= 3 and not picked
+	h.add_child(icon)
+	var v := VBoxContainer.new()
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_child(UiStyle.label(str(d.get("person", d["name"])), 34, UiStyle.C_ACCENT if picked else UiStyle.C_TEXT, HORIZONTAL_ALIGNMENT_LEFT, false))
+	v.add_child(UiStyle.label("%s · %s" % [d["name"], d.get("profile", "")], 22, UiStyle.C_SUB))
+	if picked:
+		v.add_child(UiStyle.label("✔ %d번째 팀원" % (controller.selected.find(t) + 1), 26, UiStyle.C_ACCENT, HORIZONTAL_ALIGNMENT_LEFT, false))
+	h.add_child(v)
+	b.add_child(h)
+	return b
+
+
+func _detail_holder(t: String) -> Control:
+	## 위에서 아래로 내려오며 펼쳐지는 상세 패널. 펼쳐지는 만큼 카드 목록이 아래로 밀려 내려간다.
+	var holder := Control.new()
+	holder.clip_contents = true
+	holder.custom_minimum_size = Vector2(0, DETAIL_H)
+	var panel := _detail_panel(t)
+	panel.anchor_left = 0.0
+	panel.anchor_right = 1.0
+	panel.anchor_top = 1.0
+	panel.anchor_bottom = 1.0
+	panel.offset_top = -DETAIL_H
+	panel.offset_bottom = 0.0
+	holder.add_child(panel)
+	if _focus_shown == "":
+		holder.custom_minimum_size.y = 0.0
+		var tw := holder.create_tween()
+		tw.tween_property(holder, "custom_minimum_size:y", DETAIL_H, 0.32).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_focus_shown = t
+	return holder
+
+
+func _detail_panel(t: String) -> Control:
+	var d: Dictionary = GameData.hero(t)
+	var picked := controller.selected.has(t)
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", UiStyle.box(Color("#2b3a55"), 22, 4, PlaceholderArt.hero_color(t)))
+	var h := _hbox(28)
+	var icon := HeroIcon.new(t, 400)
+	h.add_child(icon)
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_theme_constant_override("separation", 8)
+	var name_row := _hbox(18)
+	name_row.add_child(UiStyle.label(str(d.get("person", d["name"])), 58, UiStyle.C_TEXT, HORIZONTAL_ALIGNMENT_LEFT, false))
+	var role := UiStyle.label(str(d["name"]), 34, PlaceholderArt.hero_color(t).lightened(0.3), HORIZONTAL_ALIGNMENT_LEFT, false)
+	role.size_flags_vertical = Control.SIZE_SHRINK_END
+	name_row.add_child(role)
+	v.add_child(name_row)
+	v.add_child(UiStyle.label(str(d.get("profile", "")), 28, UiStyle.C_SUB))
+	v.add_child(UiStyle.label(str(d.get("bio", d["desc"])), 30, UiStyle.C_TEXT))
+	var feat := PanelContainer.new()
+	feat.add_theme_stylebox_override("panel", UiStyle.box(Color("#1f2a3d"), 16))
+	var fv := VBoxContainer.new()
+	fv.add_child(UiStyle.label("★ 특징: %s" % d["feature"], 30, UiStyle.C_ACCENT))
+	fv.add_child(UiStyle.label("%s — %s" % [d["attack"], d["desc"]], 26, UiStyle.C_TEXT))
+	fv.add_child(UiStyle.label("특기 활용: %s  ·  사거리 %.1f  ·  %.2f초마다 공격" % [d.get("special_name", ""), float(d["range"]), float(d["interval"])], 24, UiStyle.C_SUB))
+	feat.add_child(fv)
+	v.add_child(feat)
+	v.add_child(_spacer())
+	var row := _hbox(18)
+	if picked:
+		var un := UiStyle.button("팀에서 빼기", 320, 92)
+		un.pressed.connect(func():
+			_send("unconfirm_hero", {"type": t})
+			_focus = "")
+		row.add_child(un)
+	else:
+		var full := controller.selected.size() >= 3
+		var ok := UiStyle.button("이미 3명을 골랐어요" if full else "이 캐릭터로 확정!", 420, 92, 38)
+		ok.disabled = full
+		if not full:
+			UiStyle.set_selected(ok, true)
+		ok.pressed.connect(func():
+			_send("confirm_hero", {"type": t})
+			_focus = ""
+			_focus_shown = "")
+		row.add_child(ok)
+	var close := UiStyle.button("닫기", 200, 92)
+	close.pressed.connect(func():
+		_focus = ""
+		_focus_shown = "")
+	row.add_child(close)
+	v.add_child(row)
+	h.add_child(v)
+	p.add_child(h)
+	return p

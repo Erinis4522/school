@@ -58,7 +58,7 @@ class Anim:
 # ---------------- 공용 ----------------
 
 static func has_art(type: String) -> bool:
-	return AssetManifest.hero_texture(type) != null or rig_for(type) != null
+	return AssetManifest.hero_texture(type) != null or rig_for(type) != null or not GameData.hero(type).get("look", {}).is_empty()
 
 
 static func used_rect(tex: Texture2D) -> Rect2:
@@ -190,7 +190,15 @@ static func draw(ci: CanvasItem, anim: Anim, feet: Vector2, height: float, now: 
 		return true
 	var tex := AssetManifest.hero_texture(anim.type)
 	if tex == null:
-		return false
+		# 그림 파일이 없으면 data의 look으로 도형 SD 인물을 그림 (애니메이션은 똑같이 적용)
+		if GameData.hero(anim.type).get("look", {}).is_empty():
+			return false
+		if ps.glow > 0.01:
+			_draw_glow(ci, anim.type, feet + Vector2(0, -height * 0.45) + ps.off * height, height * 0.5, ps.glow, alpha)
+		ci.draw_set_transform_matrix(_base_xform(ps, anim, feet, height))
+		ChibiArt.draw(ci, anim.type, height, alpha, ps.arm)
+		ci.draw_set_transform_matrix(Transform2D.IDENTITY)
+		return true
 	var ur := used_rect(tex)
 	var s := height / ur.size.y
 	var base := _base_xform(ps, anim, feet, height)

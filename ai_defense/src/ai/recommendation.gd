@@ -214,7 +214,7 @@ static func _build_text(r: Dictionary, state: GameState, observer: CombatObserve
 	if r["has_change"]:
 		msg += "\n" + str(pros[0]) + ". 대신 " + str(cons[cons.size() - 1]) + "."
 	r["message"] = msg
-	r["speaker_name"] = hero_name
+	r["speaker_name"] = GameData.person(hero_type)
 
 
 static func _principle_line(section: String, to: String, hero_type: String) -> String:

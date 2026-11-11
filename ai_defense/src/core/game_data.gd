@@ -119,3 +119,9 @@ static func text_variants(section: String, key: String) -> Array:
 			return v
 		return [str(v)]
 	return []
+
+
+static func person(type: String) -> String:
+	## 인물 이름 (없으면 역할 이름)
+	var d: Dictionary = hero(type)
+	return str(d.get("person", d.get("name", type)))
